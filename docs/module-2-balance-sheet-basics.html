@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Module 2: Balance Sheet Basics</title>
+  <!-- Module 2 uses the same 16:9 LMS-optimized formatting as Module 1 v2; no practice questions or LMS assessment items -->
+<style>
+    :root {
+      --green: #5c8f22;
+      --green-dark: #355d13;
+      --green-light: #edf5e7;
+      --ink: #161a1d;
+      --ink-2: #2d3338;
+      --muted: #6a737d;
+      --line: #dce2e8;
+      --soft: #f6f8fa;
+      --white: #ffffff;
+      --warning: #8a5a00;
+      --warning-bg: #fff7e6;
+      --success: #1f7a3a;
+      --success-bg: #edf8ef;
+      --error: #b42318;
+      --error-bg: #fff1f0;
+      --focus: #155eef;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(22, 26, 29, 0.10);
+      --topbar-h: 46px;
+      --stepper-h: 34px;
+      --footer-h: 50px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      font-size: clamp(13px, 1.35vw, 15px);
+      line-height: 1.38;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .course {
+      width: 100vw;
+      height: 100dvh;
+      max-width: calc(100dvh * 16 / 9);
+      max-height: calc(100vw * 9 / 16);
+      aspect-ratio: 16 / 9;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: var(--topbar-h) var(--stepper-h) minmax(0, 1fr) var(--footer-h);
+      background: linear-gradient(180deg, #fbfcfd 0%, #ffffff 100%);
+      overflow: hidden;
+    }
+
+    @supports not (height: 100dvh) {
+      .course { height: 100vh; max-width: calc(100vh * 16 / 9); }
+    }
+
+    .topbar {
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-bottom: 3px solid var(--green);
+    }
+
+    .brand-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      flex: 0 0 auto;
+    }
+
+    .course-eyebrow {
+      display: none;
+    }
+
+    .course-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
+      font-size: clamp(0.92rem, 1.7vw, 1.08rem);
+      line-height: 1.05;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-compact {
+      width: clamp(105px, 14vw, 150px);
+    }
+
+    .progress-line {
+      height: 6px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #e8eef2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .reset {
+      border: 1px solid rgba(255,255,255,0.24);
+      color: #fff;
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .stepper {
+      min-width: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      padding: 5px 8px;
+    }
+
+    .step-btn {
+      width: 100%;
+      min-width: 0;
+      min-height: 23px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink-2);
+      border-radius: 999px;
+      padding: 3px 5px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: clamp(0.56rem, 0.85vw, 0.68rem);
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .step-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 900;
+    }
+
+    .step-btn.active {
+      background: var(--green-light);
+      border-color: #bdd5a6;
+      color: var(--green-dark);
+    }
+
+    .step-btn.active .step-num,
+    .step-btn.done .step-num {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .viewer {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px 12px;
+      scroll-behavior: smooth;
+    }
+
+    .slide {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fade 0.16s ease;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-head {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fafb);
+    }
+
+    .kicker {
+      display: block;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide p {
+      margin-top: 0;
+    }
+
+    .slide-title {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    .slide-body {
+      padding: 14px 16px 16px;
+    }
+
+    .lede {
+      font-size: clamp(0.92rem, 1.35vw, 1rem);
+      color: var(--ink-2);
+      margin-bottom: 10px;
+    }
+
+    .objective,
+    .callout,
+    .scenario,
+    .completion {
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin: 10px 0;
+      border: 1px solid var(--line);
+    }
+
+    .objective {
+      background: var(--green-light);
+      border-left: 6px solid var(--green);
+    }
+
+    .objective h3,
+    .callout h3,
+    .scenario h3,
+    .completion h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .objective p,
+    .callout p,
+    .scenario p,
+    .completion p {
+      margin-bottom: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .card,
+    .label-card,
+    .definition {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+
+    .card h3,
+    .label-card strong,
+    .definition strong {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .card p,
+    .definition p,
+    .label-card span {
+      margin: 0;
+      color: var(--ink-2);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    li + li {
+      margin-top: 3px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--green-dark);
+      background: var(--green-light);
+      border: 1px solid #c7ddb3;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .success {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+    }
+
+    .warning {
+      background: var(--warning-bg);
+      border-color: #f3d399;
+      color: #4b3500;
+    }
+
+    .report-labels {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .label-card {
+      background: #fbfcfd;
+      min-height: 76px;
+    }
+
+    .label-card strong {
+      color: var(--green-dark);
+      font-size: 0.96rem;
+    }
+
+    .label-card span {
+      display: block;
+      font-size: 0.82rem;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .decision .pm,
+    .decision .finance {
+      padding: 11px 12px;
+    }
+
+    .decision .pm {
+      background: var(--success-bg);
+      border-right: 1px solid var(--line);
+    }
+
+    .decision .finance {
+      background: #fff7ed;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.74);
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 8px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .button.green {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    .button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .response {
+      display: none;
+      margin-top: 8px;
+      border-left: 4px solid var(--green);
+      background: #f7fbf3;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .response.open {
+      display: block;
+    }
+
+
+
+
+
+
+
+
+    .completion {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+      text-align: center;
+    }
+
+    .footer {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .footer-title {
+      min-width: 0;
+      color: var(--ink-2);
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --topbar-h: 48px;
+        --stepper-h: 38px;
+        --footer-h: 48px;
+      }
+
+      .topbar {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .progress-compact {
+        display: none;
+      }
+
+      .reset {
+        padding: 6px 9px;
+      }
+
+      .viewer {
+        padding: 10px;
+      }
+
+      .slide-head,
+      .slide-body {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .grid,
+      .report-labels,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .decision .pm {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .step-label {
+        display: none;
+      }
+
+      .stepper {
+        gap: 5px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .footer {
+        grid-template-columns: auto auto;
+      }
+
+      .footer-title {
+        display: none;
+      }
+    }
+
+    @media (max-height: 500px) {
+      :root {
+        --topbar-h: 42px;
+        --stepper-h: 36px;
+        --footer-h: 46px;
+      }
+
+      body {
+        font-size: 13px;
+      }
+
+      .course-eyebrow {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+      }
+
+      .stepper {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .step-btn {
+        padding: 4px 7px;
+      }
+
+      .slide-head {
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
+      .slide-body {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .objective,
+      .callout,
+      .scenario,
+      .completion,
+      .card,
+      .label-card,
+      .definition {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+      }
+
+      .course {
+        height: auto;
+        display: block;
+      }
+
+      .topbar,
+      .stepper,
+      .footer {
+        display: none;
+      }
+
+      .viewer {
+        overflow: visible;
+      }
+
+      .slide {
+        display: block !important;
+        margin-bottom: 18px;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="course" id="courseApp">
+<header class="topbar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">GIM</div>
+<div class="brand-copy">
+<span class="course-title">Buildium Financial Packages · Module 2</span>
+</div>
+</div>
+<div class="top-actions">
+<div aria-label="Module progress" class="progress-compact">
+<div aria-hidden="true" class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text"><span>Progress</span><span id="progressText">0%</span></div>
+</div>
+<button class="reset" id="resetProgress" type="button">Reset</button>
+</div>
+</header>
+<nav aria-label="Module sections" class="stepper" id="stepper">
+<button class="step-btn active" data-step="0" type="button"><span class="step-num">1</span><span class="step-label">Start</span></button>
+<button class="step-btn" data-step="1" type="button"><span class="step-num">2</span><span class="step-label">Purpose</span></button>
+<button class="step-btn" data-step="2" type="button"><span class="step-num">3</span><span class="step-label">Structure</span></button>
+<button class="step-btn" data-step="3" type="button"><span class="step-num">4</span><span class="step-label">Assets</span></button>
+<button class="step-btn" data-step="4" type="button"><span class="step-num">5</span><span class="step-label">Liabilities</span></button>
+<button class="step-btn" data-step="5" type="button"><span class="step-num">6</span><span class="step-label">Equity</span></button>
+<button class="step-btn" data-step="6" type="button"><span class="step-num">7</span><span class="step-label">Explain</span></button>
+<button class="step-btn" data-step="7" type="button"><span class="step-num">8</span><span class="step-label">Wrap-Up</span></button>
+</nav>
+<main aria-live="polite" class="viewer" id="viewer">
+<section class="slide active" data-title="Module Introduction">
+<div class="slide-head">
+<span class="kicker">Module 2</span>
+<h1 class="slide-title">Balance Sheet basics</h1>
+</div>
+<div class="slide-body">
+<div class="objective">
+<h3>Learning Objective</h3>
+<p>By the end of this module, you will be able to explain the purpose of the Balance Sheet, identify assets, liabilities, and equity, and recognize which Balance Sheet questions should be escalated to finance.</p>
+</div>
+<div class="grid">
+<div class="card">
+<span class="tag">What you will learn</span>
+<h3>Module focus</h3>
+<ul>
+<li>What a Balance Sheet is used for</li>
+<li>How assets, liabilities, and equity work together</li>
+<li>How to explain cash, receivables, payables, and loans</li>
+<li>Where property managers should avoid accounting interpretation</li>
+</ul>
+</div>
+<div class="card">
+<span class="tag">GIM standard</span>
+<h3>Explain the position clearly</h3>
+<p>The Balance Sheet is often where board members look for cash, debt, and financial position. Keep explanations factual, report-based, and easy to follow.</p>
+</div>
+</div>
+<div class="callout success">
+<h3>Key idea</h3>
+<p>The Balance Sheet answers: “Where does the association stand financially as of the report date?”</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="What the Balance Sheet Shows">
+<div class="slide-head">
+<span class="kicker">Purpose</span>
+<h1 class="slide-title">A point-in-time view of financial position</h1>
+</div>
+<div class="slide-body">
+<p class="lede">Unlike an Income Statement, which shows activity over a period, the Balance Sheet shows balances as of one specific date.</p>
+<div class="grid">
+<div class="card">
+<h3>The Balance Sheet helps answer:</h3>
+<ul>
+<li>What does the association have?</li>
+<li>What is owed to the association?</li>
+<li>What does the association owe?</li>
+<li>What is the overall equity position?</li>
+</ul>
+</div>
+<div class="card">
+<h3>Sample report context</h3>
+<ul>
+<li>Association: Test Association</li>
+<li>Report: Balance Sheet</li>
+<li>Date: As of 4/30/2026</li>
+<li>Basis: Accrual Basis</li>
+</ul>
+</div>
+</div>
+<div class="callout warning">
+<h3>Buildium tip</h3>
+<p>Use “as of” language when explaining this report. A Balance Sheet does not explain every transaction that happened during the month; it shows the ending position as of the date shown.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Balance Sheet Structure">
+<div class="slide-head">
+<span class="kicker">Structure</span>
+<h1 class="slide-title">Assets, liabilities, and equity</h1>
+</div>
+<div class="slide-body">
+<p class="lede">A Balance Sheet is organized around three core sections. Property managers should be able to define each section in plain language.</p>
+<div class="grid">
+<div class="definition">
+<strong>Assets</strong>
+<p>What the association has, plus amounts owed to the association. Examples include bank balances, receivables, and funds in transit.</p>
+</div>
+<div class="definition">
+<strong>Liabilities</strong>
+<p>What the association owes to others. Examples include unpaid bills, loans, and other obligations.</p>
+</div>
+</div>
+<div class="grid">
+<div class="definition">
+<strong>Equity</strong>
+<p>The association’s accumulated financial position. Equity is affected by prior activity and current net income or loss.</p>
+</div>
+<div class="definition">
+<strong>Basic formula</strong>
+<p>Assets = Liabilities + Equity. The Balance Sheet must stay in balance.</p>
+</div>
+</div>
+<div class="callout success">
+<h3>Simple board-facing explanation</h3>
+<p>“This report shows what the association has, what it owes, and the resulting equity position as of the report date.”</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Assets in the Sample Report">
+<div class="slide-head">
+<span class="kicker">Assets</span>
+<h1 class="slide-title">What the association has or is owed</h1>
+</div>
+<div class="slide-body">
+<p class="lede">The sample Balance Sheet shows total current assets of <strong>$6,630</strong>. These are the resources reflected in Buildium as of 4/30/2026.</p>
+<div class="report-labels">
+<div class="label-card">
+<strong>Accounts Receivable</strong>
+<span>$1,430 — amounts owed to the association, such as owner charges that have been billed but not yet paid.</span>
+</div>
+<div class="label-card">
+<strong>Funds in Transit</strong>
+<span>$200 — money in process that may not yet be fully settled into the bank account.</span>
+</div>
+<div class="label-card">
+<strong>Test Bank Account</strong>
+<span>$5,000 — the cash balance reflected in Buildium for the listed bank account.</span>
+</div>
+<div class="label-card">
+<strong>Total Current Assets</strong>
+<span>$6,630 — the total of the current asset lines shown on the report.</span>
+</div>
+</div>
+<div class="callout success">
+<h3>How to say it</h3>
+<p>“As of April 30, Buildium shows total assets of $6,630, made up of receivables, funds in transit, and the bank account balance.”</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Liabilities in the Sample Report">
+<div class="slide-head">
+<span class="kicker">Liabilities</span>
+<h1 class="slide-title">What the association owes</h1>
+</div>
+<div class="slide-body">
+<p class="lede">Liabilities show obligations of the association. In the sample, Buildium shows both a current liability and a long-term liability.</p>
+<div class="report-labels">
+<div class="label-card">
+<strong>Accounts Payable</strong>
+<span>$1,000 — amounts shown as owed to vendors or other parties as of the report date.</span>
+</div>
+<div class="label-card">
+<strong>Total Current Liability</strong>
+<span>$1,000 — the total short-term liability shown in the sample report.</span>
+</div>
+<div class="label-card">
+<strong>Loan Payable</strong>
+<span>$10,000 — a debt obligation shown under long-term liabilities.</span>
+</div>
+<div class="label-card">
+<strong>Total Liabilities</strong>
+<span>$11,000 — the combined total of current and long-term liabilities.</span>
+</div>
+</div>
+<div class="callout warning">
+<h3>Watch the boundary</h3>
+<p>A PM can explain that the report shows a payable or loan balance. Finance should confirm classification, loan terms, reconciliation, or whether a balance should still be open.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Equity and Net Income">
+<div class="slide-head">
+<span class="kicker">Equity</span>
+<h1 class="slide-title">Equity is where PMs should be careful</h1>
+</div>
+<div class="slide-body">
+<p class="lede">Equity reflects the association’s accumulated financial position. It can be affected by historical activity, opening balances, retained earnings, and current net income.</p>
+<div class="report-labels">
+<div class="label-card">
+<strong>Opening Balance Equity</strong>
+<span>($8,300) — an opening or setup-related equity balance. Questions about why it is negative should go to finance.</span>
+</div>
+<div class="label-card">
+<strong>Retained Earnings</strong>
+<span>$0 — accumulated prior earnings shown in the equity section.</span>
+</div>
+<div class="label-card">
+<strong>Net Income</strong>
+<span>$3,930 — current activity that affects the association’s equity position.</span>
+</div>
+<div class="label-card">
+<strong>Total Equity</strong>
+<span>($4,370) — total equity shown after combining the equity lines.</span>
+</div>
+</div>
+<div class="callout warning">
+<h3>Use caution</h3>
+<p>PMs may explain that equity is the difference between assets and liabilities. Do not guess why equity is negative, why an opening balance exists, or whether it should be adjusted.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="How PMs Should Explain It">
+<div class="slide-head">
+<span class="kicker">Board-facing explanation</span>
+<h1 class="slide-title">Use the Balance Sheet to answer position questions</h1>
+</div>
+<div class="slide-body">
+<p class="lede">When a board member asks about cash, receivables, bills, or debt, the Balance Sheet is usually the starting point.</p>
+<div class="decision">
+<div class="pm">
+<h3>PM can usually answer</h3>
+<div class="pills">
+<span class="pill">Cash: bank account line</span>
+<span class="pill">Owed to association: accounts receivable</span>
+<span class="pill">Unpaid bills: accounts payable</span>
+<span class="pill">Debt: loan payable</span>
+<span class="pill">Report date: “as of” date</span>
+</div>
+</div>
+<div class="finance">
+<h3>Escalate to finance</h3>
+<div class="pills">
+<span class="pill">Why is equity negative?</span>
+<span class="pill">Was this opening balance correct?</span>
+<span class="pill">Should this payable still be open?</span>
+<span class="pill">Is the loan classified correctly?</span>
+<span class="pill">Does the balance need adjustment?</span>
+</div>
+</div>
+</div>
+<div class="callout success">
+<h3>Recommended phrasing</h3>
+<p>“The Balance Sheet shows the association’s position as of April 30. I can explain what Buildium is showing here, and finance can confirm the accounting detail behind the balance.”</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Module Wrap-Up">
+<div class="slide-head">
+<span class="kicker">Wrap-up</span>
+<h1 class="slide-title">Balance Sheet key takeaways</h1>
+</div>
+<div class="slide-body">
+<div class="callout success">
+<h3>Module key takeaways</h3>
+<ul>
+<li>The Balance Sheet shows financial position as of a specific date.</li>
+<li>Assets are what the association has or is owed.</li>
+<li>Liabilities are what the association owes.</li>
+<li>Equity reflects the association’s accumulated financial position.</li>
+<li>Accounting setup, classification, reconciliation, and correction questions should be escalated to finance.</li>
+</ul>
+</div>
+<div class="grid">
+<div class="card">
+<h3>PM standard</h3>
+<p>Start with what the Buildium report is showing. Use the report date, line item, and amount. Avoid unsupported accounting conclusions.</p>
+</div>
+<div class="card">
+<h3>What comes next</h3>
+<p>The next module focuses on the Income Statement: income, expenses, net operating income, net income, and timing-related questions.</p>
+</div>
+</div>
+<div class="completion" id="completionBox">
+<h3>Module 2 Complete</h3>
+<p>You have completed the Balance Sheet basics module.</p>
+</div>
+</div>
+</section>
+</main>
+<footer class="footer">
+<div class="counter" id="counter">Slide 1 of 8</div>
+<div class="footer-title" id="footerTitle">Module Introduction</div>
+<div class="footer-actions">
+<button class="button secondary" id="prevBtn" type="button">Previous</button>
+<button class="button green" id="nextBtn" type="button">Next</button>
+</div>
+</footer>
+</div>
+<script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const stepButtons = Array.from(document.querySelectorAll('.step-btn'));
+      const viewer = document.getElementById('viewer');
+      const counter = document.getElementById('counter');
+      const footerTitle = document.getElementById('footerTitle');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const resetProgress = document.getElementById('resetProgress');
+      const storageKey = 'gim-buildium-module-2-embed-progress-v1';
+
+      let current = 0;
+      let visited = new Set([0]);
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved && Array.isArray(saved.visited)) {
+          visited = new Set(saved.visited.filter(n => Number.isInteger(n) && n >= 0 && n < slides.length));
+          current = Number.isInteger(saved.current) && saved.current >= 0 && saved.current < slides.length ? saved.current : 0;
+          visited.add(current);
+        }
+      } catch (error) {
+        current = 0;
+        visited = new Set([0]);
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            current,
+            visited: Array.from(visited)
+          }));
+        } catch (error) {
+          // Some LMS previews block localStorage.
+        }
+      }
+
+      function update() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('active', index === current);
+        });
+
+        stepButtons.forEach((button, index) => {
+          button.classList.toggle('active', index === current);
+          button.classList.toggle('done', visited.has(index));
+          button.setAttribute('aria-current', index === current ? 'step' : 'false');
+        });
+
+        const title = slides[current].dataset.title || 'Module content';
+        counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+        footerTitle.textContent = title;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === slides.length - 1 ? 'Finish' : 'Next';
+
+        const percent = Math.round((visited.size / slides.length) * 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+
+        saveProgress();
+        requestAnimationFrame(() => {
+          viewer.scrollTop = 0;
+          const activeStep = stepButtons[current];
+          if (activeStep && activeStep.scrollIntoView) {
+            activeStep.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0 || index >= slides.length) return;
+        current = index;
+        visited.add(current);
+        update();
+      }
+
+      stepButtons.forEach(button => {
+        button.addEventListener('click', () => goTo(Number(button.dataset.step)));
+      });
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+
+      nextBtn.addEventListener('click', () => {
+        if (current === slides.length - 1) {
+          visited = new Set(slides.map((_, index) => index));
+          update();
+        } else {
+          goTo(current + 1);
+        }
+      });
+
+      resetProgress.addEventListener('click', () => {
+        current = 0;
+        visited = new Set([0]);
+        try { localStorage.removeItem(storageKey); } catch (error) {}
+        update();
+      });
+
+      document.addEventListener('keydown', event => {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+        if (event.key === 'ArrowLeft') goTo(current - 1);
+        if (event.key === 'ArrowRight') goTo(current + 1);
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

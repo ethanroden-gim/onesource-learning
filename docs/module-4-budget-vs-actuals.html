@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Module 4: Budget vs. Actuals Basics</title>
+  <!-- Module 4 uses the same 16:9 LMS-optimized formatting as Module 2 v2 and Module 3; no practice questions or LMS assessment items -->
+<style>
+    :root {
+      --green: #5c8f22;
+      --green-dark: #355d13;
+      --green-light: #edf5e7;
+      --ink: #161a1d;
+      --ink-2: #2d3338;
+      --muted: #6a737d;
+      --line: #dce2e8;
+      --soft: #f6f8fa;
+      --white: #ffffff;
+      --warning: #8a5a00;
+      --warning-bg: #fff7e6;
+      --success: #1f7a3a;
+      --success-bg: #edf8ef;
+      --error: #b42318;
+      --error-bg: #fff1f0;
+      --focus: #155eef;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(22, 26, 29, 0.10);
+      --topbar-h: 46px;
+      --stepper-h: 34px;
+      --footer-h: 50px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      font-size: clamp(13px, 1.35vw, 15px);
+      line-height: 1.38;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .course {
+      width: 100vw;
+      height: 100dvh;
+      max-width: calc(100dvh * 16 / 9);
+      max-height: calc(100vw * 9 / 16);
+      aspect-ratio: 16 / 9;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: var(--topbar-h) var(--stepper-h) minmax(0, 1fr) var(--footer-h);
+      background: linear-gradient(180deg, #fbfcfd 0%, #ffffff 100%);
+      overflow: hidden;
+    }
+
+    @supports not (height: 100dvh) {
+      .course { height: 100vh; max-width: calc(100vh * 16 / 9); }
+    }
+
+    .topbar {
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-bottom: 3px solid var(--green);
+    }
+
+    .brand-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      flex: 0 0 auto;
+    }
+
+    .course-eyebrow {
+      display: none;
+    }
+
+    .course-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
+      font-size: clamp(0.92rem, 1.7vw, 1.08rem);
+      line-height: 1.05;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-compact {
+      width: clamp(105px, 14vw, 150px);
+    }
+
+    .progress-line {
+      height: 6px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #e8eef2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .reset {
+      border: 1px solid rgba(255,255,255,0.24);
+      color: #fff;
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .stepper {
+      min-width: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      padding: 5px 8px;
+    }
+
+    .step-btn {
+      width: 100%;
+      min-width: 0;
+      min-height: 23px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink-2);
+      border-radius: 999px;
+      padding: 3px 5px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: clamp(0.56rem, 0.85vw, 0.68rem);
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .step-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 900;
+    }
+
+    .step-btn.active {
+      background: var(--green-light);
+      border-color: #bdd5a6;
+      color: var(--green-dark);
+    }
+
+    .step-btn.active .step-num,
+    .step-btn.done .step-num {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .viewer {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px 12px;
+      scroll-behavior: smooth;
+    }
+
+    .slide {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fade 0.16s ease;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-head {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fafb);
+    }
+
+    .kicker {
+      display: block;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide p {
+      margin-top: 0;
+    }
+
+    .slide-title {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    .slide-body {
+      padding: 14px 16px 16px;
+    }
+
+    .lede {
+      font-size: clamp(0.92rem, 1.35vw, 1rem);
+      color: var(--ink-2);
+      margin-bottom: 10px;
+    }
+
+    .objective,
+    .callout,
+    .scenario,
+    .completion {
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin: 10px 0;
+      border: 1px solid var(--line);
+    }
+
+    .objective {
+      background: var(--green-light);
+      border-left: 6px solid var(--green);
+    }
+
+    .objective h3,
+    .callout h3,
+    .scenario h3,
+    .completion h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .objective p,
+    .callout p,
+    .scenario p,
+    .completion p {
+      margin-bottom: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .card,
+    .label-card,
+    .definition {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+
+    .card h3,
+    .label-card strong,
+    .definition strong {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .card p,
+    .definition p,
+    .label-card span {
+      margin: 0;
+      color: var(--ink-2);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    li + li {
+      margin-top: 3px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--green-dark);
+      background: var(--green-light);
+      border: 1px solid #c7ddb3;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .success {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+    }
+
+    .warning {
+      background: var(--warning-bg);
+      border-color: #f3d399;
+      color: #4b3500;
+    }
+
+    .report-labels {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .label-card {
+      background: #fbfcfd;
+      min-height: 76px;
+    }
+
+    .label-card strong {
+      color: var(--green-dark);
+      font-size: 0.96rem;
+    }
+
+    .label-card span {
+      display: block;
+      font-size: 0.82rem;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .decision .pm,
+    .decision .finance {
+      padding: 11px 12px;
+    }
+
+    .decision .pm {
+      background: var(--success-bg);
+      border-right: 1px solid var(--line);
+    }
+
+    .decision .finance {
+      background: #fff7ed;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.74);
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 8px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .button.green {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    .button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .response {
+      display: none;
+      margin-top: 8px;
+      border-left: 4px solid var(--green);
+      background: #f7fbf3;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .response.open {
+      display: block;
+    }
+
+
+
+
+
+
+
+
+    .completion {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+      text-align: center;
+    }
+
+    .footer {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .footer-title {
+      min-width: 0;
+      color: var(--ink-2);
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --topbar-h: 48px;
+        --stepper-h: 38px;
+        --footer-h: 48px;
+      }
+
+      .topbar {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .progress-compact {
+        display: none;
+      }
+
+      .reset {
+        padding: 6px 9px;
+      }
+
+      .viewer {
+        padding: 10px;
+      }
+
+      .slide-head,
+      .slide-body {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .grid,
+      .report-labels,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .decision .pm {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .step-label {
+        display: none;
+      }
+
+      .stepper {
+        gap: 5px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .footer {
+        grid-template-columns: auto auto;
+      }
+
+      .footer-title {
+        display: none;
+      }
+    }
+
+    @media (max-height: 500px) {
+      :root {
+        --topbar-h: 42px;
+        --stepper-h: 36px;
+        --footer-h: 46px;
+      }
+
+      body {
+        font-size: 13px;
+      }
+
+      .course-eyebrow {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+      }
+
+      .stepper {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .step-btn {
+        padding: 4px 7px;
+      }
+
+      .slide-head {
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
+      .slide-body {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .objective,
+      .callout,
+      .scenario,
+      .completion,
+      .card,
+      .label-card,
+      .definition {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+      }
+
+      .course {
+        height: auto;
+        display: block;
+      }
+
+      .topbar,
+      .stepper,
+      .footer {
+        display: none;
+      }
+
+      .viewer {
+        overflow: visible;
+      }
+
+      .slide {
+        display: block !important;
+        margin-bottom: 18px;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="course" id="courseApp">
+<header class="topbar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">GIM</div>
+<div class="brand-copy">
+<span class="course-title">Buildium Financial Packages · Module 4</span>
+</div>
+</div>
+<div class="top-actions">
+<div aria-label="Module progress" class="progress-compact">
+<div aria-hidden="true" class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text"><span>Progress</span><span id="progressText">0%</span></div>
+</div>
+<button class="reset" id="resetProgress" type="button">Reset</button>
+</div>
+</header>
+<nav aria-label="Module sections" class="stepper" id="stepper">
+<button class="step-btn active" data-step="0" type="button"><span class="step-num">1</span><span class="step-label">Start</span></button>
+<button class="step-btn" data-step="1" type="button"><span class="step-num">2</span><span class="step-label">Purpose</span></button>
+<button class="step-btn" data-step="2" type="button"><span class="step-num">3</span><span class="step-label">Columns</span></button>
+<button class="step-btn" data-step="3" type="button"><span class="step-num">4</span><span class="step-label">Timeframe</span></button>
+<button class="step-btn" data-step="4" type="button"><span class="step-num">5</span><span class="step-label">Income</span></button>
+<button class="step-btn" data-step="5" type="button"><span class="step-num">6</span><span class="step-label">Expense</span></button>
+<button class="step-btn" data-step="6" type="button"><span class="step-num">7</span><span class="step-label">Annual</span></button>
+<button class="step-btn" data-step="7" type="button"><span class="step-num">8</span><span class="step-label">Variance</span></button>
+<button class="step-btn" data-step="8" type="button"><span class="step-num">9</span><span class="step-label">Explain</span></button>
+<button class="step-btn" data-step="9" type="button"><span class="step-num">10</span><span class="step-label">Wrap-Up</span></button>
+</nav>
+<main aria-live="polite" class="viewer" id="viewer">
+
+<section class="slide active" data-title="Module Introduction">
+  <div class="slide-head">
+    <span class="kicker">Module 4</span>
+    <h1 class="slide-title">Budget vs. Actuals basics</h1>
+  </div>
+  <div class="slide-body">
+    <div class="objective">
+      <h3>Learning Objective</h3>
+      <p>By the end of this module, you will be able to interpret actual, budget, variance, and percent-of-budget columns and explain basic budget performance to a board.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">What you will learn</span>
+        <h3>Module focus</h3>
+        <ul>
+          <li>What Budget vs. Actuals is used for</li>
+          <li>How to read monthly, year-to-date, and annual budget columns</li>
+          <li>How to explain variance and percent of budget</li>
+          <li>When a variance is operational context versus a finance escalation</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">GIM standard</span>
+        <h3>Explain performance with context</h3>
+        <p>This report helps boards understand whether financial activity is tracking to the approved budget. Keep explanations tied to the timeframe, line item, and Buildium totals.</p>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Key idea</h3>
+      <p>Budget vs. Actuals answers: “How did recorded activity compare to what we expected in the budget?”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="What the Report Shows">
+  <div class="slide-head">
+    <span class="kicker">Purpose</span>
+    <h1 class="slide-title">A comparison between actual activity and the approved budget</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">The Budget vs. Actuals report gives the board context. It does not just show what happened; it shows how actual activity compares to the budgeted expectation.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>The report helps answer:</h3>
+        <ul>
+          <li>Are we over or under budget?</li>
+          <li>Which line items are driving the difference?</li>
+          <li>Is the difference monthly, year-to-date, or annual?</li>
+          <li>Does the variance look timing-related or operationally important?</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Sample report context</h3>
+        <ul>
+          <li>Association: Test Association</li>
+          <li>Report: Budget vs. Actuals</li>
+          <li>Monthly section: 4/1/2026 - 4/30/2026</li>
+          <li>Year-to-date section: 1/1/2026 - 4/30/2026</li>
+          <li>Basis: Accrual Basis</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Buildium tip</h3>
+      <p>Always confirm whether the board is asking about the current month, year-to-date performance, or the full annual budget before giving an answer.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Key Columns">
+  <div class="slide-head">
+    <span class="kicker">Columns</span>
+    <h1 class="slide-title">How to read the core Budget vs. Actuals columns</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">Most board questions can be answered by reading these five column types correctly.</p>
+    <div class="report-labels">
+      <div class="label-card">
+        <strong>Actual</strong>
+        <span>What was recorded in Buildium for the selected period.</span>
+      </div>
+      <div class="label-card">
+        <strong>Budget</strong>
+        <span>What the approved budget expected for that same period.</span>
+      </div>
+      <div class="label-card">
+        <strong>Variance</strong>
+        <span>The difference between actual and budget. Context depends on income versus expense.</span>
+      </div>
+      <div class="label-card">
+        <strong>% of Budget</strong>
+        <span>How much of the budget has been achieved or used for the period shown.</span>
+      </div>
+      <div class="label-card">
+        <strong>Annual Budget</strong>
+        <span>The full-year approved budget amount for the line item.</span>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>How to say it</h3>
+      <p>“Actual is what Buildium shows happened. Budget is what was expected. Variance is the difference between those two numbers.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Monthly vs. Year-to-Date">
+  <div class="slide-head">
+    <span class="kicker">Timeframe</span>
+    <h1 class="slide-title">Read monthly and year-to-date separately</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">A line item can look favorable for the month and still be behind year-to-date, or the reverse. Do not blend the sections together.</p>
+    <div class="grid">
+      <div class="definition">
+        <strong>Monthly section</strong>
+        <p>Shows April activity compared to April budget. In the sample report, this is the 4/1/2026 - 4/30/2026 section.</p>
+      </div>
+      <div class="definition">
+        <strong>Year-to-date section</strong>
+        <p>Shows activity from January through April compared to the budget for the same year-to-date period.</p>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Common issue</h3>
+      <p>A board member may ask, “Are we over budget?” The better response is to clarify: “Are you looking at April only, or year-to-date?”</p>
+    </div>
+    <div class="callout success">
+      <h3>PM standard</h3>
+      <p>State the timeframe every time: “For April...” or “Year-to-date through April...”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Income Example">
+  <div class="slide-head">
+    <span class="kicker">Income</span>
+    <h1 class="slide-title">Association Fee Income shows why timeframe matters</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">In the sample report, Association Fee Income is above budget for April but below budget year-to-date.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>April Association Fee Income</h3>
+        <ul>
+          <li>Actual: <strong>$3,200</strong></li>
+          <li>Budget: <strong>$1,000</strong></li>
+          <li>Variance: <strong>$2,200</strong></li>
+          <li>% of Budget: <strong>320%</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Year-to-date Association Fee Income</h3>
+        <ul>
+          <li>Actual: <strong>$3,400</strong></li>
+          <li>Budget: <strong>$4,000</strong></li>
+          <li>Variance: <strong>($600)</strong></li>
+          <li>% of Budget: <strong>85%</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Recommended phrasing</h3>
+      <p>“April Association Fee Income is above the monthly budget, but year-to-date it is still $600 below budget.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Expense Example">
+  <div class="slide-head">
+    <span class="kicker">Expenses</span>
+    <h1 class="slide-title">Low spending may be favorable or timing-related</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">Maintenance &amp; Repairs shows no actual spending through April, even though the budget expected some spending by this point.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>April Maintenance &amp; Repairs</h3>
+        <ul>
+          <li>Actual: <strong>$0</strong></li>
+          <li>Budget: <strong>$166.67</strong></li>
+          <li>Variance: <strong>($166.67)</strong></li>
+          <li>% of Budget: <strong>0%</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Year-to-date Maintenance &amp; Repairs</h3>
+        <ul>
+          <li>Actual: <strong>$0</strong></li>
+          <li>Budget: <strong>$666.67</strong></li>
+          <li>Variance: <strong>($666.67)</strong></li>
+          <li>Annual Budget: <strong>$2,000</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Use caution</h3>
+      <p>Do not automatically call lower expense activity “savings.” The work may simply not have happened yet, or the invoice may not have been entered.</p>
+    </div>
+    <div class="callout success">
+      <h3>Recommended phrasing</h3>
+      <p>“Maintenance &amp; Repairs has no actual spending recorded through April compared to a year-to-date budget of $666.67. This may be a timing item unless we know the work will not occur.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Annual Budget Timing">
+  <div class="slide-head">
+    <span class="kicker">Annual budget</span>
+    <h1 class="slide-title">Some budgeted costs may not appear evenly each month</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">Some expenses are annual, seasonal, or event-driven. The Budget vs. Actuals report may show an annual budget even when monthly or year-to-date budget activity is zero.</p>
+    <div class="report-labels">
+      <div class="label-card">
+        <strong>Insurance</strong>
+        <span>Annual Budget: $8,000. April actual, April budget, year-to-date actual, and year-to-date budget all show $0.</span>
+      </div>
+      <div class="label-card">
+        <strong>Interest Expense</strong>
+        <span>Annual Budget: $1,000. April budget is $83.33, with no actual expense recorded.</span>
+      </div>
+      <div class="label-card">
+        <strong>Total Expenses</strong>
+        <span>April actual is $0 against a monthly budget of $250. Year-to-date actual is $0 against a budget of $1,000.</span>
+      </div>
+      <div class="label-card">
+        <strong>Timing matters</strong>
+        <span>Budget timing can depend on how the budget was entered and when costs are expected to occur.</span>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>How to say it</h3>
+      <p>“Insurance has an annual budget of $8,000, but this report does not show monthly or year-to-date budget activity for that line through April.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Interpreting Variance">
+  <div class="slide-head">
+    <span class="kicker">Variance</span>
+    <h1 class="slide-title">Favorable or unfavorable depends on the line item</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">Variance is not automatically good or bad. The meaning changes depending on whether the line is income or expense and whether timing is involved.</p>
+    <div class="decision">
+      <div class="pm">
+        <h3>Income variance</h3>
+        <div class="pills">
+          <span class="pill">Higher income than budget is usually favorable</span>
+          <span class="pill">Lower income than budget is usually unfavorable or timing-related</span>
+          <span class="pill">Confirm whether collections, billing, or timing explain the difference</span>
+        </div>
+      </div>
+      <div class="finance">
+        <h3>Expense variance</h3>
+        <div class="pills">
+          <span class="pill">Lower expense than budget may be favorable</span>
+          <span class="pill">Lower expense may also mean delayed work or invoices</span>
+          <span class="pill">Higher expense may require operational or accounting explanation</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Do not overstate</h3>
+      <p>Instead of saying, “We saved money,” say, “Spending is below budget through April; we should confirm whether that is true savings or timing.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Board-Facing Explanation">
+  <div class="slide-head">
+    <span class="kicker">Explain</span>
+    <h1 class="slide-title">Summarize the result, then identify the drivers</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">A useful Budget vs. Actuals explanation includes the timeframe, the net result, and the main line items driving the variance.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Sample April summary</h3>
+        <p>For April, net income is <strong>$3,715</strong> compared to a monthly budget of <strong>$766.67</strong>, resulting in a positive variance of <strong>$2,948.33</strong>.</p>
+      </div>
+      <div class="card">
+        <h3>Sample year-to-date summary</h3>
+        <p>Year-to-date net income is <strong>$3,930</strong> compared to a budget of <strong>$3,066.67</strong>, resulting in a positive variance of <strong>$863.33</strong>.</p>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Recommended phrasing</h3>
+      <p>“The main drivers are higher April association fee income and interest income, while no expenses are recorded through April. We should treat some expense variances as timing items unless confirmed otherwise.”</p>
+    </div>
+    <div class="callout warning">
+      <h3>Escalate when needed</h3>
+      <p>Reforecasting, budget coding disputes, accrual questions, and requests to adjust financial activity should be escalated to finance.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Module Wrap-Up">
+  <div class="slide-head">
+    <span class="kicker">Wrap-up</span>
+    <h1 class="slide-title">Budget vs. Actuals key takeaways</h1>
+  </div>
+  <div class="slide-body">
+    <div class="callout success">
+      <h3>Module key takeaways</h3>
+      <ul>
+        <li>Budget vs. Actuals compares recorded activity to the approved budget.</li>
+        <li>Always separate monthly results from year-to-date results.</li>
+        <li>Actual is what Buildium shows happened; budget is what was expected.</li>
+        <li>Variance needs context, especially for expenses that may be timing-related.</li>
+        <li>Reforecasting, accruals, coding, and correction questions should be escalated to finance.</li>
+      </ul>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>PM standard</h3>
+        <p>State the timeframe, read the actual and budget columns, explain the variance, and avoid calling timing differences “savings” until confirmed.</p>
+      </div>
+      <div class="card">
+        <h3>What comes next</h3>
+        <p>The next module focuses on the Delinquent Association Owners report: owner balances, aging buckets, collections status, and privacy considerations.</p>
+      </div>
+    </div>
+    <div class="completion" id="completionBox">
+      <h3>Module 4 Complete</h3>
+      <p>You have completed the Budget vs. Actuals basics module.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+<div class="counter" id="counter">Slide 1 of 10</div>
+<div class="footer-title" id="footerTitle">Module Introduction</div>
+<div class="footer-actions">
+<button class="button secondary" id="prevBtn" type="button">Previous</button>
+<button class="button green" id="nextBtn" type="button">Next</button>
+</div>
+</footer>
+</div>
+<script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const stepButtons = Array.from(document.querySelectorAll('.step-btn'));
+      const viewer = document.getElementById('viewer');
+      const counter = document.getElementById('counter');
+      const footerTitle = document.getElementById('footerTitle');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const resetProgress = document.getElementById('resetProgress');
+      const storageKey = 'gim-buildium-module-4-embed-progress-v1';
+
+      let current = 0;
+      let visited = new Set([0]);
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved && Array.isArray(saved.visited)) {
+          visited = new Set(saved.visited.filter(n => Number.isInteger(n) && n >= 0 && n < slides.length));
+          current = Number.isInteger(saved.current) && saved.current >= 0 && saved.current < slides.length ? saved.current : 0;
+          visited.add(current);
+        }
+      } catch (error) {
+        current = 0;
+        visited = new Set([0]);
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            current,
+            visited: Array.from(visited)
+          }));
+        } catch (error) {
+          // Some LMS previews block localStorage.
+        }
+      }
+
+      function update() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('active', index === current);
+        });
+
+        stepButtons.forEach((button, index) => {
+          button.classList.toggle('active', index === current);
+          button.classList.toggle('done', visited.has(index));
+          button.setAttribute('aria-current', index === current ? 'step' : 'false');
+        });
+
+        const title = slides[current].dataset.title || 'Module content';
+        counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+        footerTitle.textContent = title;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === slides.length - 1 ? 'Finish' : 'Next';
+
+        const percent = Math.round((visited.size / slides.length) * 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+
+        saveProgress();
+        requestAnimationFrame(() => {
+          viewer.scrollTop = 0;
+          const activeStep = stepButtons[current];
+          if (activeStep && activeStep.scrollIntoView) {
+            activeStep.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0 || index >= slides.length) return;
+        current = index;
+        visited.add(current);
+        update();
+      }
+
+      stepButtons.forEach(button => {
+        button.addEventListener('click', () => goTo(Number(button.dataset.step)));
+      });
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+
+      nextBtn.addEventListener('click', () => {
+        if (current === slides.length - 1) {
+          visited = new Set(slides.map((_, index) => index));
+          update();
+        } else {
+          goTo(current + 1);
+        }
+      });
+
+      resetProgress.addEventListener('click', () => {
+        current = 0;
+        visited = new Set([0]);
+        try { localStorage.removeItem(storageKey); } catch (error) {}
+        update();
+      });
+
+      document.addEventListener('keydown', event => {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+        if (event.key === 'ArrowLeft') goTo(current - 1);
+        if (event.key === 'ArrowRight') goTo(current + 1);
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

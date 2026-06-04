@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Module 5: Delinquent Association Owners</title>
+  <!-- Module 5 uses the same clean 16:9 LMS-optimized formatting; no practice questions or LMS assessment items -->
+<style>
+    :root {
+      --green: #5c8f22;
+      --green-dark: #355d13;
+      --green-light: #edf5e7;
+      --ink: #161a1d;
+      --ink-2: #2d3338;
+      --muted: #6a737d;
+      --line: #dce2e8;
+      --soft: #f6f8fa;
+      --white: #ffffff;
+      --warning: #8a5a00;
+      --warning-bg: #fff7e6;
+      --success: #1f7a3a;
+      --success-bg: #edf8ef;
+      --error: #b42318;
+      --error-bg: #fff1f0;
+      --focus: #155eef;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(22, 26, 29, 0.10);
+      --topbar-h: 46px;
+      --stepper-h: 34px;
+      --footer-h: 50px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      font-size: clamp(13px, 1.35vw, 15px);
+      line-height: 1.38;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .course {
+      width: 100vw;
+      height: 100dvh;
+      max-width: calc(100dvh * 16 / 9);
+      max-height: calc(100vw * 9 / 16);
+      aspect-ratio: 16 / 9;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: var(--topbar-h) var(--stepper-h) minmax(0, 1fr) var(--footer-h);
+      background: linear-gradient(180deg, #fbfcfd 0%, #ffffff 100%);
+      overflow: hidden;
+    }
+
+    @supports not (height: 100dvh) {
+      .course { height: 100vh; max-width: calc(100vh * 16 / 9); }
+    }
+
+    .topbar {
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-bottom: 3px solid var(--green);
+    }
+
+    .brand-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      flex: 0 0 auto;
+    }
+
+    .course-eyebrow {
+      display: none;
+    }
+
+    .course-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
+      font-size: clamp(0.92rem, 1.7vw, 1.08rem);
+      line-height: 1.05;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-compact {
+      width: clamp(105px, 14vw, 150px);
+    }
+
+    .progress-line {
+      height: 6px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #e8eef2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .reset {
+      border: 1px solid rgba(255,255,255,0.24);
+      color: #fff;
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .stepper {
+      min-width: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      padding: 5px 8px;
+    }
+
+    .step-btn {
+      width: 100%;
+      min-width: 0;
+      min-height: 23px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink-2);
+      border-radius: 999px;
+      padding: 3px 5px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: clamp(0.56rem, 0.85vw, 0.68rem);
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .step-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 900;
+    }
+
+    .step-btn.active {
+      background: var(--green-light);
+      border-color: #bdd5a6;
+      color: var(--green-dark);
+    }
+
+    .step-btn.active .step-num,
+    .step-btn.done .step-num {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .viewer {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px 12px;
+      scroll-behavior: smooth;
+    }
+
+    .slide {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fade 0.16s ease;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-head {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fafb);
+    }
+
+    .kicker {
+      display: block;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide p {
+      margin-top: 0;
+    }
+
+    .slide-title {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    .slide-body {
+      padding: 14px 16px 16px;
+    }
+
+    .lede {
+      font-size: clamp(0.92rem, 1.35vw, 1rem);
+      color: var(--ink-2);
+      margin-bottom: 10px;
+    }
+
+    .objective,
+    .callout,
+    .scenario,
+    .completion {
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin: 10px 0;
+      border: 1px solid var(--line);
+    }
+
+    .objective {
+      background: var(--green-light);
+      border-left: 6px solid var(--green);
+    }
+
+    .objective h3,
+    .callout h3,
+    .scenario h3,
+    .completion h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .objective p,
+    .callout p,
+    .scenario p,
+    .completion p {
+      margin-bottom: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .card,
+    .label-card,
+    .definition {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+
+    .card h3,
+    .label-card strong,
+    .definition strong {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .card p,
+    .definition p,
+    .label-card span {
+      margin: 0;
+      color: var(--ink-2);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    li + li {
+      margin-top: 3px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--green-dark);
+      background: var(--green-light);
+      border: 1px solid #c7ddb3;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .success {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+    }
+
+    .warning {
+      background: var(--warning-bg);
+      border-color: #f3d399;
+      color: #4b3500;
+    }
+
+    .report-labels {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .label-card {
+      background: #fbfcfd;
+      min-height: 76px;
+    }
+
+    .label-card strong {
+      color: var(--green-dark);
+      font-size: 0.96rem;
+    }
+
+    .label-card span {
+      display: block;
+      font-size: 0.82rem;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .decision .pm,
+    .decision .finance {
+      padding: 11px 12px;
+    }
+
+    .decision .pm {
+      background: var(--success-bg);
+      border-right: 1px solid var(--line);
+    }
+
+    .decision .finance {
+      background: #fff7ed;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.74);
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 8px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .button.green {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    .button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .response {
+      display: none;
+      margin-top: 8px;
+      border-left: 4px solid var(--green);
+      background: #f7fbf3;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .response.open {
+      display: block;
+    }
+
+
+
+
+
+
+
+
+    .completion {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+      text-align: center;
+    }
+
+    .footer {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .footer-title {
+      min-width: 0;
+      color: var(--ink-2);
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --topbar-h: 48px;
+        --stepper-h: 38px;
+        --footer-h: 48px;
+      }
+
+      .topbar {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .progress-compact {
+        display: none;
+      }
+
+      .reset {
+        padding: 6px 9px;
+      }
+
+      .viewer {
+        padding: 10px;
+      }
+
+      .slide-head,
+      .slide-body {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .grid,
+      .report-labels,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .decision .pm {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .step-label {
+        display: none;
+      }
+
+      .stepper {
+        gap: 5px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .footer {
+        grid-template-columns: auto auto;
+      }
+
+      .footer-title {
+        display: none;
+      }
+    }
+
+    @media (max-height: 500px) {
+      :root {
+        --topbar-h: 42px;
+        --stepper-h: 36px;
+        --footer-h: 46px;
+      }
+
+      body {
+        font-size: 13px;
+      }
+
+      .course-eyebrow {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+      }
+
+      .stepper {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .step-btn {
+        padding: 4px 7px;
+      }
+
+      .slide-head {
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
+      .slide-body {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .objective,
+      .callout,
+      .scenario,
+      .completion,
+      .card,
+      .label-card,
+      .definition {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+      }
+
+      .course {
+        height: auto;
+        display: block;
+      }
+
+      .topbar,
+      .stepper,
+      .footer {
+        display: none;
+      }
+
+      .viewer {
+        overflow: visible;
+      }
+
+      .slide {
+        display: block !important;
+        margin-bottom: 18px;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="course" id="courseApp">
+<header class="topbar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">GIM</div>
+<div class="brand-copy">
+<span class="course-title">Buildium Financial Packages · Module 5</span>
+</div>
+</div>
+<div class="top-actions">
+<div aria-label="Module progress" class="progress-compact">
+<div aria-hidden="true" class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text"><span>Progress</span><span id="progressText">0%</span></div>
+</div>
+<button class="reset" id="resetProgress" type="button">Reset</button>
+</div>
+</header>
+<nav aria-label="Module sections" class="stepper" id="stepper">
+<button class="step-btn active" data-step="0" type="button"><span class="step-num">1</span><span class="step-label">Start</span></button>
+<button class="step-btn" data-step="1" type="button"><span class="step-num">2</span><span class="step-label">Purpose</span></button>
+<button class="step-btn" data-step="2" type="button"><span class="step-num">3</span><span class="step-label">Owner</span></button>
+<button class="step-btn" data-step="3" type="button"><span class="step-num">4</span><span class="step-label">Aging</span></button>
+<button class="step-btn" data-step="4" type="button"><span class="step-num">5</span><span class="step-label">Charges</span></button>
+<button class="step-btn" data-step="5" type="button"><span class="step-num">6</span><span class="step-label">Privacy</span></button>
+<button class="step-btn" data-step="6" type="button"><span class="step-num">7</span><span class="step-label">Wrap-Up</span></button>
+</nav>
+<main aria-live="polite" class="viewer" id="viewer">
+
+<section class="slide active" data-title="Module Introduction">
+  <div class="slide-head">
+    <span class="kicker">Module 5</span>
+    <h1 class="slide-title">Delinquent Association Owners report</h1>
+  </div>
+  <div class="slide-body">
+    <div class="objective">
+      <h3>Learning Objective</h3>
+      <p>By the end of this module, you will be able to explain owner delinquency balances, read aging buckets, describe what charges make up the balance, and identify when collections or ledger questions should be escalated.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">What you will learn</span>
+        <h3>Module focus</h3>
+        <ul>
+          <li>What the Delinquent Association Owners report shows</li>
+          <li>How to read owner balances and delinquency status</li>
+          <li>How to explain aging buckets and charge breakdowns</li>
+          <li>How to discuss owner balances professionally</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">GIM standard</span>
+        <h3>Be factual and careful</h3>
+        <p>Delinquency information is operationally important and sensitive. Keep explanations neutral, use the Buildium report language, and avoid speculation about owner circumstances.</p>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Key idea</h3>
+      <p>This report answers: “Who has a past-due owner balance, how much is owed, and how old is the balance?”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="What the Report Shows">
+  <div class="slide-head">
+    <span class="kicker">Purpose</span>
+    <h1 class="slide-title">A point-in-time view of past-due owner balances</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">The Delinquent Association Owners report shows owner balances that are past due as of the report date. It is used to help the board understand delinquency exposure and collection follow-up needs.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>The report helps answer:</h3>
+        <ul>
+          <li>Which owner accounts are delinquent?</li>
+          <li>How much is currently past due?</li>
+          <li>How old are the unpaid balances?</li>
+          <li>Is the account marked with a delinquency status?</li>
+          <li>What charge categories make up the balance?</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Sample report context</h3>
+        <ul>
+          <li>Association: Test Association</li>
+          <li>Report: Delinquent Association Owners</li>
+          <li>Report date: As of 4/30/2026</li>
+          <li>Owner scope: Future/Current owners</li>
+          <li>System: Buildium-generated report</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Buildium tip</h3>
+      <p>Always check the “as of” date before answering. A payment received after that date may not be reflected in the report.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Reading the Owner Line">
+  <div class="slide-head">
+    <span class="kicker">Owner Balance</span>
+    <h1 class="slide-title">Start with the owner line, status, and total</h1>
+  </div>
+  <div class="slide-body">
+    <div class="grid">
+      <div class="card">
+        <h3>Sample owner line</h3>
+        <ul>
+          <li>Unit: <strong>2</strong></li>
+          <li>Owner: <strong>TEST OWNER2</strong></li>
+          <li>Delinquency status: <strong>In collections</strong></li>
+          <li>Last payment: <strong>None received</strong></li>
+          <li>Total balance: <strong>$430</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Plain-language explanation</h3>
+        <p>“As of the report date, Unit 2 shows a delinquent balance of $430. Buildium lists the account as in collections and shows no payment received.”</p>
+        <p class="lede">Keep the explanation tied to what the report displays.</p>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Escalation watch-out</h3>
+      <p>The PM can read the status shown in Buildium. Questions about legal action, attorney activity, payment plan terms, or next collection steps should follow GIM’s escalation process.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Aging Buckets">
+  <div class="slide-head">
+    <span class="kicker">Aged Balances</span>
+    <h1 class="slide-title">Aging buckets show how long the balance has been unpaid</h1>
+  </div>
+  <div class="slide-body">
+    <p class="lede">Aging buckets do not just show the total delinquency. They show whether the balance is recent or has been outstanding for a longer period.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Sample aging breakdown</h3>
+        <div class="pills">
+          <span class="pill">0–30 days: $215</span>
+          <span class="pill">31–60 days: $215</span>
+          <span class="pill">61–90 days: $0</span>
+          <span class="pill">91+ days: $0</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Board-facing explanation</h3>
+        <p>“The total delinquent balance is $430. Of that, $215 is 0–30 days old and $215 is 31–60 days old. There is no balance shown in the 61–90 or 91+ day buckets.”</p>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Key idea</h3>
+      <p>Aging helps the board distinguish between a newer past-due balance and a longer-running delinquency concern.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Charge Breakdown">
+  <div class="slide-head">
+    <span class="kicker">Charges</span>
+    <h1 class="slide-title">The report also shows what makes up the balance</h1>
+  </div>
+  <div class="slide-body">
+    <div class="grid">
+      <div class="card">
+        <h3>Sample charge categories</h3>
+        <ul>
+          <li>Association Fee Income: <strong>$400</strong></li>
+          <li>Late Fee Income: <strong>$30</strong></li>
+          <li>Total delinquent balance: <strong>$430</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>How to explain it</h3>
+        <p>“The balance is made up of $400 in association fees and $30 in late fees.”</p>
+        <p>This is helpful when the board asks whether the balance is regular assessments, late fees, fines, or another charge type.</p>
+      </div>
+    </div>
+    <div class="callout warning">
+      <h3>Do not overstep</h3>
+      <p>The PM can explain the charge categories shown. Questions about whether a charge should be waived, reversed, or disputed need the approved internal process and may require finance or collections review.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Privacy and Professionalism">
+  <div class="slide-head">
+    <span class="kicker">Communication Standard</span>
+    <h1 class="slide-title">Discuss delinquency information neutrally and only with authorized parties</h1>
+  </div>
+  <div class="slide-body">
+    <div class="grid">
+      <div class="card">
+        <span class="tag">Use this approach</span>
+        <h3>Do</h3>
+        <ul>
+          <li>Use neutral, factual language</li>
+          <li>Refer to the Buildium report date</li>
+          <li>Discuss owner details only with authorized parties</li>
+          <li>Separate report facts from collection decisions</li>
+          <li>Escalate disputes or legal questions</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">Avoid this approach</span>
+        <h3>Do not</h3>
+        <ul>
+          <li>Speculate about why the owner has not paid</li>
+          <li>Use judgmental language</li>
+          <li>Share owner balance details casually</li>
+          <li>Promise a collection outcome</li>
+          <li>Approve waivers outside process</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Better wording</h3>
+      <p>Say, “The report shows a delinquent balance,” not “the owner refuses to pay.” Say, “Buildium shows no payment received,” not “they never pay.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-title="Key Takeaways">
+  <div class="slide-head">
+    <span class="kicker">Wrap-Up</span>
+    <h1 class="slide-title">What the PM can answer and when to escalate</h1>
+  </div>
+  <div class="slide-body">
+    <div class="grid">
+      <div class="card pm">
+        <span class="tag">PM can answer</span>
+        <h3>Factual report questions</h3>
+        <ul>
+          <li>How much is delinquent?</li>
+          <li>Which aging bucket is the balance in?</li>
+          <li>Is the account marked in collections?</li>
+          <li>What charges make up the balance?</li>
+          <li>What does the report show as of the report date?</li>
+        </ul>
+      </div>
+      <div class="card finance">
+        <span class="tag">Escalate</span>
+        <h3>Process, legal, or ledger questions</h3>
+        <ul>
+          <li>What legal action has been taken?</li>
+          <li>Can the association waive late fees?</li>
+          <li>Is the owner disputing the ledger?</li>
+          <li>Should a charge be reversed?</li>
+          <li>What collection step comes next?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout success">
+      <h3>Module takeaway</h3>
+      <p>The Delinquent Association Owners report is practical and sensitive. Use it to answer basic factual questions, protect owner confidentiality, and escalate collection, legal, waiver, or ledger disputes.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+<div class="counter" id="counter">Slide 1 of 7</div>
+<div class="footer-title" id="footerTitle">Module Introduction</div>
+<div class="footer-actions">
+<button class="button secondary" id="prevBtn" type="button">Previous</button>
+<button class="button green" id="nextBtn" type="button">Next</button>
+</div>
+</footer>
+</div>
+<script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const stepButtons = Array.from(document.querySelectorAll('.step-btn'));
+      const viewer = document.getElementById('viewer');
+      const counter = document.getElementById('counter');
+      const footerTitle = document.getElementById('footerTitle');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const resetProgress = document.getElementById('resetProgress');
+      const storageKey = 'gim-buildium-module-5-embed-progress-v1';
+
+      let current = 0;
+      let visited = new Set([0]);
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved && Array.isArray(saved.visited)) {
+          visited = new Set(saved.visited.filter(n => Number.isInteger(n) && n >= 0 && n < slides.length));
+          current = Number.isInteger(saved.current) && saved.current >= 0 && saved.current < slides.length ? saved.current : 0;
+          visited.add(current);
+        }
+      } catch (error) {
+        current = 0;
+        visited = new Set([0]);
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            current,
+            visited: Array.from(visited)
+          }));
+        } catch (error) {
+          // Some LMS previews block localStorage.
+        }
+      }
+
+      function update() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('active', index === current);
+        });
+
+        stepButtons.forEach((button, index) => {
+          button.classList.toggle('active', index === current);
+          button.classList.toggle('done', visited.has(index));
+          button.setAttribute('aria-current', index === current ? 'step' : 'false');
+        });
+
+        const title = slides[current].dataset.title || 'Module content';
+        counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+        footerTitle.textContent = title;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === slides.length - 1 ? 'Finish' : 'Next';
+
+        const percent = Math.round((visited.size / slides.length) * 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+
+        saveProgress();
+        requestAnimationFrame(() => {
+          viewer.scrollTop = 0;
+          const activeStep = stepButtons[current];
+          if (activeStep && activeStep.scrollIntoView) {
+            activeStep.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0 || index >= slides.length) return;
+        current = index;
+        visited.add(current);
+        update();
+      }
+
+      stepButtons.forEach(button => {
+        button.addEventListener('click', () => goTo(Number(button.dataset.step)));
+      });
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+
+      nextBtn.addEventListener('click', () => {
+        if (current === slides.length - 1) {
+          visited = new Set(slides.map((_, index) => index));
+          update();
+        } else {
+          goTo(current + 1);
+        }
+      });
+
+      resetProgress.addEventListener('click', () => {
+        current = 0;
+        visited = new Set([0]);
+        try { localStorage.removeItem(storageKey); } catch (error) {}
+        update();
+      });
+
+      document.addEventListener('keydown', event => {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+        if (event.key === 'ArrowLeft') goTo(current - 1);
+        if (event.key === 'ArrowRight') goTo(current + 1);
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

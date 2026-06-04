@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Module 1: Explaining Buildium Financial Packages</title>
+  <!-- v6: fixed navigation script; no practice questions, no audience/format metadata -->
+<style>
+    :root {
+      --green: #5c8f22;
+      --green-dark: #355d13;
+      --green-light: #edf5e7;
+      --ink: #161a1d;
+      --ink-2: #2d3338;
+      --muted: #6a737d;
+      --line: #dce2e8;
+      --soft: #f6f8fa;
+      --white: #ffffff;
+      --warning: #8a5a00;
+      --warning-bg: #fff7e6;
+      --success: #1f7a3a;
+      --success-bg: #edf8ef;
+      --error: #b42318;
+      --error-bg: #fff1f0;
+      --focus: #155eef;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(22, 26, 29, 0.10);
+      --topbar-h: 46px;
+      --stepper-h: 42px;
+      --footer-h: 50px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      font-size: clamp(13px, 1.35vw, 15px);
+      line-height: 1.38;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .course {
+      width: 100vw;
+      height: 100dvh;
+      max-width: calc(100dvh * 16 / 9);
+      max-height: calc(100vw * 9 / 16);
+      aspect-ratio: 16 / 9;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: var(--topbar-h) var(--stepper-h) minmax(0, 1fr) var(--footer-h);
+      background: linear-gradient(180deg, #fbfcfd 0%, #ffffff 100%);
+      overflow: hidden;
+    }
+
+    @supports not (height: 100dvh) {
+      .course { height: 100vh; max-width: calc(100vh * 16 / 9); }
+    }
+
+    .topbar {
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-bottom: 3px solid var(--green);
+    }
+
+    .brand-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--green);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      flex: 0 0 auto;
+    }
+
+    .course-eyebrow {
+      display: none;
+    }
+
+    .course-title {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 800;
+      font-size: clamp(0.92rem, 1.7vw, 1.08rem);
+      line-height: 1.05;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-compact {
+      width: clamp(105px, 14vw, 150px);
+    }
+
+    .progress-line {
+      height: 6px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      color: #e8eef2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .reset {
+      border: 1px solid rgba(255,255,255,0.24);
+      color: #fff;
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .stepper {
+      min-width: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      align-items: center;
+      gap: 7px;
+      overflow: hidden;
+      padding: 7px 12px;
+    }
+
+    .step-btn {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink-2);
+      border-radius: 999px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: clamp(0.68rem, 1.1vw, 0.78rem);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    .step-btn.active {
+      background: var(--green-light);
+      border-color: #bdd5a6;
+      color: var(--green-dark);
+    }
+
+    .step-btn.active .step-num,
+    .step-btn.done .step-num {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .viewer {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px 12px;
+      scroll-behavior: smooth;
+    }
+
+    .slide {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fade 0.16s ease;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-head {
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fafb);
+    }
+
+    .kicker {
+      display: block;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .slide h1,
+    .slide h2,
+    .slide h3,
+    .slide p {
+      margin-top: 0;
+    }
+
+    .slide-title {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    .slide-body {
+      padding: 14px 16px 16px;
+    }
+
+    .lede {
+      font-size: clamp(0.92rem, 1.35vw, 1rem);
+      color: var(--ink-2);
+      margin-bottom: 10px;
+    }
+
+    .objective,
+    .callout,
+    .scenario,
+    .completion {
+      border-radius: 12px;
+      padding: 11px 12px;
+      margin: 10px 0;
+      border: 1px solid var(--line);
+    }
+
+    .objective {
+      background: var(--green-light);
+      border-left: 6px solid var(--green);
+    }
+
+    .objective h3,
+    .callout h3,
+    .scenario h3,
+    .completion h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .objective p,
+    .callout p,
+    .scenario p,
+    .completion p {
+      margin-bottom: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .card,
+    .label-card,
+    .definition {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 11px 12px;
+    }
+
+    .card h3,
+    .label-card strong,
+    .definition strong {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .card p,
+    .definition p,
+    .label-card span {
+      margin: 0;
+      color: var(--ink-2);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+
+    li + li {
+      margin-top: 3px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--green-dark);
+      background: var(--green-light);
+      border: 1px solid #c7ddb3;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .success {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+    }
+
+    .warning {
+      background: var(--warning-bg);
+      border-color: #f3d399;
+      color: #4b3500;
+    }
+
+    .report-labels {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .label-card {
+      background: #fbfcfd;
+      min-height: 76px;
+    }
+
+    .label-card strong {
+      color: var(--green-dark);
+      font-size: 0.96rem;
+    }
+
+    .label-card span {
+      display: block;
+      font-size: 0.82rem;
+    }
+
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .decision .pm,
+    .decision .finance {
+      padding: 11px 12px;
+    }
+
+    .decision .pm {
+      background: var(--success-bg);
+      border-right: 1px solid var(--line);
+    }
+
+    .decision .finance {
+      background: #fff7ed;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.74);
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 8px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      min-height: 36px;
+    }
+
+    .button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .button.green {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    .button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+    }
+
+    .response {
+      display: none;
+      margin-top: 8px;
+      border-left: 4px solid var(--green);
+      background: #f7fbf3;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .response.open {
+      display: block;
+    }
+
+
+
+
+
+
+
+
+    .completion {
+      background: var(--success-bg);
+      border-color: #bfe1c8;
+      text-align: center;
+    }
+
+    .footer {
+      background: #fff;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .footer-title {
+      min-width: 0;
+      color: var(--ink-2);
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --topbar-h: 48px;
+        --stepper-h: 38px;
+        --footer-h: 48px;
+      }
+
+      .topbar {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .progress-compact {
+        display: none;
+      }
+
+      .reset {
+        padding: 6px 9px;
+      }
+
+      .viewer {
+        padding: 10px;
+      }
+
+      .slide-head,
+      .slide-body {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .grid,
+      .report-labels,
+      .decision {
+        grid-template-columns: 1fr;
+      }
+
+      .decision .pm {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .step-label {
+        display: none;
+      }
+
+      .stepper {
+        gap: 5px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .footer {
+        grid-template-columns: auto auto;
+      }
+
+      .footer-title {
+        display: none;
+      }
+    }
+
+    @media (max-height: 500px) {
+      :root {
+        --topbar-h: 42px;
+        --stepper-h: 36px;
+        --footer-h: 46px;
+      }
+
+      body {
+        font-size: 13px;
+      }
+
+      .course-eyebrow {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+      }
+
+      .stepper {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .step-btn {
+        padding: 4px 7px;
+      }
+
+      .slide-head {
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
+      .slide-body {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .objective,
+      .callout,
+      .scenario,
+      .completion,
+      .card,
+      .label-card,
+      .definition {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+      }
+
+      .course {
+        height: auto;
+        display: block;
+      }
+
+      .topbar,
+      .stepper,
+      .footer {
+        display: none;
+      }
+
+      .viewer {
+        overflow: visible;
+      }
+
+      .slide {
+        display: block !important;
+        margin-bottom: 18px;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="course" id="courseApp">
+<header class="topbar">
+<div class="brand-row">
+<div aria-hidden="true" class="brand-mark">GIM</div>
+<div class="brand-copy">
+<span class="course-title">Buildium Financial Packages · Module 1</span>
+</div>
+</div>
+<div class="top-actions">
+<div aria-label="Module progress" class="progress-compact">
+<div aria-hidden="true" class="progress-line"><div class="progress-fill" id="progressFill"></div></div>
+<div class="progress-text"><span>Progress</span><span id="progressText">0%</span></div>
+</div>
+<button class="reset" id="resetProgress" type="button">Reset</button>
+</div>
+</header>
+<nav aria-label="Module sections" class="stepper" id="stepper">
+<button class="step-btn active" data-step="0" type="button"><span class="step-num">1</span><span class="step-label">Start</span></button>
+<button class="step-btn" data-step="1" type="button"><span class="step-num">2</span><span class="step-label">Package</span></button>
+<button class="step-btn" data-step="2" type="button"><span class="step-num">3</span><span class="step-label">PM Role</span></button>
+<button class="step-btn" data-step="3" type="button"><span class="step-num">4</span><span class="step-label">Buildium</span></button>
+<button class="step-btn" data-step="4" type="button"><span class="step-num">5</span><span class="step-label">Escalation</span></button>
+<button class="step-btn" data-step="5" type="button"><span class="step-num">6</span><span class="step-label">Wrap-Up</span></button>
+</nav>
+<main aria-live="polite" class="viewer" id="viewer">
+<section class="slide active" data-title="Course Introduction">
+<div class="slide-head">
+<span class="kicker">Module 1</span>
+<h1 class="slide-title">What this financial package is — and the PM’s role</h1>
+</div>
+<div class="slide-body">
+<div class="objective">
+<h3>Learning Objective</h3>
+<p>By the end of this module, you will be able to explain the purpose of a Buildium-generated financial package and identify the property manager’s role in basic financial conversations.</p>
+</div>
+<div class="grid">
+<div class="card">
+<span class="tag">What you will learn</span>
+<h3>Module focus</h3>
+<ul>
+<li>What a financial package is used for</li>
+<li>How the reports work together</li>
+<li>What a property manager should explain</li>
+<li>When to involve finance</li>
+</ul>
+</div>
+<div class="card">
+<span class="tag">GIM standard</span>
+<h3>Clear. Accurate. Transparent.</h3>
+<p>Property managers are not expected to replace finance. They are expected to help boards understand the basics, stay factual, and avoid guessing.</p>
+</div>
+</div>
+<div class="callout success">
+<h3>Key idea</h3>
+<p>A confident PM can say: “I can explain what this Buildium report is showing, and I’ll have finance confirm the accounting detail.”</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="What Is a Financial Package?">
+<div class="slide-head">
+<span class="kicker">Purpose</span>
+<h1 class="slide-title">A monthly snapshot of financial activity</h1>
+</div>
+<div class="slide-body">
+<p class="lede">A financial package gives the board a structured way to review what happened, what is outstanding, and where more detail may be needed.</p>
+<div class="grid">
+<div class="card">
+<h3>It helps the board understand:</h3>
+<ul>
+<li>What the association owns</li>
+<li>What the association owes</li>
+<li>What income and expenses were recorded</li>
+<li>How actual results compare to budget</li>
+<li>Which owners are delinquent</li>
+<li>What transactions support the totals</li>
+</ul>
+</div>
+<div class="card">
+<h3>The sample package includes:</h3>
+<ul>
+<li>Balance Sheet</li>
+<li>Income Statement</li>
+<li>Budget vs. Actuals</li>
+<li>Delinquent Association Owners</li>
+<li>Transaction Detail by Account</li>
+</ul>
+</div>
+</div>
+
+</div>
+</section>
+<section class="slide" data-title="The Property Manager’s Role">
+<div class="slide-head">
+<span class="kicker">Role clarity</span>
+<h1 class="slide-title">Explain the report. Do not guess.</h1>
+</div>
+<div class="slide-body">
+<p class="lede">The property manager helps the board navigate the package. The PM does not speculate about accounting treatment or make unsupported financial conclusions.</p>
+<div class="grid">
+<div class="definition">
+<strong>Explain</strong>
+<p>Identify the report, read the relevant section, define basic terms, and point to the total or line item that answers the question.</p>
+</div>
+<div class="definition">
+<strong>Do not guess</strong>
+<p>Do not speculate about journal entries, accruals, reclassifications, prior-period activity, or whether an accounting entry is correct.</p>
+</div>
+</div>
+<div class="grid">
+<div class="card">
+<h3>PMs should be able to:</h3>
+<ul>
+<li>Identify the correct report</li>
+<li>Explain what the report shows</li>
+<li>Point to the relevant line item or total</li>
+<li>Answer simple factual questions</li>
+<li>Escalate accounting interpretation to finance</li>
+</ul>
+</div>
+<div class="card">
+<h3>Use report-based language:</h3>
+<ul>
+<li>“The report is showing…”</li>
+<li>“As of the report date…”</li>
+<li>“For this reporting period…”</li>
+<li>“Finance should confirm the accounting treatment.”</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-title="Buildium Report Basics">
+<div class="slide-head">
+<span class="kicker">Buildium basics</span>
+<h1 class="slide-title">Read the report labels before answering</h1>
+</div>
+<div class="slide-body">
+<p class="lede">Because these reports are generated from Buildium, the date, period, basis, and generated timestamp all affect how you explain the report.</p>
+<div class="report-labels">
+<div class="label-card">
+<strong>Association Name</strong>
+<span>Confirms you are reviewing the correct property or association.</span>
+</div>
+<div class="label-card">
+<strong>Report Title</strong>
+<span>Tells you which type of question the report can answer.</span>
+</div>
+<div class="label-card">
+<strong>Date or Period</strong>
+<span>Shows whether the report is point-in-time or activity over a period.</span>
+</div>
+<div class="label-card">
+<strong>Accounting Basis</strong>
+<span>May show accrual basis, cash basis, or another reporting basis.</span>
+</div>
+<div class="label-card">
+<strong>Generated Timestamp</strong>
+<span>Helps determine whether recent transactions may be included.</span>
+</div>
+<div class="label-card">
+<strong>Page Count</strong>
+<span>Confirms whether you have the full report.</span>
+</div>
+</div>
+<div class="callout warning">
+<h3>Buildium tip</h3>
+<p>If someone asks whether a recent payment, invoice, or adjustment is included, check the report’s generated date and time before answering.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-title="PM Answer vs. Finance Escalation">
+<div class="slide-head">
+<span class="kicker">Escalation boundary</span>
+<h1 class="slide-title">Reading the report vs. interpreting accounting treatment</h1>
+</div>
+<div class="slide-body">
+<p class="lede">A useful rule: if the question is about reading the report, the PM can usually answer. If the question is about accounting treatment, correction, classification, or whether something should have been booked differently, finance should answer.</p>
+<div class="decision">
+<div class="pm">
+<h3>PM can usually answer</h3>
+<div class="pills">
+<span class="pill">Which report shows cash?</span>
+<span class="pill">How much income was recorded?</span>
+<span class="pill">Which owner balances are delinquent?</span>
+<span class="pill">What line item is over budget?</span>
+<span class="pill">What transactions make up this total?</span>
+</div>
+</div>
+<div class="finance">
+<h3>Escalate to finance</h3>
+<div class="pills">
+<span class="pill">Was this journal entry booked correctly?</span>
+<span class="pill">Why is equity negative?</span>
+<span class="pill">Should this be accrued?</span>
+<span class="pill">Should this expense be reclassified?</span>
+<span class="pill">Does this require a correction?</span>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+<section class="slide" data-title="Module Wrap-Up">
+<div class="slide-head">
+<span class="kicker">Wrap-up</span>
+<h1 class="slide-title">The PM standard</h1>
+</div>
+<div class="slide-body">
+<div class="callout success">
+<h3>Module key takeaways</h3>
+<ul>
+<li>Buildium financial packages combine summary reports and detail reports.</li>
+<li>Property managers should explain what the reports show.</li>
+<li>Property managers should not guess on accounting treatment.</li>
+<li>Escalation protects accuracy, transparency, and board trust.</li>
+</ul>
+</div>
+<div class="grid">
+<div class="card">
+<h3>Use this sentence often</h3>
+<p>“I can explain what Buildium is showing here. Finance should confirm the accounting detail behind that entry.”</p>
+</div>
+<div class="card">
+<h3>What comes next</h3>
+<p>The next module focuses on the Balance Sheet: assets, liabilities, equity, cash, receivables, payables, loans, and escalation boundaries.</p>
+</div>
+</div>
+<div class="completion" id="completionBox">
+<h3>Module 1 Complete</h3>
+<p>You have completed the introduction to Buildium financial packages and the property manager’s role.</p>
+</div>
+</div>
+</section>
+</main>
+<footer class="footer">
+<div class="counter" id="counter">Slide 1 of 6</div>
+<div class="footer-title" id="footerTitle">Course Introduction</div>
+<div class="footer-actions">
+<button class="button secondary" id="prevBtn" type="button">Previous</button>
+<button class="button green" id="nextBtn" type="button">Next</button>
+</div>
+</footer>
+</div>
+<script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const stepButtons = Array.from(document.querySelectorAll('.step-btn'));
+      const viewer = document.getElementById('viewer');
+      const counter = document.getElementById('counter');
+      const footerTitle = document.getElementById('footerTitle');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const resetProgress = document.getElementById('resetProgress');
+      const storageKey = 'gim-buildium-module-1-embed-progress-v5';
+
+      let current = 0;
+      let visited = new Set([0]);
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved && Array.isArray(saved.visited)) {
+          visited = new Set(saved.visited.filter(n => Number.isInteger(n) && n >= 0 && n < slides.length));
+          current = Number.isInteger(saved.current) && saved.current >= 0 && saved.current < slides.length ? saved.current : 0;
+          visited.add(current);
+        }
+      } catch (error) {
+        current = 0;
+        visited = new Set([0]);
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            current,
+            visited: Array.from(visited)
+          }));
+        } catch (error) {
+          // Some LMS previews block localStorage.
+        }
+      }
+
+      function update() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('active', index === current);
+        });
+
+        stepButtons.forEach((button, index) => {
+          button.classList.toggle('active', index === current);
+          button.classList.toggle('done', visited.has(index));
+          button.setAttribute('aria-current', index === current ? 'step' : 'false');
+        });
+
+        const title = slides[current].dataset.title || 'Module content';
+        counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+        footerTitle.textContent = title;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === slides.length - 1 ? 'Finish' : 'Next';
+
+        const percent = Math.round((visited.size / slides.length) * 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+
+        saveProgress();
+        requestAnimationFrame(() => {
+          viewer.scrollTop = 0;
+          const activeStep = stepButtons[current];
+          if (activeStep && activeStep.scrollIntoView) {
+            activeStep.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0 || index >= slides.length) return;
+        current = index;
+        visited.add(current);
+        update();
+      }
+
+      stepButtons.forEach(button => {
+        button.addEventListener('click', () => goTo(Number(button.dataset.step)));
+      });
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+
+      nextBtn.addEventListener('click', () => {
+        if (current === slides.length - 1) {
+          visited = new Set(slides.map((_, index) => index));
+          update();
+        } else {
+          goTo(current + 1);
+        }
+      });
+
+      resetProgress.addEventListener('click', () => {
+        current = 0;
+        visited = new Set([0]);
+        try { localStorage.removeItem(storageKey); } catch (error) {}
+        update();
+      });
+
+      document.addEventListener('keydown', event => {
+        const tag = event.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+        if (event.key === 'ArrowLeft') goTo(current - 1);
+        if (event.key === 'ArrowRight') goTo(current + 1);
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>
