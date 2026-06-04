@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuzzKill IPM · Module 2 · Pest Identification Fundamentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* BuzzKill brand tokens */
+    --bk-black:#0E0E0C;
+    --bk-ink:#1B1914;
+    --bk-lime:#5FD12F;
+    --bk-lime-bright:#74E640;
+    --bk-forest:#1F5A14;
+    --bk-mint:#D4ECC4;
+    --bk-cream:#FBF8F2;
+    --bk-sand:#EBE3D0;
+    --bk-tan:#D6CDB8;
+    --bk-stone:#504B40;
+    --bk-warm-gray:#7A7363;
+    --bk-white:#FFFFFF;
+    --bk-amber:#E8A33D;
+
+    /* Semantic */
+    --ink:var(--bk-ink);
+    --muted:var(--bk-warm-gray);
+    --line:var(--bk-tan);
+    --bg:var(--bk-sand);
+    --callout-bg:var(--bk-mint);
+    --callout-bd:var(--bk-forest);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .heading{font-family:"Fraunces",Georgia,serif;font-weight:600;letter-spacing:-0.01em}
+  .wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:12px}
+  /* Fixed 16:9 frame, scales to container */
+  .frame{
+    width:min(100%,1280px);
+    aspect-ratio:16/9;
+    background:var(--bk-cream);
+    border:1px solid var(--bk-tan);
+    border-radius:14px;
+    box-shadow:0 6px 28px rgba(14,14,12,.12);
+    display:grid;
+    grid-template-rows:auto auto 1fr auto;
+    overflow:hidden;
+  }
+  /* HEADER — dark tactical band */
+  header{
+    background:var(--bk-black);color:var(--bk-cream);
+    padding:10px 18px;display:flex;align-items:center;gap:14px;
+  }
+  .badge{
+    width:36px;height:36px;border-radius:8px;background:var(--bk-lime);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:700;color:var(--bk-black);font-size:15px;letter-spacing:.5px;
+  }
+  .titles{display:flex;flex-direction:column;line-height:1.15}
+  .titles .t1{font-family:"Fraunces",serif;font-weight:600;font-size:16px;letter-spacing:-0.01em}
+  .titles .t1 em{font-style:italic;color:var(--bk-lime);font-weight:600}
+  .titles .t2{font-family:"Inter",sans-serif;font-size:10.5px;color:var(--bk-tan);margin-top:2px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600}
+  .modwrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .modwrap label{font-size:10px;color:var(--bk-tan);letter-spacing:1.2px;text-transform:uppercase;font-weight:600}
+  select{
+    background:#1c1c1a;color:var(--bk-cream);border:1px solid #2c2c28;border-radius:6px;
+    padding:6px 10px;font-family:"Inter",sans-serif;font-size:12px;cursor:pointer;
+  }
+  select:focus{outline:2px solid var(--bk-lime)}
+
+  /* PILLS NAV */
+  .pills{
+    display:flex;gap:6px;padding:10px 18px;background:var(--bk-cream);border-bottom:1px solid var(--bk-tan);
+    overflow-x:auto;scrollbar-width:thin;
+  }
+  .pill{
+    flex:0 0 auto;border:1px solid var(--bk-tan);background:var(--bk-white);
+    color:var(--bk-stone);font-family:"Inter",sans-serif;font-weight:500;font-size:11px;letter-spacing:.3px;
+    padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .pill:hover{border-color:var(--bk-forest);color:var(--bk-ink)}
+  .pill.active{background:var(--bk-forest);color:var(--bk-cream);border-color:var(--bk-forest);font-weight:700}
+  .pill.done{border-color:var(--bk-forest);color:var(--bk-forest)}
+
+  /* SLIDE STAGE */
+  .stage{position:relative;overflow:hidden;background:var(--bk-cream)}
+  .slide{
+    position:absolute;inset:0;padding:28px 38px;
+    display:none;flex-direction:column;gap:14px;
+    animation:fade .25s ease;
+  }
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .eyebrow{
+    color:var(--bk-forest);font-family:"Inter",sans-serif;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;
+  }
+  h1.slide-h{font-family:"Fraunces",serif;font-weight:600;font-size:34px;line-height:1.1;color:var(--bk-black);letter-spacing:-0.015em}
+  h1.slide-h em{font-style:italic;color:var(--bk-forest);font-weight:600}
+  h2.slide-sub{font-family:"Fraunces",serif;font-weight:600;font-size:20px;color:var(--bk-ink);margin-top:2px}
+  p,li{font-family:"Inter",sans-serif;font-size:14px;line-height:1.55;color:var(--bk-ink)}
+  em{font-style:italic;color:var(--bk-forest)}
+  ul.tight{padding-left:18px}
+  ul.tight li{margin:4px 0}
+  ul.tight li::marker{color:var(--bk-forest)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .card{
+    border:1px solid var(--bk-tan);border-radius:10px;padding:14px 16px;background:var(--bk-white);
+  }
+  .card h3{font-family:"Fraunces",serif;font-weight:600;font-size:14px;color:var(--bk-black);margin-bottom:6px;letter-spacing:-0.005em}
+  .card p,.card li{font-size:12.5px;line-height:1.5}
+  .callout{
+    border-left:4px solid var(--callout-bd);background:var(--callout-bg);
+    padding:10px 14px;border-radius:6px;
+  }
+  .callout strong{color:var(--bk-forest);font-weight:700}
+  .num-list{counter-reset:step;display:grid;gap:8px}
+  .num-list .step{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+  .num-list .step::before{
+    counter-increment:step;content:counter(step);
+    width:26px;height:26px;border-radius:50%;background:var(--bk-forest);color:var(--bk-cream);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:700;font-size:13px;
+  }
+  .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 14px;font-size:13px}
+  .kv dt{color:var(--bk-forest);font-weight:700;font-family:"Inter",sans-serif;letter-spacing:.2px}
+  .kv dd{color:var(--bk-ink)}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--bk-mint);color:var(--bk-forest);font-size:10px;letter-spacing:.8px;text-transform:uppercase;font-weight:700}
+
+  /* CONTROLS */
+  footer{
+    background:var(--bk-cream);border-top:1px solid var(--bk-tan);
+    padding:10px 18px;display:flex;align-items:center;gap:14px;
+  }
+  .progress{flex:1;height:8px;background:var(--bk-sand);border-radius:999px;overflow:hidden;border:1px solid var(--bk-tan)}
+  .progress > span{display:block;height:100%;background:var(--bk-forest);width:0;transition:width .25s ease}
+  .meter{font-family:"Inter",sans-serif;font-size:11px;color:var(--bk-stone);letter-spacing:.5px;min-width:84px;text-align:right;font-weight:500}
+  .btn{
+    border:1px solid var(--bk-black);background:var(--bk-cream);color:var(--bk-black);
+    font-family:"Inter",sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;
+    padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;
+  }
+  .btn:hover{background:var(--bk-black);color:var(--bk-cream)}
+  .btn.primary{background:var(--bk-forest);border-color:var(--bk-forest);color:var(--bk-cream)}
+  .btn.primary:hover{background:var(--bk-black);border-color:var(--bk-black);color:var(--bk-lime)}
+  .btn.ghost{border-color:var(--bk-tan);color:var(--bk-stone)}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  /* Responsive type for smaller LMS embeds */
+  @media (max-width:900px){
+    h1.slide-h{font-size:22px}
+    h2.slide-sub{font-size:15px}
+    p,li{font-size:12.5px}
+    .grid2{grid-template-columns:1fr}
+    .grid3{grid-template-columns:1fr 1fr}
+    .slide{padding:20px 22px;gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="frame" aria-label="IPM Training Module">
+    <header>
+      <div class="badge">BK</div>
+      <div class="titles">
+        <span class="t1">BuzzKill <em>IPM</em> Training</span>
+        <span class="t2" id="modLabel">Module 1 · The IPM Framework</span>
+      </div>
+    </header>
+
+    <nav class="pills" id="pills" aria-label="Slide navigation"></nav>
+
+    <div class="stage" id="stage" aria-live="polite"></div>
+
+    <footer>
+      <button class="btn" id="btnReset" title="Reset module">Reset</button>
+      <button class="btn" id="btnPrev">‹ Previous</button>
+      <div class="progress" aria-label="Module progress"><span id="bar"></span></div>
+      <div class="meter" id="meter">0 / 0</div>
+      <button class="btn primary" id="btnNext">Next ›</button>
+    </footer>
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   COURSE DATA — concise, slide-ready instructional content
+   ============================================================ */
+const COURSE = [
+{
+    id:'m2', title:'Pest Identification Fundamentals',
+    slides:[
+      { eyebrow:'Module 2 · Lesson overview', h:'What you’ll learn',
+        body:`<ul class="tight">
+                <li>Identify the most common structural pests on sight, by sign, and by frass/droppings.</li>
+                <li>Distinguish a carpenter ant from a subterranean termite — and know when to refer the call out.</li>
+                <li>Read rodent sign well enough to call mouse vs. rat from a 30-second basement walk.</li>
+                <li>Run a clean specimen workflow: capture, label, log, and ship if needed.</li>
+              </ul>`},
+      { eyebrow:'Ant vs. termite', h:'Two things, one wrong move',
+        body:`<div class="grid2">
+                <div class="card"><h3>Carpenter ant</h3>
+                  <ul class="tight">
+                    <li>Pinched waist (one or two nodes).</li>
+                    <li>Two pairs of wings, unequal length.</li>
+                    <li>Frass: sawdust mixed with insect parts, kicked out of galleries.</li>
+                    <li>Smooth, clean galleries that ignore wood grain.</li>
+                    <li>Active spring through fall; dusk foraging.</li>
+                  </ul></div>
+                <div class="card"><h3>Subterranean termite</h3>
+                  <ul class="tight">
+                    <li>No waist — body is uniform.</li>
+                    <li>Two pairs of wings, equal length, longer than the body.</li>
+                    <li>Frass: pellets like coffee grounds, often inside shelter tubes.</li>
+                    <li>Rough galleries packed with mud; follows the grain.</li>
+                    <li>Year-round in heated structures; swarms in spring.</li>
+                  </ul></div>
+              </div>
+              <div class="callout"><strong>Decision rule:</strong> If you suspect termite, stop treatment and refer to a licensed wood-destroying-insect inspector.</div>`},
+      { eyebrow:'Rodent dropping ID', h:'Mouse vs. rat at a glance',
+        body:`<dl class="kv">
+                <dt>House mouse</dt><dd>Rice-grain shape, pointed ends, 3–6 mm. Scattered — roughly 50–75 per day per mouse.</dd>
+                <dt>Norway rat</dt><dd>Capsule shape with blunt ends, 12–18 mm. Clustered. Thicker than roof rat.</dd>
+                <dt>Roof rat</dt><dd>Capsule shape, tapered ends, 12–18 mm. Found in elevated runways and attics.</dd>
+              </dl>`},
+      { eyebrow:'Reading sign', h:'Other indicators that close the call',
+        body:`<div class="grid2">
+                <div class="card"><h3>Rub marks</h3><p>Greasy black smudges where fur contacts wall — baseboards, openings. Rats only; mice don’t leave rub marks.</p></div>
+                <div class="card"><h3>Gnaw marks</h3><p>Mouse: paired 1–2 mm grooves. Rat: paired 4 mm grooves. Fresh = light wood; weathered = darkened.</p></div>
+                <div class="card"><h3>Tracks</h3><p>Use a flour patch. 4 toes front, 5 toes back. Tail drag for rats; rarely for mice.</p></div>
+                <div class="card"><h3>Burrows</h3><p>Norway rat: 2–4″ hole, smooth from use, near foundation or dumpster. Active = polished; inactive = cobwebs.</p></div>
+              </div>`},
+      { eyebrow:'Specimen workflow', h:'When you can’t ID it on site',
+        body:`<p>Every BuzzKill route runs into pests you cannot identify with certainty. The specimen, properly handled, tells the whole story.</p>
+              <div class="num-list">
+                <div class="step"><div><strong>Capture</strong> with the smallest container that fits. Don’t crush.</div></div>
+                <div class="step"><div><strong>Label</strong> with date, address, location of find, and your initials.</div></div>
+                <div class="step"><div><strong>Log</strong> the find in the route app with two photos: close-up plus context shot.</div></div>
+                <div class="step"><div><strong>Ship</strong> to the BuzzKill identification queue. Do not treat speculatively.</div></div>
+              </div>`}
+    ]
+  }
+];
+
+/* ============================================================
+   APP STATE + RENDER
+   ============================================================ */
+const state = { modIdx:0, slideIdx:0 };
+
+const $modLabel = document.getElementById('modLabel');
+const $pills = document.getElementById('pills');
+const $stage = document.getElementById('stage');
+const $bar = document.getElementById('bar');
+const $meter = document.getElementById('meter');
+const $btnPrev = document.getElementById('btnPrev');
+const $btnNext = document.getElementById('btnNext');
+const $btnReset = document.getElementById('btnReset');
+
+function initModuleSelect(){}
+
+function renderPills(){
+  const mod = COURSE[state.modIdx];
+  $pills.innerHTML = '';
+  mod.slides.forEach((s,i)=>{
+    const b = document.createElement('button');
+    b.className = 'pill' + (i===state.slideIdx?' active':'') + (i<state.slideIdx?' done':'');
+    b.textContent = `${String(i+1).padStart(2,'0')} · ${s.h.length>34?s.h.slice(0,32)+'…':s.h}`;
+    b.title = s.h;
+    b.addEventListener('click', ()=>{ state.slideIdx = i; renderAll(); });
+    $pills.appendChild(b);
+  });
+}
+
+function renderStage(){
+  const mod = COURSE[state.modIdx];
+  $stage.innerHTML = '';
+  mod.slides.forEach((s,i)=>{
+    const el = document.createElement('article');
+    el.className = 'slide' + (i===state.slideIdx?' active':'');
+    el.innerHTML = `
+      <div class="eyebrow">${s.eyebrow}</div>
+      <h1 class="slide-h heading">${s.h}</h1>
+      ${s.body}
+    `;
+    $stage.appendChild(el);
+  });
+}
+
+function renderControls(){
+  const mod = COURSE[state.modIdx];
+  $modLabel.textContent = `Module ${state.modIdx+1} · ${mod.title}`;
+  const total = mod.slides.length;
+  const pct = ((state.slideIdx+1)/total)*100;
+  $bar.style.width = pct + '%';
+  $meter.textContent = `${state.slideIdx+1} / ${total}`;
+  $btnPrev.disabled = state.slideIdx===0 && state.modIdx===0;
+  $btnNext.textContent = (state.slideIdx===total-1 && state.modIdx<COURSE.length-1) ? 'Next module ›' :
+                        (state.slideIdx===total-1 && state.modIdx===COURSE.length-1) ? 'Finish' : 'Next ›';
+}
+
+function renderAll(){
+  renderPills();
+  renderStage();
+  renderControls();
+}
+
+function next(){
+  const mod = COURSE[state.modIdx];
+  if(state.slideIdx < mod.slides.length-1){
+    state.slideIdx++;
+  } else if(state.modIdx < COURSE.length-1){
+    state.modIdx++; state.slideIdx = 0;
+  }
+  renderAll();
+}
+function prev(){
+  if(state.slideIdx > 0){ state.slideIdx--; }
+  else if(state.modIdx > 0){
+    state.modIdx--; state.slideIdx = COURSE[state.modIdx].slides.length-1;
+  }
+  renderAll();
+}
+function reset(){ state.slideIdx = 0; renderAll(); }
+
+$btnNext.addEventListener('click', next);
+$btnPrev.addEventListener('click', prev);
+$btnReset.addEventListener('click', reset);
+
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='SELECT') return;
+  if(e.key==='ArrowRight') next();
+  if(e.key==='ArrowLeft') prev();
+});
+
+initModuleSelect();
+renderAll();
+</script>
+</body>
+</html>
