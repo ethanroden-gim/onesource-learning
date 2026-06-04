@@ -428,6 +428,37 @@
       background: #fff;
     }
 
+    .report-crop-window {
+      height: clamp(150px, 27vh, 235px);
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      background-color: #fff;
+    }
+
+    .report-crop-window.page-1 {
+      background-image: url("assets/transaction-detail-by-account-screenshot-1.png");
+    }
+
+    .report-crop-window.page-2 {
+      background-image: url("assets/transaction-detail-by-account-screenshot-2.png");
+    }
+
+    .report-crop-window.account-groups {
+      background-position: center 38%;
+    }
+
+    .report-crop-window.columns {
+      background-position: center 16%;
+    }
+
+    .report-crop-window.trace-total {
+      background-position: center 86%;
+    }
+
+    .report-crop-window.page-2-detail {
+      background-position: center 50%;
+    }
+
     .report-caption {
       margin: 0;
       padding: 8px 10px;
@@ -845,6 +876,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">Buildium groups the detail under account headings, then totals the activity for each account. This structure lets you trace a summary line back to the entries behind it.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Transaction Detail by Account report showing account group headings such as Accounts Receivable, Funds in Transit, Accounts Payable, Loan Payable, Equity, and Income." class="report-crop-window page-1 account-groups" role="img"></div>
+      <figcaption class="report-caption">Full report context: Account headings organize the detail so each subtotal can be traced back to specific entries.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Sample asset and liability groups</h3>
@@ -879,6 +914,10 @@
     <h1 class="slide-title">Each row tells the transaction story</h1>
   </div>
   <div class="slide-body">
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Transaction Detail by Account report header showing Date, Type, Property or Company, Name, Description, and Amount columns." class="report-crop-window page-1 columns" role="img"></div>
+      <figcaption class="report-caption">Full report context: Each row uses the same columns, so read across the row before explaining the amount.</figcaption>
+    </figure>
     <div class="report-labels">
       <div class="label-card">
         <strong>Date</strong>
@@ -919,6 +958,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">When a board member asks where a summary number came from, start with the summary report, then use Transaction Detail by Account to show the supporting entries.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Transaction Detail by Account income section showing Association Fee Income entries of $200 and $3,000 totaling $3,200." class="report-crop-window page-1 trace-total" role="img"></div>
+      <figcaption class="report-caption">Full report context: The Association Fee Income subtotal is supported by the individual entries directly above it.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Association Fee Income detail</h3>
@@ -946,6 +989,10 @@
     <h1 class="slide-title">Charges are usually easier to explain than journal entries</h1>
   </div>
   <div class="slide-body">
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped page 2 of the Transaction Detail by Account report showing Late Fee Income, Interest Income, and Total Income." class="report-crop-window page-2 page-2-detail" role="img"></div>
+      <figcaption class="report-caption">Full report context: Page 2 continues the Income section with Late Fee Income and Interest Income before the Total Income line.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Late Fee Income</h3>

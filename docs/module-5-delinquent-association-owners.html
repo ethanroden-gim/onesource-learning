@@ -424,6 +424,26 @@
       background: #fff;
     }
 
+    .report-crop-window {
+      height: clamp(150px, 27vh, 235px);
+      background-image: url("assets/delinquent-association-owners-screenshot.png");
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      background-color: #fff;
+    }
+
+    .report-crop-window.owner-line {
+      background-position: center 42%;
+    }
+
+    .report-crop-window.aging {
+      background-position: center 43%;
+    }
+
+    .report-crop-window.charge-breakdown {
+      background-position: center 54%;
+    }
+
     .report-caption {
       margin: 0;
       padding: 8px 10px;
@@ -833,6 +853,10 @@
     <h1 class="slide-title">Start with the owner line, status, and total</h1>
   </div>
   <div class="slide-body">
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Delinquent Association Owners report showing Unit 2, owner name, delinquency status, last payment, total balance, and aging columns." class="report-crop-window owner-line" role="img"></div>
+      <figcaption class="report-caption">Full report context: Start on the owner line before interpreting any detail. It identifies the unit, owner, status, last payment, and total balance.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Sample owner line</h3>
@@ -864,6 +888,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">Aging buckets do not just show the total delinquency. They show whether the balance is recent or has been outstanding for a longer period.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped aged balances section of the Delinquent Association Owners report showing $215 in 0-30 days, $215 in 31-60 days, and $0 in older buckets." class="report-crop-window aging" role="img"></div>
+      <figcaption class="report-caption">Full report context: The aged balance columns explain how the $430 total is split across time buckets.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Sample aging breakdown</h3>
@@ -892,6 +920,10 @@
     <h1 class="slide-title">The report also shows what makes up the balance</h1>
   </div>
   <div class="slide-body">
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped charge breakdown from the Delinquent Association Owners report showing Association Fee Income of $400 and Late Fee Income of $30." class="report-crop-window charge-breakdown" role="img"></div>
+      <figcaption class="report-caption">Full report context: The indented charge lines below the owner line show what makes up the delinquent balance.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>Sample charge categories</h3>

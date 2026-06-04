@@ -424,6 +424,22 @@
       background: #fff;
     }
 
+    .report-crop-window {
+      height: clamp(150px, 27vh, 235px);
+      background-image: url("assets/income-statement-screenshot.png");
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      background-color: #fff;
+    }
+
+    .report-crop-window.income-lines {
+      background-position: center 58%;
+    }
+
+    .report-crop-window.bottom-lines {
+      background-position: center 82%;
+    }
+
     .report-caption {
       margin: 0;
       padding: 8px 10px;
@@ -832,6 +848,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">The sample Income Statement shows three income lines for April, with total income of <strong>$3,715</strong>.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Income section of the sample Income Statement showing Association Fee Income, Late Fee Income, Interest Income, and Total Income of $3,715." class="report-crop-window income-lines" role="img"></div>
+      <figcaption class="report-caption">Full report context: The income lines appear under the Income heading and combine to Total Income of $3,715.</figcaption>
+    </figure>
     <div class="report-labels">
       <div class="label-card">
         <strong>Association Fee Income</strong>
@@ -864,6 +884,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">The bottom of the Income Statement summarizes the result after income and expenses are applied.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped bottom section of the sample Income Statement showing Net Operating Income and Net Income of $3,715." class="report-crop-window bottom-lines" role="img"></div>
+      <figcaption class="report-caption">Full report context: The bottom lines tie the report together. With no expenses shown, Net Operating Income and Net Income both equal $3,715.</figcaption>
+    </figure>
     <div class="grid">
       <div class="definition">
         <strong>Net Operating Income</strong>
@@ -892,6 +916,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">A board member may notice that the sample Income Statement shows income but no expenses for April. Keep the response factual and verify before assuming the reason.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Income Statement showing the report moves from Total Income directly to Net Operating Income and Net Income with no expense lines displayed." class="report-crop-window bottom-lines" role="img"></div>
+      <figcaption class="report-caption">Full report context: In this sample, no expense section appears before the bottom lines, so the explanation should stay factual and timing-aware.</figcaption>
+    </figure>
     <div class="report-labels">
       <div class="label-card">
         <strong>No expenses entered</strong>

@@ -424,6 +424,30 @@
       background: #fff;
     }
 
+    .report-crop-window {
+      height: clamp(150px, 27vh, 235px);
+      background-image: url("assets/budget-vs-actual-screenshot.png");
+      background-repeat: no-repeat;
+      background-size: 100% auto;
+      background-color: #fff;
+    }
+
+    .report-crop-window.columns {
+      background-position: center 36%;
+    }
+
+    .report-crop-window.income {
+      background-position: center 48%;
+    }
+
+    .report-crop-window.expense {
+      background-position: center 66%;
+    }
+
+    .report-crop-window.annual {
+      background-position: center 78%;
+    }
+
     .report-caption {
       margin: 0;
       padding: 8px 10px;
@@ -836,6 +860,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">Most board questions can be answered by reading these five column types correctly.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Budget vs. Actuals column headers showing actual, budget, variance, percent of budget, year-to-date, and annual budget columns." class="report-crop-window columns" role="img"></div>
+      <figcaption class="report-caption">Full report context: The report repeats the same column logic across monthly, year-to-date, and annual budget sections.</figcaption>
+    </figure>
     <div class="report-labels">
       <div class="label-card">
         <strong>Actual</strong>
@@ -872,6 +900,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">A line item can look favorable for the month and still be behind year-to-date, or the reverse. Do not blend the sections together.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Budget vs. Actuals report showing the April section beside the year-to-date section." class="report-crop-window columns" role="img"></div>
+      <figcaption class="report-caption">Full report context: April is shown separately from year-to-date through April, so always name which section you are explaining.</figcaption>
+    </figure>
     <div class="grid">
       <div class="definition">
         <strong>Monthly section</strong>
@@ -900,6 +932,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">In the sample report, Association Fee Income is above budget for April but below budget year-to-date.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Budget vs. Actuals income section showing Association Fee Income actual, budget, variance, and percent of budget for April and year-to-date." class="report-crop-window income" role="img"></div>
+      <figcaption class="report-caption">Full report context: The same Association Fee Income line shows a favorable April variance and an unfavorable year-to-date variance.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>April Association Fee Income</h3>
@@ -934,6 +970,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">Maintenance &amp; Repairs shows no actual spending through April, even though the budget expected some spending by this point.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Budget vs. Actuals expense section showing Maintenance and Repairs actual spending of $0 against budgeted amounts." class="report-crop-window expense" role="img"></div>
+      <figcaption class="report-caption">Full report context: Expense lines can show zero actual activity even when monthly, year-to-date, or annual budget amounts exist.</figcaption>
+    </figure>
     <div class="grid">
       <div class="card">
         <h3>April Maintenance &amp; Repairs</h3>
@@ -972,6 +1012,10 @@
   </div>
   <div class="slide-body">
     <p class="lede">Some expenses are annual, seasonal, or event-driven. The Budget vs. Actuals report may show an annual budget even when monthly or year-to-date budget activity is zero.</p>
+    <figure class="report-figure report-crop">
+      <div aria-label="Cropped Budget vs. Actuals annual budget section showing Insurance, Interest Expense, and Total Expenses annual budget amounts." class="report-crop-window annual" role="img"></div>
+      <figcaption class="report-caption">Full report context: The Annual Budget column can contain full-year expectations even when current-period actuals are still $0.</figcaption>
+    </figure>
     <div class="report-labels">
       <div class="label-card">
         <strong>Insurance</strong>
