@@ -408,6 +408,32 @@
       margin: 10px 0;
     }
 
+    .report-figure {
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .report-figure img {
+      display: block;
+      width: 100%;
+      max-height: clamp(215px, 42vh, 360px);
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .report-caption {
+      margin: 0;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfcfd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .label-card {
       background: #fbfcfd;
       min-height: 76px;
@@ -788,6 +814,10 @@
         </ul>
       </div>
     </div>
+    <figure class="report-figure">
+      <img alt="Sample Income Statement for Test Association showing April income lines and net income of $3,715." src="assets/income-statement-screenshot.png"/>
+      <figcaption class="report-caption">Sample Income Statement used throughout this module: Test Association, 4/1/2026 - 4/30/2026, accrual basis.</figcaption>
+    </figure>
     <div class="callout warning">
       <h3>Buildium tip</h3>
       <p>Use “for the period” language when explaining this report. The sample Income Statement is for April activity, not the association’s entire financial position.</p>

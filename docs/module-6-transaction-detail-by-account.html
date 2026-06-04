@@ -408,6 +408,36 @@
       margin: 10px 0;
     }
 
+    .report-figure {
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .report-figure + .report-figure {
+      margin-top: 8px;
+    }
+
+    .report-figure img {
+      display: block;
+      width: 100%;
+      max-height: clamp(215px, 42vh, 360px);
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .report-caption {
+      margin: 0;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfcfd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .label-card {
       background: #fbfcfd;
       min-height: 76px;
@@ -793,6 +823,14 @@
         </ul>
       </div>
     </div>
+    <figure class="report-figure">
+      <img alt="Page 1 of the sample Transaction Detail by Account report showing assets, liabilities, equity, and income account detail." src="assets/transaction-detail-by-account-screenshot-1.png"/>
+      <figcaption class="report-caption">Sample Transaction Detail by Account report, page 1 of 2: detail entries grouped by account.</figcaption>
+    </figure>
+    <figure class="report-figure">
+      <img alt="Page 2 of the sample Transaction Detail by Account report showing Late Fee Income, Interest Income, and total income detail." src="assets/transaction-detail-by-account-screenshot-2.png"/>
+      <figcaption class="report-caption">Sample Transaction Detail by Account report, page 2 of 2: remaining income detail and totals.</figcaption>
+    </figure>
     <div class="callout warning">
       <h3>Buildium tip</h3>
       <p>This is a period report. It shows transaction detail for the selected date range. It may not always equal the ending balance on a point-in-time report like the Balance Sheet without additional reconciliation.</p>

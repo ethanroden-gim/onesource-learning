@@ -408,6 +408,32 @@
       margin: 10px 0;
     }
 
+    .report-figure {
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .report-figure img {
+      display: block;
+      width: 100%;
+      max-height: clamp(215px, 42vh, 360px);
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .report-caption {
+      margin: 0;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfcfd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .label-card {
       background: #fbfcfd;
       min-height: 76px;
@@ -792,6 +818,10 @@
         </ul>
       </div>
     </div>
+    <figure class="report-figure">
+      <img alt="Sample Budget vs. Actuals report for Test Association showing April, year-to-date, and annual budget columns." src="assets/budget-vs-actual-screenshot.png"/>
+      <figcaption class="report-caption">Sample Budget vs. Actuals report used throughout this module: Test Association, April and year-to-date sections, accrual basis.</figcaption>
+    </figure>
     <div class="callout warning">
       <h3>Buildium tip</h3>
       <p>Always confirm whether the board is asking about the current month, year-to-date performance, or the full annual budget before giving an answer.</p>

@@ -408,6 +408,32 @@
       margin: 10px 0;
     }
 
+    .report-figure {
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .report-figure img {
+      display: block;
+      width: 100%;
+      max-height: clamp(215px, 42vh, 360px);
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .report-caption {
+      margin: 0;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfcfd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .label-card {
       background: #fbfcfd;
       min-height: 76px;
@@ -790,6 +816,10 @@
         </ul>
       </div>
     </div>
+    <figure class="report-figure">
+      <img alt="Sample Delinquent Association Owners report showing Unit 2 with a $430 delinquent balance split between 0-30 and 31-60 day aging buckets." src="assets/delinquent-association-owners-screenshot.png"/>
+      <figcaption class="report-caption">Sample Delinquent Association Owners report used throughout this module: Test Association, as of 4/30/2026.</figcaption>
+    </figure>
     <div class="callout warning">
       <h3>Buildium tip</h3>
       <p>Always check the “as of” date before answering. A payment received after that date may not be reflected in the report.</p>
