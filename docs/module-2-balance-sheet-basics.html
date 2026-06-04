@@ -409,6 +409,32 @@
       margin: 10px 0;
     }
 
+    .report-figure {
+      margin: 10px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .report-figure img {
+      display: block;
+      width: 100%;
+      max-height: clamp(215px, 42vh, 360px);
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .report-caption {
+      margin: 0;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #fbfcfd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
     .label-card {
       background: #fbfcfd;
       min-height: 76px;
@@ -788,6 +814,10 @@
 </ul>
 </div>
 </div>
+<figure class="report-figure">
+<img alt="Sample Balance Sheet for Test Association showing assets of $6,630, liabilities of $11,000, equity of negative $4,370, and total liabilities and equity of $6,630." src="assets/sample-balance-sheet.svg"/>
+<figcaption class="report-caption">Sample Balance Sheet used throughout this module: Test Association, as of 4/30/2026, accrual basis.</figcaption>
+</figure>
 <div class="callout warning">
 <h3>Buildium tip</h3>
 <p>Use “as of” language when explaining this report. A Balance Sheet does not explain every transaction that happened during the month; it shows the ending position as of the date shown.</p>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1650 1484" role="img" aria-labelledby="title desc">
+  <title id="title">Sample Balance Sheet for Test Association</title>
+  <desc id="desc">Balance Sheet as of April 30, 2026, showing assets, liabilities, equity, and total liabilities and equity of 6,630 dollars.</desc>
+  <rect width="1650" height="1484" fill="#fff"/>
+  <rect x="85" y="65" width="312" height="129" fill="#000"/>
+  <text x="118" y="132" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="900" fill="#fff" letter-spacing="8">GIM</text>
+  <text x="245" y="128" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="900" fill="#82bd58">PROPERTY</text>
+  <text x="245" y="151" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="900" fill="#82bd58">MANAGEMENT</text>
+  <rect x="115" y="158" width="250" height="14" fill="#82bd58"/>
+  <text x="134" y="170" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#000" letter-spacing="5">RENT | MANAGE | MAINTAIN</text>
+  <path d="M124 112 L146 82 L179 93 L214 82 L237 116 L221 116 L209 97 L178 107 L148 97 L135 116 Z" fill="#82bd58"/>
+
+  <text x="838" y="106" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="50" fill="#000">Balance Sheet</text>
+  <text x="838" y="161" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#000">As of 4/30/2026, Accrual Basis</text>
+  <text x="1240" y="88" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#626b73">GIM Property Management, LLC</text>
+  <text x="1240" y="118" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#626b73">www.gimpm.com</text>
+  <text x="1240" y="148" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#626b73">contact@gimpm.com</text>
+  <text x="1240" y="178" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#626b73">(617) 404-9801</text>
+
+  <rect x="80" y="260" width="1490" height="56" fill="#ccc"/>
+  <text x="92" y="296" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="800" fill="#000">TEST ASSOCIATION</text>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#000">
+    <text x="90" y="370" font-weight="800">Assets</text>
+    <text x="118" y="410" font-weight="800">Current Asset</text>
+    <text x="158" y="450">1000 Accounts Receivable</text>
+    <text x="1570" y="450" text-anchor="end">1,430.00</text>
+    <text x="158" y="491">1015 Funds in Transit</text>
+    <text x="1570" y="491" text-anchor="end">200.00</text>
+    <text x="158" y="532">TEST BANK ACCOUNT - 0001</text>
+    <text x="1570" y="532" text-anchor="end">5,000.00</text>
+    <text x="158" y="572" font-weight="800">Total Current Asset</text>
+    <text x="1570" y="572" text-anchor="end" font-weight="800">$6,630.00</text>
+    <line x1="80" y1="585" x2="1570" y2="585" stroke="#c8c8c8" stroke-width="2"/>
+    <text x="118" y="633" font-weight="800">Total Assets</text>
+    <text x="1570" y="633" text-anchor="end" font-weight="800">$6,630.00</text>
+    <line x1="80" y1="650" x2="1570" y2="650" stroke="#000" stroke-width="2"/>
+
+    <text x="90" y="705" font-weight="800">Liabilities</text>
+    <text x="118" y="746" font-weight="800">Current Liability</text>
+    <text x="158" y="786">2001 Accounts Payable</text>
+    <text x="1570" y="786" text-anchor="end">1,000.00</text>
+    <text x="158" y="827" font-weight="800">Total Current Liability</text>
+    <text x="1570" y="827" text-anchor="end" font-weight="800">$1,000.00</text>
+    <line x1="80" y1="840" x2="1570" y2="840" stroke="#c8c8c8" stroke-width="2"/>
+    <text x="118" y="870" font-weight="800">Long Term Liability</text>
+    <text x="158" y="910">2301 Loan Payable</text>
+    <text x="1570" y="910" text-anchor="end">10,000.00</text>
+    <text x="158" y="951" font-weight="800">Total Long Term Liability</text>
+    <text x="1570" y="951" text-anchor="end" font-weight="800">$10,000.00</text>
+    <line x1="80" y1="964" x2="1570" y2="964" stroke="#c8c8c8" stroke-width="2"/>
+    <text x="118" y="993" font-weight="800">Total Liabilities</text>
+    <text x="1570" y="993" text-anchor="end" font-weight="800">$11,000.00</text>
+    <line x1="80" y1="1010" x2="1570" y2="1010" stroke="#000" stroke-width="2"/>
+
+    <text x="90" y="1064" font-weight="800">Equity</text>
+    <text x="158" y="1105">3001 Opening Balance Equity</text>
+    <text x="1570" y="1105" text-anchor="end">(8,300.00)</text>
+    <text x="158" y="1146">3201 Retained Earnings</text>
+    <text x="1570" y="1146" text-anchor="end">0.00</text>
+    <text x="158" y="1187">Net Income</text>
+    <text x="1570" y="1187" text-anchor="end">3,930.00</text>
+    <text x="118" y="1228" font-weight="800">Total Equity</text>
+    <text x="1570" y="1228" text-anchor="end" font-weight="800">($4,370.00)</text>
+    <line x1="80" y1="1242" x2="1570" y2="1242" stroke="#000" stroke-width="2"/>
+    <text x="118" y="1290" font-weight="800">Total Liabilities &amp; Equity</text>
+    <text x="1570" y="1290" text-anchor="end" font-weight="800">$6,630.00</text>
+    <line x1="80" y1="1304" x2="1570" y2="1304" stroke="#000" stroke-width="2"/>
+    <line x1="80" y1="1309" x2="1570" y2="1309" stroke="#000" stroke-width="2"/>
+  </g>
+</svg>
