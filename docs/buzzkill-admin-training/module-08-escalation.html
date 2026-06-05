@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 8: Urgency &amp; Escalation | BuzzKill Admin Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #7ac142;
+      --green-dark: #5a9130;
+      --green-light: #a8d87c;
+      --black: #0d0d0d;
+      --gray-light: #f4f5f3;
+      --white: #ffffff;
+      --red: #e05050;
+      --red-dark: #c03030;
+      --amber: #f59e0b;
+      --blue: #4285f4;
+      --font-heading: 'Alfa Slab One', serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); font-family: var(--font-body); }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--green);
+      width: 0%; transition: width var(--trans); z-index: 1000; }
+
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 999; border-bottom: 1px solid rgba(122,193,66,0.15);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-logo { width: 28px; height: 28px; background: var(--green); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 12px; color: var(--black); }
+    .nav-brand span { color: var(--white); font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); cursor: pointer; transition: all 0.25s; }
+    .nav-dot.active { background: var(--green); transform: scale(1.3); }
+    .nav-dot.visited { background: rgba(122,193,66,0.4); }
+    .nav-time { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; }
+
+    #slides-container { height: 100vh; position: relative; }
+    .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      display: flex; flex-direction: column; padding-top: 52px;
+      transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(18px); }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .slide.exit { opacity: 0; transform: translateY(-18px); }
+    .slide-inner { flex: 1; overflow-y: auto; padding: 28px 48px 88px; }
+
+    #nav-controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 999; }
+    .nav-btn { height: 42px; padding: 0 22px; border-radius: 21px;
+      border: 1.5px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05);
+      color: var(--white); font-family: var(--font-body); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .nav-btn:hover { border-color: var(--green); background: rgba(122,193,66,0.1); color: var(--green); }
+    .nav-btn.primary { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
+    .nav-btn.primary:hover { background: var(--green-dark); border-color: var(--green-dark); color: var(--white); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+    #slide-counter { color: rgba(255,255,255,0.38); font-size: 13px; min-width: 44px; text-align: center; }
+
+    /* Shared */
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .eyebrow.dark { color: var(--green-dark); }
+    .h2 { font-family: var(--font-heading); font-size: clamp(21px, 3vw, 30px); color: var(--white); line-height: 1.15; margin-bottom: 20px; }
+    .h2 span { color: var(--green); }
+    .h2.on-light { color: var(--black); }
+    .h2.on-light span { color: var(--green-dark); }
+
+    .in-practice { margin-top: 18px; padding: 15px 20px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border-left: 3px solid rgba(122,193,66,0.5); }
+    .in-practice.light { background: rgba(0,0,0,0.05); border-left-color: var(--green-dark); }
+    .ip-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .ip-l.d { color: var(--green-dark); }
+    .ip-t { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+    .ip-t.d { color: #445540; }
+
+    /* ════ SLIDE 0: Title ══════════════════════════════ */
+    #slide-0 { background: var(--black); }
+    #slide-0 .slide-inner { display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; padding-bottom: 88px; }
+    .te { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+    .tm { font-family: var(--font-heading); font-size: clamp(30px, 5vw, 56px); color: var(--white); line-height: 1.08; margin-bottom: 11px; }
+    .tm span { color: var(--green); }
+    .ts { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 28px; max-width: 500px; line-height: 1.6; }
+    .pills { display: flex; gap: 11px; justify-content: center; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .obj { margin-top: 28px; padding: 18px 24px; border-radius: 12px; max-width: 540px;
+      border-left: 3px solid var(--green); background: rgba(122,193,66,0.06); text-align: left; }
+    .obj-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .obj p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ════ SLIDE 1: Urgency Tiers ══════════════════════ */
+    #slide-1 { background: var(--black); }
+    .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .tier { border-radius: 14px; overflow: hidden; }
+    .tier-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+    .tier.routine .tier-header { background: rgba(122,193,66,0.15); }
+    .tier.review .tier-header { background: rgba(245,158,11,0.15); }
+    .tier.urgent .tier-header { background: rgba(224,80,80,0.15); }
+    .tier-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .tier.routine .tier-dot { background: var(--green); }
+    .tier.review .tier-dot { background: var(--amber); }
+    .tier.urgent .tier-dot { background: var(--red); }
+    .tier-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .tier.routine .tier-label { color: var(--green-light); }
+    .tier.review .tier-label { color: #fbbf24; }
+    .tier.urgent .tier-label { color: #f87171; }
+    .tier-body { padding: 14px 18px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07); border-top: none;
+      border-radius: 0 0 14px 14px; }
+    .tier-item { font-size: 13px; color: rgba(255,255,255,0.75); display: flex; gap: 8px;
+      align-items: flex-start; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .tier-item:last-child { border-bottom: none; }
+    .tier.routine .tier-item::before { content: '→'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .tier.review .tier-item::before { content: '!'; background: rgba(245,158,11,0.2); color: #fbbf24;
+      width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+    .tier.urgent .tier-item::before { content: '🚨'; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .judgment-box { display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+      background: rgba(122,193,66,0.08); border: 1.5px solid rgba(122,193,66,0.28);
+      border-radius: 10px; }
+    .jb-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); white-space: nowrap; flex-shrink: 0; }
+    .jb-t { font-size: 14px; color: var(--white); font-weight: 500; line-height: 1.5; }
+
+    /* ════ SLIDE 2: Escalation Triggers ════════════════ */
+    #slide-2 { background: var(--gray-light); }
+    .triggers-intro { font-size: 14px; color: #555; margin-bottom: 18px; line-height: 1.6; max-width: 640px; }
+    .triggers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+    .trigger-card { background: var(--white); border-radius: 11px; padding: 14px 16px;
+      display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border-left: 4px solid transparent; transition: all 0.2s; }
+    .trigger-card:hover { transform: translateX(3px); }
+    .trigger-card.safety { border-left-color: var(--red); }
+    .trigger-card.service { border-left-color: var(--amber); }
+    .trigger-card.relationship { border-left-color: #9b59b6; }
+    .trigger-card.operational { border-left-color: var(--blue); }
+    .trigger-card.always { border-left-color: var(--green-dark); }
+    .tc-icon { font-size: 20px; flex-shrink: 0; }
+    .tc-cat { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+    .trigger-card.safety .tc-cat { color: var(--red); }
+    .trigger-card.service .tc-cat { color: #d97706; }
+    .trigger-card.relationship .tc-cat { color: #9b59b6; }
+    .trigger-card.operational .tc-cat { color: var(--blue); }
+    .trigger-card.always .tc-cat { color: var(--green-dark); }
+    .tc-text { font-size: 13px; color: var(--black); line-height: 1.5; }
+    .not-failure { background: var(--black); border-radius: 12px; padding: 18px 22px; }
+    .nf-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .nf-t { font-size: 14px; color: rgba(255,255,255,0.82); line-height: 1.65; }
+    .nf-t em { color: var(--green-light); font-style: normal; font-weight: 600; }
+
+    /* ════ SLIDE 3: Documentation for Escalation ═══════ */
+    #slide-3 { background: var(--black); }
+    .doc-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .esc-note { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 13px; overflow: hidden; }
+    .en-header { background: rgba(224,80,80,0.12); border-bottom: 1px solid rgba(224,80,80,0.2);
+      padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+    .en-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--red); }
+    .en-title { font-size: 13px; font-weight: 700; color: var(--white); }
+    .en-fields { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
+    .en-field { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px;
+      background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 2px solid rgba(224,80,80,0.3); }
+    .ef-num { font-size: 11px; font-weight: 700; color: rgba(224,80,80,0.7); width: 20px; flex-shrink: 0; margin-top: 1px; }
+    .ef-label { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+    .ef-hint { font-size: 11.5px; color: rgba(255,255,255,0.38); }
+    .doc-side { display: flex; flex-direction: column; gap: 14px; }
+    .contrast-box { border-radius: 12px; overflow: hidden; }
+    .cb-half { padding: 16px 18px; }
+    .cb-half.weak { background: rgba(224,80,80,0.08); border: 1.5px solid rgba(224,80,80,0.25); border-radius: 10px 10px 0 0; }
+    .cb-half.strong { background: rgba(122,193,66,0.09); border: 1.5px solid rgba(122,193,66,0.28); border-top: none; border-radius: 0 0 10px 10px; }
+    .cbh-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+    .cb-half.weak .cbh-label { color: var(--red); }
+    .cb-half.strong .cbh-label { color: var(--green); }
+    .cbh-text { font-size: 13.5px; line-height: 1.6; font-style: italic; }
+    .cb-half.weak .cbh-text { color: rgba(255,255,255,0.65); }
+    .cb-half.strong .cbh-text { color: rgba(255,255,255,0.85); }
+    .esc-reminder { padding: 14px 18px; border-radius: 10px;
+      background: rgba(245,158,11,0.09); border: 1.5px solid rgba(245,158,11,0.3); }
+    .er-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 7px; }
+    .er-t { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.55; }
+
+    /* ════ SLIDE 4: Activity ════════════════════════════ */
+    #slide-4 { background: var(--black); }
+    .act-intro { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 20px; max-width: 640px; line-height: 1.6; }
+    .ladder-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+    .ll-item { display: flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: 99px; font-size: 12px; font-weight: 700; border: 1.5px solid; }
+    .ll-routine { background: rgba(122,193,66,0.1); border-color: rgba(122,193,66,0.35); color: var(--green-light); }
+    .ll-review { background: rgba(245,158,11,0.09); border-color: rgba(245,158,11,0.35); color: #fbbf24; }
+    .ll-escalate { background: rgba(66,133,244,0.1); border-color: rgba(66,133,244,0.35); color: #93b8f9; }
+    .ll-urgent { background: rgba(224,80,80,0.1); border-color: rgba(224,80,80,0.35); color: #f87171; }
+    .ladder-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .ladder-card { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 12px; padding: 16px 18px; }
+    .ladder-card.result-correct { border-color: rgba(122,193,66,0.45); background: rgba(122,193,66,0.07); }
+    .ladder-card.result-wrong { border-color: rgba(224,80,80,0.4); background: rgba(224,80,80,0.06); }
+    .lc-scenario { font-size: 14.5px; font-style: italic; color: var(--white); margin-bottom: 14px;
+      line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
+    .lc-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); font-style: normal; }
+    .lc-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .lc-btn { padding: 8px 16px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; border: 1.5px solid; font-family: var(--font-body); }
+    .lc-btn.routine { background: transparent; border-color: rgba(122,193,66,0.4); color: rgba(255,255,255,0.55); }
+    .lc-btn.routine:hover, .lc-btn.routine.selected { background: rgba(122,193,66,0.15); border-color: var(--green); color: var(--green-light); }
+    .lc-btn.review { background: transparent; border-color: rgba(245,158,11,0.4); color: rgba(255,255,255,0.55); }
+    .lc-btn.review:hover, .lc-btn.review.selected { background: rgba(245,158,11,0.12); border-color: var(--amber); color: #fbbf24; }
+    .lc-btn.escalate { background: transparent; border-color: rgba(66,133,244,0.4); color: rgba(255,255,255,0.55); }
+    .lc-btn.escalate:hover, .lc-btn.escalate.selected { background: rgba(66,133,244,0.12); border-color: var(--blue); color: #93b8f9; }
+    .lc-btn.urgent { background: transparent; border-color: rgba(224,80,80,0.4); color: rgba(255,255,255,0.55); }
+    .lc-btn.urgent:hover, .lc-btn.urgent.selected { background: rgba(224,80,80,0.12); border-color: var(--red); color: #f87171; }
+    .lc-btn:disabled { cursor: default; }
+    .lc-feedback { font-size: 12.5px; margin-top: 10px; line-height: 1.55; display: none;
+      padding: 9px 13px; border-radius: 8px; }
+    .lc-feedback.show { display: block; }
+    .lc-feedback.fb-correct { background: rgba(122,193,66,0.1); color: var(--green-light); }
+    .lc-feedback.fb-wrong { background: rgba(224,80,80,0.08); color: #f87171; }
+    .lc-feedback strong { display: block; margin-bottom: 3px; font-size: 13px; }
+    .check-all-btn { height: 42px; padding: 0 26px; border-radius: 21px;
+      background: var(--green); border: none; color: var(--black); font-family: var(--font-body);
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .check-all-btn:hover { background: var(--green-dark); color: var(--white); }
+    .check-all-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .final-score { display: none; margin-top: 16px; padding: 16px 22px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); }
+    .final-score.show { display: flex; gap: 18px; align-items: center; animation: fu 0.3s ease; }
+    @keyframes fu { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .fs-num { font-family: var(--font-heading); font-size: 32px; color: var(--green); flex-shrink: 0; }
+    .fs-text { font-size: 14px; color: rgba(255,255,255,0.72); line-height: 1.6; }
+    .fs-text strong { color: var(--white); display: block; margin-bottom: 3px; font-size: 15px; }
+    .retry-btn { margin-top: 12px; height: 38px; padding: 0 20px; border-radius: 19px;
+      background: transparent; border: 1.5px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6); font-family: var(--font-body); font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .retry-btn:hover { border-color: var(--green); color: var(--green); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(122,193,66,0.28); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .tiers, .triggers-grid, .doc-layout { grid-template-columns: 1fr; }
+      .slide-inner { padding: 22px 20px 88px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<nav id="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">BK</div>
+    <span>Module 8: Urgency, Escalation &amp; Judgment</span>
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <span class="nav-time">⏱ 7 min</span>
+</nav>
+<div id="nav-controls">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter">1 / 5</span>
+  <button class="nav-btn primary" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<div id="slides-container">
+
+<!-- ══ SLIDE 0: Title ══════════════════════════════════ -->
+<section class="slide active" id="slide-0">
+  <div class="slide-inner">
+    <div class="te">BuzzKill Admin Training</div>
+    <h1 class="tm">Module 8:<br><span>Urgency, Escalation</span><br>&amp; Professional Judgment</h1>
+    <p class="ts">Not every request is the same. Knowing when to handle, when to review, and when to escalate immediately is part of the job.</p>
+    <div class="pills">
+      <div class="pill"><span class="dot" style="background:var(--green)"></span> 7 minutes</div>
+      <div class="pill"><span class="dot" style="background:var(--amber)"></span> Escalation Ladder Activity</div>
+    </div>
+    <div class="obj">
+      <div class="obj-l">Learning Objective</div>
+      <p>You will be able to classify customer issues by urgency and determine whether to resolve, document, schedule, or escalate — and document escalations completely.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 1: Urgency Tiers ══════════════════════════ -->
+<section class="slide" id="slide-1">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 1 of 3</div>
+    <h2 class="h2">Not Every Request Has <span>the Same Urgency</span></h2>
+    <div class="tiers">
+
+      <div class="tier routine">
+        <div class="tier-header">
+          <div class="tier-dot"></div>
+          <div class="tier-label">Routine</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-item">Appointment confirmation</div>
+          <div class="tier-item">Invoice copy request</div>
+          <div class="tier-item">Basic scheduling change</div>
+          <div class="tier-item">General service inquiry</div>
+          <div class="tier-item">Contact or account update</div>
+        </div>
+      </div>
+
+      <div class="tier review">
+        <div class="tier-header">
+          <div class="tier-dot"></div>
+          <div class="tier-label">Needs Closer Review</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-item">Repeated callbacks for same issue</div>
+          <div class="tier-item">Multi-unit pest reports</div>
+          <div class="tier-item">Angry board or property manager</div>
+          <div class="tier-item">Safety or health-related question</div>
+          <div class="tier-item">Bed bug, rodent, or termite in sensitive context</div>
+          <div class="tier-item">Complaint about prior service outcome</div>
+        </div>
+      </div>
+
+      <div class="tier urgent">
+        <div class="tier-header">
+          <div class="tier-dot"></div>
+          <div class="tier-label">Urgent Escalation</div>
+        </div>
+        <div class="tier-body">
+          <div class="tier-item">Exposure or illness after treatment</div>
+          <div class="tier-item">Technician incident on property</div>
+          <div class="tier-item">Major service failure</div>
+          <div class="tier-item">Safety risk to occupants</div>
+          <div class="tier-item">Legal, insurance, or liability concern</div>
+          <div class="tier-item">Any situation requiring immediate action</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="judgment-box">
+      <span class="jb-l">Judgment Rule</span>
+      <span class="jb-t">Part of your job is reading the urgency of a situation accurately. When in doubt, treat it as one tier higher and escalate. The cost of over-escalating is low. The cost of under-escalating can be significant.</span>
+    </div>
+    <div class="in-practice">
+      <div class="ip-l">In Practice</div>
+      <div class="ip-t">Some requests are routine — confirming an appointment or sending an invoice copy. Others need closer review, especially if they involve multiple units, repeated service concerns, or product safety questions. Anything involving exposure, illness, legal concerns, or safety risks must be escalated immediately according to company process.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 2: Escalation Triggers ═══════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-inner">
+    <div class="eyebrow dark">Section 2 of 3</div>
+    <h2 class="h2 on-light"><span>Escalation</span> Triggers</h2>
+    <p class="triggers-intro" style="color:#555;">Escalate when any of these are present. You do not need all of them — one is enough.</p>
+    <div class="triggers-grid">
+      <div class="trigger-card safety">
+        <div class="tc-icon">⚕️</div>
+        <div>
+          <div class="tc-cat">Safety &amp; Health</div>
+          <div class="tc-text">Product-specific safety questions, health concerns, pregnancy, asthma, allergy, or any report of exposure or illness after service</div>
+        </div>
+      </div>
+      <div class="trigger-card service">
+        <div class="tc-icon">⚠️</div>
+        <div>
+          <div class="tc-cat">Service Concern</div>
+          <div class="tc-text">Repeated callbacks for the same issue, unresolved problems, possible termite or structural concern, bed bugs in a multi-unit property</div>
+        </div>
+      </div>
+      <div class="trigger-card relationship">
+        <div class="tc-icon">🏢</div>
+        <div>
+          <div class="tc-cat">Relationship &amp; Authority</div>
+          <div class="tc-text">Angry board member or property manager, escalating tone, threatened complaint or review, senior stakeholder involved</div>
+        </div>
+      </div>
+      <div class="trigger-card operational">
+        <div class="tc-icon">🔧</div>
+        <div>
+          <div class="tc-cat">Operational</div>
+          <div class="tc-text">Technician access failure affecting service quality, wildlife safety risk, any situation that could affect BuzzKill's liability or reputation</div>
+        </div>
+      </div>
+      <div class="trigger-card always" style="grid-column: 1 / -1;">
+        <div class="tc-icon">📋</div>
+        <div>
+          <div class="tc-cat">Always Escalate</div>
+          <div class="tc-text">Legal, insurance, or liability language in any communication. Any situation you are unsure how to handle. "I don't know" is the start of doing the right thing — escalate and document.</div>
+        </div>
+      </div>
+    </div>
+    <div class="not-failure">
+      <div class="nf-l">Escalation Is Not Failure</div>
+      <div class="nf-t">When a question goes beyond your authority or knowledge, route it. It is always better to say <em>"I'm going to route this to the right person"</em> than to guess and create a larger problem. Escalation is part of doing the job well.</div>
+    </div>
+    <div class="in-practice light">
+      <div class="ip-l d">In Practice</div>
+      <div class="ip-t d">Escalation is especially important for safety, health, liability, and sensitive customer relationships. The person you escalate to needs to know about the issue while there is still time to act on it properly.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 3: Documentation for Escalation ═══════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 3 of 3</div>
+    <h2 class="h2">Documentation <span>for Escalation</span></h2>
+    <div class="doc-layout">
+      <div>
+        <div class="esc-note">
+          <div class="en-header">
+            <div class="en-dot"></div>
+            <div class="en-title">Escalation Note — Required Fields</div>
+          </div>
+          <div class="en-fields">
+            <div class="en-field"><div class="ef-num">1</div><div><div class="ef-label">Date and time</div><div class="ef-hint">Exact time of contact or incident</div></div></div>
+            <div class="en-field"><div class="ef-num">2</div><div><div class="ef-label">Who contacted us</div><div class="ef-hint">Name, role, and contact method</div></div></div>
+            <div class="en-field"><div class="ef-num">3</div><div><div class="ef-label">Property, community, or address</div><div class="ef-hint">Full location including unit or common area</div></div></div>
+            <div class="en-field"><div class="ef-num">4</div><div><div class="ef-label">What was reported</div><div class="ef-hint">Exactly what the customer said — not your interpretation</div></div></div>
+            <div class="en-field"><div class="ef-num">5</div><div><div class="ef-label">What the customer requested</div><div class="ef-hint">Specific ask or outcome they want</div></div></div>
+            <div class="en-field"><div class="ef-num">6</div><div><div class="ef-label">What was promised</div><div class="ef-hint">Anything you said would happen — be exact</div></div></div>
+            <div class="en-field"><div class="ef-num">7</div><div><div class="ef-label">Who was notified</div><div class="ef-hint">Manager, technician, or team member alerted</div></div></div>
+            <div class="en-field"><div class="ef-num">8</div><div><div class="ef-label">Recommended next step</div><div class="ef-hint">What you believe should happen and by when</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-side">
+        <div class="contrast-box">
+          <div class="cb-half weak">
+            <div class="cbh-label">Vague Escalation</div>
+            <div class="cbh-text">"Customer called and is upset about mice. Escalating."</div>
+          </div>
+          <div class="cb-half strong">
+            <div class="cbh-label">Strong Escalation</div>
+            <div class="cbh-text">"6/4 10:15am — Jane Smith, resident, Maple Court Bldg B Unit 204, called to report continued scratching sounds and droppings after last week's treatment. Customer is requesting a same-day callback and is considering contacting the board. No promises made. Notified manager. Recommend priority callback review."</div>
+          </div>
+        </div>
+        <div class="esc-reminder">
+          <div class="er-l">Be Factual — Not Editorial</div>
+          <div class="er-t">Document what the customer <em>said</em>, not what you think they meant or whether you agree with their concern. The person reviewing the escalation needs facts, not interpretation. Stick to specifics.</div>
+        </div>
+        <div class="in-practice">
+          <div class="ip-l">In Practice</div>
+          <div class="ip-t">When you escalate, give the next person enough detail to act. A vague escalation creates more back-and-forth and delays resolution. A strong escalation note lets the manager or technician act immediately with full context.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 4: Activity — Escalation Ladder ═══════════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-inner">
+    <div class="eyebrow">Module Activity</div>
+    <h2 class="h2">Escalation <span>Ladder</span></h2>
+    <p class="act-intro">For each scenario, select the correct urgency level. Consider what you know and whether this situation requires immediate escalation, closer review, or can be handled routinely.</p>
+    <div class="ladder-legend">
+      <div class="ll-item ll-routine">🟢 Routine</div>
+      <div class="ll-item ll-review">🟡 Needs Review</div>
+      <div class="ll-item ll-escalate">🔵 Escalate</div>
+      <div class="ll-item ll-urgent">🔴 Urgent Escalation</div>
+    </div>
+    <div class="ladder-cards" id="ladder-cards"></div>
+    <button class="check-all-btn" id="check-all" onclick="checkAll()" disabled>Check My Answers</button>
+    <div class="final-score" id="final-score">
+      <div class="fs-num" id="fs-num">0/5</div>
+      <div>
+        <div class="fs-text"><strong id="fs-msg"></strong><span id="fs-sub"></span></div>
+        <button class="retry-btn" onclick="resetActivity()">↩ Try Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+// ── Navigation ───────────────────────────────────────────
+let current = 0;
+const TOTAL = 5;
+const slides = document.querySelectorAll('.slide');
+const visited = new Set([0]);
+
+const dotLabels = ['Intro','Urgency Tiers','Triggers','Documentation','Activity'];
+const dotsEl = document.getElementById('nav-dots');
+dotLabels.forEach((l, i) => {
+  const d = document.createElement('div');
+  d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  d.title = l; d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI() {
+  dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.className = 'nav-dot';
+    if (i === current) d.classList.add('active');
+    else if (visited.has(i)) d.classList.add('visited');
+  });
+  document.getElementById('progress-bar').style.width = (current / (TOTAL-1) * 100) + '%';
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + TOTAL;
+  document.getElementById('prev-btn').disabled = current === 0;
+  document.getElementById('next-btn').textContent = current === TOTAL-1 ? '✓ Complete' : 'Next →';
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL || idx === current) return;
+  const prev = current;
+  slides[prev].classList.remove('active');
+  slides[prev].classList.add('exit');
+  setTimeout(() => slides[prev].classList.remove('exit'), 440);
+  current = idx; visited.add(current);
+  setTimeout(() => slides[current].classList.add('active'), 30);
+  updateUI();
+  if (idx === 4 && !actBuilt) buildActivity();
+}
+
+function navigate(d) { goTo(current + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navigate(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+});
+
+// ── Activity ─────────────────────────────────────────────
+const ladderItems = [
+  {
+    text: 'A homeowner calls to ask for a copy of their most recent invoice.',
+    correct: 'routine',
+    explanation: 'This is a routine administrative task. Look up the account in FieldRoutes and send the invoice through the appropriate channel. No escalation needed.'
+  },
+  {
+    text: 'A resident says she is pregnant and wants to know if the upcoming treatment is safe for her.',
+    correct: 'escalate',
+    explanation: 'Safety questions involving health conditions — including pregnancy — must be routed to the SDS, product label, and technician or manager. Do not answer from memory. Escalate before the appointment.'
+  },
+  {
+    text: 'A property manager calls to say roaches have now been reported in five units across two buildings at a condo association.',
+    correct: 'review',
+    explanation: 'Multi-unit pest reports need closer review and likely scheduling prioritization. This is beyond a single appointment — it may require technician or manager input on scope, urgency, and authorization. Route for review immediately.'
+  },
+  {
+    text: 'A technician called in to say they could not access the property because the lockbox code was wrong, and the customer is now upset.',
+    correct: 'escalate',
+    explanation: 'An access failure that affected service and has created a frustrated customer is an operational escalation. The technician, manager, and customer all need to be coordinated. Document and escalate to resolve the access issue and reschedule correctly.'
+  },
+  {
+    text: 'A customer calls and says they feel dizzy and their eyes are irritated — they were home during the treatment this morning.',
+    correct: 'urgent',
+    explanation: 'Any report of illness or exposure symptoms after a treatment is an urgent escalation. Follow BuzzKill\'s incident and emergency procedure immediately. Do not offer medical advice. Document everything and get the manager involved right away.'
+  }
+];
+
+const selections = {};
+let actBuilt = false;
+let checked = false;
+
+function buildActivity() {
+  actBuilt = true;
+  const wrap = document.getElementById('ladder-cards');
+  wrap.innerHTML = '';
+  Object.keys(selections).forEach(k => delete selections[k]);
+  checked = false;
+  document.getElementById('final-score').classList.remove('show');
+  document.getElementById('check-all').style.display = '';
+  document.getElementById('check-all').disabled = true;
+
+  ladderItems.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'ladder-card';
+    card.id = 'lc-' + i;
+    card.innerHTML = `
+      <div class="lc-scenario">
+        <div class="lc-num">${i + 1}</div>
+        <span>${item.text}</span>
+      </div>
+      <div class="lc-btns">
+        <button class="lc-btn routine" onclick="selectLevel(${i}, 'routine', this)">🟢 Routine</button>
+        <button class="lc-btn review" onclick="selectLevel(${i}, 'review', this)">🟡 Needs Review</button>
+        <button class="lc-btn escalate" onclick="selectLevel(${i}, 'escalate', this)">🔵 Escalate</button>
+        <button class="lc-btn urgent" onclick="selectLevel(${i}, 'urgent', this)">🔴 Urgent</button>
+      </div>
+      <div class="lc-feedback" id="lcfb-${i}"></div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function selectLevel(idx, level, btn) {
+  if (checked) return;
+  const card = document.getElementById('lc-' + idx);
+  card.querySelectorAll('.lc-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selections[idx] = level;
+  document.getElementById('check-all').disabled = Object.keys(selections).length < ladderItems.length;
+}
+
+function checkAll() {
+  if (checked) return;
+  checked = true;
+  let score = 0;
+  const levelLabels = { routine: '🟢 Routine', review: '🟡 Needs Review', escalate: '🔵 Escalate', urgent: '🔴 Urgent Escalation' };
+
+  ladderItems.forEach((item, i) => {
+    const card = document.getElementById('lc-' + i);
+    const sel = selections[i];
+    const isCorrect = sel === item.correct;
+    if (isCorrect) score++;
+
+    card.querySelectorAll('.lc-btn').forEach(b => b.disabled = true);
+    card.classList.add(isCorrect ? 'result-correct' : 'result-wrong');
+
+    const fb = document.getElementById('lcfb-' + i);
+    fb.className = 'lc-feedback show ' + (isCorrect ? 'fb-correct' : 'fb-wrong');
+    fb.innerHTML = `<strong>${isCorrect ? '✓ Correct' : `✗ Not quite — correct level: ${levelLabels[item.correct]}`}</strong>${item.explanation}`;
+  });
+
+  document.getElementById('check-all').style.display = 'none';
+
+  const msgs = {
+    5: ['Perfect Score', 'You correctly classified every scenario. You understand the difference between routine tasks, issues that need review, and situations that require immediate escalation.'],
+    4: ['Strong Work', 'You got most right. Review the scenario you missed — focus on what signals that a situation needs escalation rather than routine handling.'],
+    3: ['Getting There', 'A few classifications need work. Revisit the urgency tiers and pay attention to the key triggers: safety, health, multi-unit, legal, and access failures.'],
+    2: ['Keep Reviewing', 'Review the escalation triggers in Section 2 and the urgency tiers in Section 1. When in doubt, escalate — the cost of over-escalating is low.'],
+    1: ['Start Over', 'Go back through the module and pay particular attention to what distinguishes routine from escalation-worthy. Any safety or health concern is at least an escalation.']
+  };
+  const m = msgs[score] || msgs[1];
+  document.getElementById('fs-num').textContent = score + '/5';
+  document.getElementById('fs-msg').textContent = m[0];
+  document.getElementById('fs-sub').textContent = m[1];
+  document.getElementById('final-score').classList.add('show');
+}
+
+function resetActivity() {
+  checked = false;
+  buildActivity();
+}
+
+updateUI();
+</script>
+</body>
+</html>

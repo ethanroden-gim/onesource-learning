@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 6: Safety & Role Boundaries | BuzzKill Admin Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #7ac142;
+      --green-dark: #5a9130;
+      --green-light: #a8d87c;
+      --black: #0d0d0d;
+      --gray-light: #f4f5f3;
+      --white: #ffffff;
+      --red: #e05050;
+      --amber: #f59e0b;
+      --amber-bg: rgba(245,158,11,0.09);
+      --amber-border: rgba(245,158,11,0.3);
+      --red-bg: rgba(224,80,80,0.09);
+      --red-border: rgba(224,80,80,0.28);
+      --font-heading: 'Alfa Slab One', serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --trans: 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); font-family: var(--font-body); }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--green); width: 0%; transition: width var(--trans); z-index: 1000; }
+
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 999; border-bottom: 1px solid rgba(122,193,66,0.15);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-logo { width: 28px; height: 28px; background: var(--green); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 12px; color: var(--black); }
+    .nav-brand span { color: var(--white); font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.18); cursor: pointer; transition: all 0.25s; }
+    .nav-dot.active { background: var(--green); transform: scale(1.3); }
+    .nav-dot.visited { background: rgba(122,193,66,0.4); }
+    .nav-time { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; }
+
+    #slides-container { height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      display: flex; flex-direction: column; padding-top: 52px;
+      transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(18px);
+    }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .slide.exit { opacity: 0; transform: translateY(-18px); }
+    .slide-inner { flex: 1; overflow-y: auto; padding: 30px 48px 88px; }
+
+    #nav-controls {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 999;
+    }
+    .nav-btn { height: 42px; padding: 0 22px; border-radius: 21px;
+      border: 1.5px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05);
+      color: var(--white); font-family: var(--font-body); font-size: 13.5px;
+      font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .nav-btn:hover { border-color: var(--green); background: rgba(122,193,66,0.1); color: var(--green); }
+    .nav-btn.primary { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
+    .nav-btn.primary:hover { background: var(--green-dark); border-color: var(--green-dark); color: var(--white); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+    #slide-counter { color: rgba(255,255,255,0.38); font-size: 13px; min-width: 44px; text-align: center; }
+
+    /* Shared */
+    .slide-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .slide-eyebrow.dark { color: var(--green-dark); }
+    .slide-title { font-family: var(--font-heading); font-size: clamp(22px, 3.2vw, 32px);
+      color: var(--white); line-height: 1.15; margin-bottom: 22px; }
+    .slide-title span { color: var(--green); }
+    .slide-title.on-light { color: var(--black); }
+    .slide-title.on-light span { color: var(--green-dark); }
+
+    .in-practice { margin-top: 20px; padding: 16px 20px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border-left: 3px solid rgba(122,193,66,0.5); }
+    .in-practice.light { background: rgba(0,0,0,0.05); border-left-color: var(--green-dark); }
+    .ip-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 7px; }
+    .ip-label.dark { color: var(--green-dark); }
+    .ip-text { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+    .ip-text.dark { color: #445540; }
+
+    .core-rule { display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+      background: rgba(122,193,66,0.1); border: 1.5px solid rgba(122,193,66,0.3);
+      border-radius: 10px; margin-top: 18px; }
+    .rule-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); white-space: nowrap; flex-shrink: 0; }
+    .rule-text { font-size: 14px; color: var(--white); font-weight: 600; }
+
+    .alert-rule { display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+      background: var(--red-bg); border: 1.5px solid var(--red-border);
+      border-radius: 10px; margin-top: 18px; }
+    .alert-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--red); white-space: nowrap; flex-shrink: 0; }
+    .alert-text { font-size: 14px; color: rgba(255,255,255,0.82); font-weight: 500; }
+
+    /* ════ SLIDE 0: Title ════════════════════════════════ */
+    #slide-0 { background: var(--black); }
+    #slide-0 .slide-inner { display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; padding-bottom: 88px; }
+    .title-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+    .title-main { font-family: var(--font-heading); font-size: clamp(30px, 5vw, 56px);
+      color: var(--white); line-height: 1.08; margin-bottom: 12px; }
+    .title-main span { color: var(--green); }
+    .title-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 30px;
+      max-width: 500px; line-height: 1.6; }
+    .meta-pills { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+      border-radius: 99px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pill .dot.green { background: var(--green); }
+    .pill .dot.amber { background: var(--amber); }
+    .objective-box { margin-top: 30px; padding: 18px 26px; border-radius: 12px; max-width: 550px;
+      border-left: 3px solid var(--green); background: rgba(122,193,66,0.06); text-align: left; }
+    .obj-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 7px; }
+    .objective-box p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ════ SLIDE 1: Safety Questions Are Different ════════ */
+    #slide-1 { background: var(--black); }
+    .safety-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .safety-item {
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 11px; padding: 16px 14px; text-align: center;
+      transition: all 0.2s; cursor: default;
+    }
+    .safety-item:hover { border-color: var(--amber-border); background: var(--amber-bg); transform: translateY(-2px); }
+    .safety-item .si-icon { font-size: 24px; margin-bottom: 8px; }
+    .safety-item .si-text { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+    .safety-item .si-sub { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+    /* ════ SLIDE 2: What Is an SDS? ══════════════════════ */
+    #slide-2 { background: var(--gray-light); }
+    .sds-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .sds-doc {
+      background: var(--white); border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1); overflow: hidden;
+    }
+    .sds-doc-header { background: #1a3a5c; padding: 14px 20px; }
+    .sds-doc-title { font-weight: 700; color: var(--white); font-size: 14px; letter-spacing: 0.04em; }
+    .sds-doc-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+    .sds-sections { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .sds-section { display: flex; gap: 10px; align-items: center; padding: 9px 12px;
+      border-radius: 7px; background: #f8f9fa; border-left: 3px solid transparent; font-size: 13px; }
+    .sds-section.highlighted { background: rgba(122,193,66,0.1); border-left-color: var(--green-dark); color: var(--black); font-weight: 600; }
+    .sds-section.normal { color: #888; border-left-color: #ddd; }
+    .sds-num { font-size: 11px; font-weight: 700; color: #aaa; width: 20px; flex-shrink: 0; }
+    .sds-section.highlighted .sds-num { color: var(--green-dark); }
+    .osha-cite { margin-top: 16px; padding: 12px 16px; border-radius: 8px;
+      background: #f0f4f8; border-left: 3px solid #4285f4; font-size: 12.5px; color: #444; line-height: 1.55; }
+    .osha-cite strong { color: #1a3a5c; }
+    .sds-rule-col { display: flex; flex-direction: column; gap: 14px; }
+    .info-card { background: var(--white); border-radius: 12px; padding: 18px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .ic-icon { font-size: 28px; margin-bottom: 10px; }
+    .ic-title { font-size: 15px; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+    .ic-text { font-size: 13px; color: #555; line-height: 1.6; }
+    .ic-text strong { color: var(--black); }
+
+    /* ════ SLIDE 3: What Is a Product Label? ═════════════ */
+    #slide-3 { background: var(--black); }
+    .label-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .label-mock {
+      background: #fffef0; border: 2px solid #d4a843; border-radius: 12px; overflow: hidden;
+    }
+    .label-mock-header { background: #d4a843; padding: 12px 18px; }
+    .label-mock-title { font-weight: 900; font-size: 16px; color: var(--black); text-transform: uppercase; letter-spacing: 0.06em; }
+    .label-mock-sub { font-size: 11px; color: rgba(0,0,0,0.6); margin-top: 2px; }
+    .label-sections { padding: 14px 18px; }
+    .label-section { margin-bottom: 10px; }
+    .ls-header { font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #8b4513; margin-bottom: 4px; }
+    .ls-content { font-size: 12px; color: #333; line-height: 1.5; }
+    .ls-content.highlighted { background: rgba(122,193,66,0.18); border-radius: 4px;
+      padding: 4px 8px; color: #2a5520; font-weight: 600; }
+    .epa-cite { margin-top: 16px; padding: 12px 16px; border-radius: 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.55; }
+    .epa-cite em { color: var(--amber); font-style: normal; font-weight: 600; }
+    .label-key-points { display: flex; flex-direction: column; gap: 12px; }
+    .lkp-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px;
+      background: rgba(255,255,255,0.04); border-radius: 10px; border: 1px solid rgba(255,255,255,0.07); }
+    .lkp-icon { font-size: 20px; flex-shrink: 0; }
+    .lkp-title { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+    .lkp-desc { font-size: 12.5px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    /* ════ SLIDE 4: Questions Admin Should Not Answer ════ */
+    #slide-4 { background: var(--gray-light); }
+    .no-answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .no-answer-item {
+      background: var(--white); border-radius: 10px; padding: 13px 16px;
+      border-left: 4px solid var(--red); box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: flex; gap: 12px; align-items: center; font-size: 13.5px;
+      color: var(--black); font-weight: 500; font-style: italic;
+    }
+    .no-answer-item .x-mark { font-size: 14px; color: var(--red); flex-shrink: 0; }
+    .strong-response {
+      background: var(--black); border-radius: 12px; padding: 20px 24px;
+    }
+    .sr-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .sr-quote { font-size: 16px; color: var(--white); line-height: 1.6; font-style: italic;
+      border-left: 3px solid var(--green); padding-left: 16px; }
+
+    /* ════ SLIDE 5: Approved Safety Language ═════════════ */
+    #slide-5 { background: var(--black); }
+    .language-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .use-phrases, .avoid-phrases { display: flex; flex-direction: column; gap: 10px; }
+    .col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 12px; }
+    .col-label.green { color: var(--green); }
+    .col-label.red { color: var(--red); }
+    .phrase-item {
+      padding: 13px 16px; border-radius: 10px; font-size: 13.5px; line-height: 1.55;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .phrase-use { background: rgba(122,193,66,0.08); border: 1.5px solid rgba(122,193,66,0.25);
+      color: var(--white); }
+    .phrase-use::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .phrase-avoid { background: var(--red-bg); border: 1.5px solid var(--red-border);
+      color: rgba(255,255,255,0.7); }
+    .phrase-avoid::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+    .trust-box { margin-top: 20px; padding: 18px 22px; border-radius: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); }
+    .tb-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .tb-text { font-size: 14px; color: var(--white); line-height: 1.65; }
+    .tb-text em { color: var(--green-light); font-style: normal; font-weight: 600; }
+
+    /* ════ SLIDE 6: Activity ══════════════════════════════ */
+    #slide-6 { background: var(--black); }
+    .activity-intro { font-size: 14px; color: rgba(255,255,255,0.55);
+      margin-bottom: 24px; max-width: 640px; line-height: 1.6; }
+
+    /* Category legend */
+    .category-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+    .cat-pill { display: flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: 99px; font-size: 12px; font-weight: 700; border: 1.5px solid; }
+    .cat-pill.admin { background: rgba(122,193,66,0.1); border-color: rgba(122,193,66,0.35); color: var(--green-light); }
+    .cat-pill.refer { background: var(--amber-bg); border-color: var(--amber-border); color: #fbbf24; }
+    .cat-pill.urgent { background: var(--red-bg); border-color: var(--red-border); color: #f87171; }
+
+    /* Sort cards */
+    .sort-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .sort-card { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 16px 18px; }
+    .sort-card.result-correct { border-color: rgba(122,193,66,0.5); background: rgba(122,193,66,0.07); }
+    .sort-card.result-wrong { border-color: var(--red-border); background: var(--red-bg); }
+    .sc-question { font-size: 15px; font-style: italic; color: var(--white);
+      margin-bottom: 12px; line-height: 1.5; }
+    .sc-question::before { content: '"'; color: var(--green); }
+    .sc-question::after { content: '"'; color: var(--green); }
+    .sc-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cat-btn {
+      padding: 8px 16px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; border: 1.5px solid;
+      font-family: var(--font-body);
+    }
+    .cat-btn.admin { background: transparent; border-color: rgba(122,193,66,0.4); color: rgba(255,255,255,0.6); }
+    .cat-btn.admin:hover, .cat-btn.admin.selected { background: rgba(122,193,66,0.15); border-color: var(--green); color: var(--green-light); }
+    .cat-btn.refer { background: transparent; border-color: var(--amber-border); color: rgba(255,255,255,0.6); }
+    .cat-btn.refer:hover, .cat-btn.refer.selected { background: var(--amber-bg); border-color: var(--amber); color: #fbbf24; }
+    .cat-btn.urgent { background: transparent; border-color: var(--red-border); color: rgba(255,255,255,0.6); }
+    .cat-btn.urgent:hover, .cat-btn.urgent.selected { background: var(--red-bg); border-color: var(--red); color: #f87171; }
+    .cat-btn:disabled { cursor: default; }
+    .sc-feedback { font-size: 12.5px; line-height: 1.55; margin-top: 10px;
+      padding: 10px 14px; border-radius: 8px; display: none; }
+    .sc-feedback.show { display: block; }
+    .sc-feedback.correct { background: rgba(122,193,66,0.1); color: var(--green-light); }
+    .sc-feedback.wrong { background: var(--red-bg); color: #f87171; }
+    .sc-feedback strong { display: block; margin-bottom: 4px; font-size: 13px; }
+
+    /* Check + score */
+    #check-btn { height: 42px; padding: 0 26px; border-radius: 21px;
+      background: var(--green); border: none; color: var(--black);
+      font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+    #check-btn:hover { background: var(--green-dark); color: var(--white); }
+    #check-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    #sort-score { display: none; }
+    #sort-score.show { display: block; animation: fadeUp 0.3s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .score-strip { display: flex; align-items: center; gap: 16px; padding: 16px 22px;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px; }
+    .ss-score { font-family: var(--font-heading); font-size: 28px; color: var(--green); }
+    .ss-text { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.55; }
+    .ss-text strong { color: var(--white); display: block; margin-bottom: 3px; }
+    #retry-btn { margin-top: 12px; height: 38px; padding: 0 20px; border-radius: 19px;
+      background: transparent; border: 1.5px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.6); font-family: var(--font-body); font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    #retry-btn:hover { border-color: var(--green); color: var(--green); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(122,193,66,0.28); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .safety-grid { grid-template-columns: repeat(2,1fr); }
+      .sds-layout,.label-layout,.no-answer-grid,.language-layout { grid-template-columns: 1fr; }
+      .slide-inner { padding: 22px 20px 88px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">BK</div>
+    <span>Module 6: Safety &amp; Role Boundaries</span>
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <span class="nav-time">⏱ 12 min</span>
+</nav>
+
+<div id="nav-controls">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter">1 / 7</span>
+  <button class="nav-btn primary" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<div id="slides-container">
+
+<!-- ══ SLIDE 0: Title ════════════════════════════════════ -->
+<section class="slide active" id="slide-0">
+  <div class="slide-inner">
+    <div class="title-eyebrow">BuzzKill Admin Training</div>
+    <h1 class="title-main">Module 6:<br><span>Safety &amp; Role Boundaries</span></h1>
+    <p class="title-sub">SDS, product labels, safety questions, and knowing when to refer rather than answer.</p>
+    <div class="meta-pills">
+      <div class="pill"><span class="dot green"></span> 12 minutes</div>
+      <div class="pill"><span class="dot amber"></span> Sorting Activity</div>
+    </div>
+    <div class="objective-box">
+      <div class="obj-label">Learning Objective</div>
+      <p>You will be able to identify safety-related questions that require SDS review, product label review, technician input, or management escalation — and use the correct language to route them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 1: Safety Questions Are Different ═══════════ -->
+<section class="slide" id="slide-1">
+  <div class="slide-inner">
+    <div class="slide-eyebrow">Section 1 of 5</div>
+    <h2 class="slide-title">Safety Questions <span>Are Different</span></h2>
+    <div class="safety-grid">
+      <div class="safety-item">
+        <div class="si-icon">🐾</div>
+        <div class="si-text">Pets &amp; Children</div>
+        <div class="si-sub">Re-entry, contact, and exposure questions</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">🤰</div>
+        <div class="si-text">Pregnancy &amp; Health</div>
+        <div class="si-sub">Conditions requiring special precautions</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">⏱️</div>
+        <div class="si-text">Re-entry Timing</div>
+        <div class="si-sub">"When can we go back in?"</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">🍽️</div>
+        <div class="si-text">Food Surfaces</div>
+        <div class="si-sub">Kitchen prep areas, pantries, counters</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">💨</div>
+        <div class="si-text">Ventilation</div>
+        <div class="si-sub">Air circulation, windows, HVAC systems</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">⚠️</div>
+        <div class="si-text">Exposure Concerns</div>
+        <div class="si-sub">"Someone was in the room during treatment"</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">🌱</div>
+        <div class="si-text">Environmental</div>
+        <div class="si-sub">Plants, water features, garden areas</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">🚨</div>
+        <div class="si-text">Spills &amp; Incidents</div>
+        <div class="si-sub">Any potential product contact or accident</div>
+      </div>
+      <div class="safety-item">
+        <div class="si-icon">🧪</div>
+        <div class="si-text">Product Safety</div>
+        <div class="si-sub">"What exactly is being applied?"</div>
+      </div>
+    </div>
+    <div class="core-rule">
+      <span class="rule-label">Core Rule</span>
+      <span class="rule-text">Do not guess. Do not answer from memory. Refer, verify, and escalate.</span>
+    </div>
+    <div class="in-practice">
+      <div class="ip-label">In Practice</div>
+      <div class="ip-text">Safety questions are different from general scheduling questions. Customers may ask whether a product is safe for pets, whether children need to leave, or whether food surfaces need preparation. These questions should not be answered casually. Your job is to route the question to the SDS, product label, technician, or manager — and document that you did so.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 2: What Is an SDS? ══════════════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-inner">
+    <div class="slide-eyebrow dark">Section 2 of 5</div>
+    <h2 class="slide-title on-light">What Is <span>an SDS?</span></h2>
+    <div class="sds-layout">
+      <div>
+        <div class="sds-doc">
+          <div class="sds-doc-header">
+            <div class="sds-doc-title">Safety Data Sheet (SDS)</div>
+            <div class="sds-doc-sub">OSHA Hazard Communication Standard</div>
+          </div>
+          <div class="sds-sections">
+            <div class="sds-section highlighted"><span class="sds-num">1</span> Identification</div>
+            <div class="sds-section highlighted"><span class="sds-num">2</span> Hazard Identification</div>
+            <div class="sds-section normal"><span class="sds-num">3</span> Composition / Ingredients</div>
+            <div class="sds-section highlighted"><span class="sds-num">4</span> First-Aid Measures</div>
+            <div class="sds-section highlighted"><span class="sds-num">5</span> Firefighting Measures</div>
+            <div class="sds-section highlighted"><span class="sds-num">6</span> Accidental Release</div>
+            <div class="sds-section highlighted"><span class="sds-num">7</span> Handling &amp; Storage</div>
+            <div class="sds-section highlighted"><span class="sds-num">8</span> Exposure Controls / PPE</div>
+            <div class="sds-section normal"><span class="sds-num">9–16</span> Physical properties, toxicology, transport…</div>
+          </div>
+        </div>
+        <div class="osha-cite" style="margin-top:14px;">
+          <strong>Per OSHA:</strong> SDSs provide information on chemical properties, hazards, protective measures, and precautions for handling, storage, and transport.
+        </div>
+      </div>
+      <div class="sds-rule-col">
+        <div class="info-card">
+          <div class="ic-icon">📄</div>
+          <div class="ic-title">What it is for admin</div>
+          <div class="ic-text">When a customer asks a product-specific safety question, the SDS is the authoritative reference — not your memory, not what you've heard before. <strong>Do not improvise safety guidance.</strong></div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🗂️</div>
+          <div class="ic-title">Where SDSs are kept</div>
+          <div class="ic-text">Know where to find BuzzKill's SDS documents for products in use. Your trainer will walk you through the company's SDS access process.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🔁</div>
+          <div class="ic-title">Your role</div>
+          <div class="ic-text">You are not expected to read and interpret SDS documents for customers. Your role is to <strong>route the question to the person who can</strong> — the technician or manager — and document that you did so.</div>
+        </div>
+      </div>
+    </div>
+    <div class="in-practice light">
+      <div class="ip-label dark">In Practice</div>
+      <div class="ip-text dark">An SDS is a formal safety reference for a chemical product. For admin support, the important takeaway is simple: when the question is product-specific, do not rely on memory. Route the question, reference the SDS, and document the interaction.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 3: What Is a Product Label? ═════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-inner">
+    <div class="slide-eyebrow">Section 3 of 5</div>
+    <h2 class="slide-title">What Is a <span>Product Label?</span></h2>
+    <div class="label-layout">
+      <div>
+        <div class="label-mock">
+          <div class="label-mock-header">
+            <div class="label-mock-title">Pesticide Product Label</div>
+            <div class="label-mock-sub">EPA Registration No. xxxxxxx</div>
+          </div>
+          <div class="label-sections">
+            <div class="label-section">
+              <div class="ls-header">Directions for Use</div>
+              <div class="ls-content highlighted">It is a violation of Federal law to use this product in a manner inconsistent with its labeling.</div>
+            </div>
+            <div class="label-section">
+              <div class="ls-header">Precautionary Statements</div>
+              <div class="ls-content">Keep out of reach of children. Harmful if swallowed. Avoid contact with skin, eyes, and clothing.</div>
+            </div>
+            <div class="label-section">
+              <div class="ls-header">Re-entry Interval</div>
+              <div class="ls-content highlighted">Do not enter or allow others to enter treated areas until sprays have dried.</div>
+            </div>
+            <div class="label-section">
+              <div class="ls-header">Environmental Hazards</div>
+              <div class="ls-content">This product is toxic to fish and aquatic invertebrates. Do not apply near water.</div>
+            </div>
+            <div class="label-section">
+              <div class="ls-header">Use Sites / Application Limits</div>
+              <div class="ls-content">For use in residential structures. Apply to cracks and crevices only.</div>
+            </div>
+          </div>
+        </div>
+        <div class="epa-cite" style="margin-top:14px;">
+          <em>Per EPA:</em> Pesticide labels provide critical information about how to safely and legally use pesticide products. Pesticide labels are <em>legally enforceable</em>.
+        </div>
+      </div>
+      <div class="label-key-points">
+        <div class="lkp-item">
+          <div class="lkp-icon">⚖️</div>
+          <div>
+            <div class="lkp-title">Labels are legally enforceable</div>
+            <div class="lkp-desc">This is why BuzzKill does not rely on casual explanations. The label is the legal document — what it says is what governs use.</div>
+          </div>
+        </div>
+        <div class="lkp-item">
+          <div class="lkp-icon">📋</div>
+          <div>
+            <div class="lkp-title">Labels answer re-entry questions</div>
+            <div class="lkp-desc">When customers ask "when can I go back in?", the product label — not admin memory — provides the authoritative answer for that specific product.</div>
+          </div>
+        </div>
+        <div class="lkp-item">
+          <div class="lkp-icon">🐾</div>
+          <div>
+            <div class="lkp-title">Labels address pets and surfaces</div>
+            <div class="lkp-desc">Pet safety, food surfaces, and specific use restrictions are all addressed in the label. Route the question; don't guess.</div>
+          </div>
+        </div>
+        <div class="lkp-item">
+          <div class="lkp-icon">🔁</div>
+          <div>
+            <div class="lkp-title">Different products, different rules</div>
+            <div class="lkp-desc">A blanket answer about safety doesn't work. Each product has its own label. The technician assigned to the service knows which product applies.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="in-practice">
+      <div class="ip-label">In Practice</div>
+      <div class="ip-text">The product label is a legal document. This is why BuzzKill should not rely on casual explanations when customers ask product-specific questions. The label matters — and so does your documentation of how you handled the question.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 4: Questions Not to Answer From Memory ══════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-inner">
+    <div class="slide-eyebrow dark">Section 4 of 5</div>
+    <h2 class="slide-title on-light">Questions Admin Should <span>Not Answer From Memory</span></h2>
+    <div class="no-answer-grid">
+      <div class="no-answer-item"><span class="x-mark">✗</span>"Is this safe for my baby?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"Can my dog lick the floor after treatment?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"Do I need to leave the house?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"What exact chemical will be used?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"Can this be used around food?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"Is it safe if I have asthma?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"How long until I can touch treated areas?"</div>
+      <div class="no-answer-item"><span class="x-mark">✗</span>"What happens if someone was exposed?"</div>
+    </div>
+    <div class="strong-response">
+      <div class="sr-eyebrow">The Correct Response to All of These</div>
+      <div class="sr-quote">I'm going to route that to the proper safety reference and technician or manager. I want to make sure you get accurate information, not my best guess.</div>
+    </div>
+    <div class="in-practice light" style="margin-top:16px;">
+      <div class="ip-label dark">In Practice</div>
+      <div class="ip-text dark">These questions may sound simple, but they carry real safety implications. Do not say something is "completely safe." Do not give medical advice. Do not answer re-entry or contact questions unless the answer has been verified through the correct source. Document the question and that you routed it — every time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 5: Approved Safety Language ═════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="slide-inner">
+    <div class="slide-eyebrow">Section 5 of 5</div>
+    <h2 class="slide-title">Approved <span>Safety Language</span></h2>
+    <div class="language-layout">
+      <div>
+        <div class="col-label green">Use these phrases:</div>
+        <div class="use-phrases">
+          <div class="phrase-item phrase-use">"For product-specific safety information, we refer to the SDS and product label."</div>
+          <div class="phrase-item phrase-use">"A technician can confirm the treatment details for your specific service."</div>
+          <div class="phrase-item phrase-use">"I do not want to give you an inaccurate safety answer."</div>
+          <div class="phrase-item phrase-use">"I'll document your question and route it to the appropriate person."</div>
+          <div class="phrase-item phrase-use">"Please follow the instructions provided by the technician and any written preparation materials."</div>
+        </div>
+      </div>
+      <div>
+        <div class="col-label red">Avoid these phrases:</div>
+        <div class="avoid-phrases">
+          <div class="phrase-item phrase-avoid">"It's harmless."</div>
+          <div class="phrase-item phrase-avoid">"You'll definitely be fine."</div>
+          <div class="phrase-item phrase-avoid">"No precautions are needed."</div>
+          <div class="phrase-item phrase-avoid">"I think the product is safe."</div>
+          <div class="phrase-item phrase-avoid">"Don't worry about it."</div>
+        </div>
+        <div class="trust-box" style="margin-top:16px;">
+          <div class="tb-label">Why This Builds Trust</div>
+          <div class="tb-text">Saying <em>"I do not want to give you inaccurate information"</em> is not weakness — it is professional accuracy. Customers appreciate honesty paired with action. It shows that BuzzKill takes safety seriously and that you are the kind of person who gets things right rather than just moving on.</div>
+        </div>
+      </div>
+    </div>
+    <div class="alert-rule" style="margin-top:20px;">
+      <span class="alert-label">Never Do This</span>
+      <span class="alert-text">Do not answer a safety question and then fail to document it. Even if you route it correctly, the interaction should be in the record.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 6: Activity — Can I Answer This? ════════════ -->
+<section class="slide" id="slide-6">
+  <div class="slide-inner">
+    <div class="slide-eyebrow">Module Activity</div>
+    <h2 class="slide-title">Can I Answer This? <span>Sorting Activity</span></h2>
+    <p class="activity-intro">For each customer question or situation, classify it using the three categories below. Make your selection, then check your answers.</p>
+
+    <div class="category-legend">
+      <div class="cat-pill admin">✅ Admin Can Handle</div>
+      <div class="cat-pill refer">⚠️ Refer / Escalate to Tech or Manager</div>
+      <div class="cat-pill urgent">🚨 Urgent — Escalate Immediately</div>
+    </div>
+
+    <div class="sort-grid" id="sort-grid"></div>
+
+    <button id="check-btn" onclick="checkAnswers()" disabled>Check My Answers</button>
+
+    <div id="sort-score">
+      <div class="score-strip">
+        <div class="ss-score" id="sort-score-num">0/5</div>
+        <div class="ss-text">
+          <strong id="sort-score-msg"></strong>
+          <span id="sort-score-sub"></span>
+        </div>
+      </div>
+      <button id="retry-btn" onclick="resetActivity()">↩ Try Again</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /slides-container -->
+
+<script>
+// ── Navigation ─────────────────────────────────────────
+let current = 0;
+const TOTAL = 7;
+const slides = document.querySelectorAll('.slide');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const counter = document.getElementById('slide-counter');
+const pb = document.getElementById('progress-bar');
+const visited = new Set([0]);
+
+const dotLabels = ['Intro','Safety Qs','SDS','Label','Never Guess','Language','Activity'];
+const dotsEl = document.getElementById('nav-dots');
+dotLabels.forEach((label, i) => {
+  const d = document.createElement('div');
+  d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  d.title = label; d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI() {
+  dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.className = 'nav-dot';
+    if (i === current) d.classList.add('active');
+    else if (visited.has(i)) d.classList.add('visited');
+  });
+  pb.style.width = (current / (TOTAL - 1) * 100) + '%';
+  counter.textContent = (current + 1) + ' / ' + TOTAL;
+  prevBtn.disabled = current === 0;
+  nextBtn.textContent = current === TOTAL - 1 ? '✓ Complete' : 'Next →';
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL || idx === current) return;
+  const prev = current;
+  slides[prev].classList.remove('active');
+  slides[prev].classList.add('exit');
+  setTimeout(() => slides[prev].classList.remove('exit'), 440);
+  current = idx; visited.add(current);
+  setTimeout(() => slides[current].classList.add('active'), 30);
+  updateUI();
+  if (idx === 6 && !activityBuilt) buildActivity();
+}
+
+function navigate(d) { goTo(current + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navigate(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+});
+
+// ── Sorting Activity ───────────────────────────────────
+const sortItems = [
+  {
+    question: "What time is my appointment?",
+    correct: 'admin',
+    explanation: "Appointment times are scheduling information that admin can look up and confirm. This is exactly the kind of question that belongs in your lane — verify in the system and respond accurately."
+  },
+  {
+    question: "Is the product safe for my cat?",
+    correct: 'refer',
+    explanation: "Product-specific pet safety questions must be answered through the SDS and product label, confirmed by the technician. Do not answer this from memory — the specific product used matters, and you may not know it in advance."
+  },
+  {
+    question: "Can I get a copy of my invoice?",
+    correct: 'admin',
+    explanation: "Invoice and billing requests are administrative tasks. You can look this up in FieldRoutes or route through the billing process. This does not require technician or safety escalation."
+  },
+  {
+    question: "What chemical will the technician apply in my kitchen?",
+    correct: 'refer',
+    explanation: "Product-specific questions require technician or manager input. The specific product varies by service. Route to the technician or manager and reference the product label. Do not guess or give a generic answer."
+  },
+  {
+    question: "I feel sick after a treatment — I was in the room when it happened.",
+    correct: 'urgent',
+    explanation: "Any report of potential product exposure or illness after a treatment is an urgent escalation. Follow BuzzKill's incident and emergency procedure immediately. Document everything and get the right person involved right away."
+  }
+];
+
+const selections = {};
+let activityBuilt = false;
+
+function buildActivity() {
+  activityBuilt = true;
+  const grid = document.getElementById('sort-grid');
+  grid.innerHTML = '';
+  sortItems.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'sort-card';
+    card.id = 'sort-card-' + i;
+    card.innerHTML = `
+      <div class="sc-question">${item.question}</div>
+      <div class="sc-buttons">
+        <button class="cat-btn admin" onclick="selectCat(${i}, 'admin', this)">✅ Admin Can Handle</button>
+        <button class="cat-btn refer" onclick="selectCat(${i}, 'refer', this)">⚠️ Refer / Escalate</button>
+        <button class="cat-btn urgent" onclick="selectCat(${i}, 'urgent', this)">🚨 Urgent Escalation</button>
+      </div>
+      <div class="sc-feedback" id="feedback-${i}"></div>
+    `;
+    grid.appendChild(card);
+  });
+  updateCheckBtn();
+}
+
+function selectCat(idx, cat, btn) {
+  const card = document.getElementById('sort-card-' + idx);
+  card.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selections[idx] = cat;
+  updateCheckBtn();
+}
+
+function updateCheckBtn() {
+  const btn = document.getElementById('check-btn');
+  btn.disabled = Object.keys(selections).length < sortItems.length;
+}
+
+function checkAnswers() {
+  let correct = 0;
+  sortItems.forEach((item, i) => {
+    const card = document.getElementById('sort-card-' + i);
+    const fb = document.getElementById('feedback-' + i);
+    const sel = selections[i];
+    const isCorrect = sel === item.correct;
+    if (isCorrect) correct++;
+
+    card.querySelectorAll('.cat-btn').forEach(b => b.disabled = true);
+    card.classList.add(isCorrect ? 'result-correct' : 'result-wrong');
+    fb.className = 'sc-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+    const catLabels = { admin: '✅ Admin Can Handle', refer: '⚠️ Refer / Escalate', urgent: '🚨 Urgent Escalation' };
+    fb.innerHTML = `<strong>${isCorrect ? '✓ Correct' : '✗ Not quite — correct category: ' + catLabels[item.correct]}</strong>${item.explanation}`;
+  });
+
+  document.getElementById('check-btn').style.display = 'none';
+
+  const scoreEl = document.getElementById('sort-score');
+  document.getElementById('sort-score-num').textContent = correct + '/5';
+  const msgs = {
+    5: ['Excellent', 'You correctly categorized every question. You understand which situations require escalation and which are within your lane.'],
+    4: ['Strong Work', 'You got most categories right. Review the one you missed — the key is recognizing safety and product-specific questions immediately.'],
+    3: ['Getting There', 'Review the questions you missed and focus on the pattern: anything involving product safety, re-entry, or incidents should escalate.'],
+    default: ['Keep Practicing', 'Review the approved safety language and practice identifying which questions carry safety implications before answering.']
+  };
+  const m = msgs[correct] || msgs.default;
+  document.getElementById('sort-score-msg').textContent = m[0];
+  document.getElementById('sort-score-sub').textContent = m[1];
+  scoreEl.classList.add('show');
+}
+
+function resetActivity() {
+  Object.keys(selections).forEach(k => delete selections[k]);
+  document.getElementById('sort-score').classList.remove('show');
+  document.getElementById('check-btn').style.display = '';
+  activityBuilt = false;
+  buildActivity();
+}
+
+updateUI();
+</script>
+</body>
+</html>

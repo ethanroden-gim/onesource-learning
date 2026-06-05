@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 7: Core Administrative Workflows | BuzzKill Admin Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #7ac142;
+      --green-dark: #5a9130;
+      --green-light: #a8d87c;
+      --black: #0d0d0d;
+      --gray-light: #f4f5f3;
+      --white: #ffffff;
+      --red: #e05050;
+      --amber: #f59e0b;
+      --blue: #4285f4;
+      --font-heading: 'Alfa Slab One', serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); font-family: var(--font-body); }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--green); width: 0%; transition: width var(--trans); z-index: 1000; }
+
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 999; border-bottom: 1px solid rgba(122,193,66,0.15);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-logo { width: 28px; height: 28px; background: var(--green); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 12px; color: var(--black); }
+    .nav-brand span { color: var(--white); font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .nav-dots { display: flex; gap: 6px; align-items: center; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); cursor: pointer; transition: all 0.25s; }
+    .nav-dot.active { background: var(--green); transform: scale(1.3); }
+    .nav-dot.visited { background: rgba(122,193,66,0.4); }
+    .nav-time { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; }
+
+    #slides-container { height: 100vh; position: relative; }
+    .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      display: flex; flex-direction: column; padding-top: 52px;
+      transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(18px); }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .slide.exit { opacity: 0; transform: translateY(-18px); }
+    .slide-inner { flex: 1; overflow-y: auto; padding: 28px 48px 88px; }
+
+    #nav-controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 999; }
+    .nav-btn { height: 42px; padding: 0 22px; border-radius: 21px;
+      border: 1.5px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05);
+      color: var(--white); font-family: var(--font-body); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .nav-btn:hover { border-color: var(--green); background: rgba(122,193,66,0.1); color: var(--green); }
+    .nav-btn.primary { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
+    .nav-btn.primary:hover { background: var(--green-dark); border-color: var(--green-dark); color: var(--white); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+    #slide-counter { color: rgba(255,255,255,0.38); font-size: 13px; min-width: 44px; text-align: center; }
+
+    /* Shared */
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .eyebrow.dark { color: var(--green-dark); }
+    .h2 { font-family: var(--font-heading); font-size: clamp(21px, 3vw, 30px); color: var(--white); line-height: 1.15; margin-bottom: 20px; }
+    .h2 span { color: var(--green); }
+    .h2.on-light { color: var(--black); }
+    .h2.on-light span { color: var(--green-dark); }
+
+    .in-practice { margin-top: 18px; padding: 15px 20px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border-left: 3px solid rgba(122,193,66,0.5); }
+    .in-practice.light { background: rgba(0,0,0,0.05); border-left-color: var(--green-dark); }
+    .ip-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .ip-l.d { color: var(--green-dark); }
+    .ip-t { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+    .ip-t.d { color: #445540; }
+
+    .doc-note { display: flex; gap: 12px; align-items: flex-start; padding: 13px 18px;
+      border-radius: 10px; background: rgba(122,193,66,0.09); border: 1.5px solid rgba(122,193,66,0.28); margin-top: 16px; }
+    .doc-note.light { background: rgba(90,145,48,0.07); border-color: rgba(90,145,48,0.28); }
+    .dn-icon { font-size: 17px; flex-shrink: 0; }
+    .dn-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 4px; }
+    .dn-l.d { color: var(--green-dark); }
+    .dn-t { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.55; }
+    .dn-t.d { color: #3a4a35; }
+
+    /* ════ SLIDE 0: Title ════════════════════════ */
+    #slide-0 { background: var(--black); }
+    #slide-0 .slide-inner { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-bottom: 88px; }
+    .te { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .tm { font-family: var(--font-heading); font-size: clamp(30px, 5vw, 54px); color: var(--white); line-height: 1.08; margin-bottom: 11px; }
+    .tm span { color: var(--green); }
+    .ts { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 28px; max-width: 500px; line-height: 1.6; }
+    .pills { display: flex; gap: 11px; justify-content: center; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 99px;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+    .dot-g { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .obj { margin-top: 28px; padding: 18px 24px; border-radius: 12px; max-width: 540px;
+      border-left: 3px solid var(--green); background: rgba(122,193,66,0.06); text-align: left; }
+    .obj-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .obj p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ════ SLIDE 1: Workflow Pattern ════════════ */
+    #slide-1 { background: var(--black); }
+    .flow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    .flow-step {
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 11px; padding: 16px 14px; display: flex; gap: 12px; align-items: flex-start;
+      transition: all 0.2s; cursor: default;
+    }
+    .flow-step:hover { border-color: rgba(122,193,66,0.4); background: rgba(122,193,66,0.06); transform: translateY(-2px); }
+    .flow-num { width: 32px; height: 32px; border-radius: 50%; background: rgba(122,193,66,0.15);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 13px; font-weight: 700; color: var(--green); }
+    .fs-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+    .fs-desc { font-size: 11.5px; color: rgba(255,255,255,0.42); line-height: 1.4; }
+    .flow-rule { display: flex; align-items: center; gap: 12px; padding: 13px 18px;
+      background: rgba(122,193,66,0.1); border: 1.5px solid rgba(122,193,66,0.3); border-radius: 10px; }
+    .fr-l { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); white-space: nowrap; flex-shrink: 0; }
+    .fr-t { font-size: 14px; color: var(--white); font-weight: 600; }
+
+    /* ════ SLIDE 2: Intake ══════════════════════ */
+    #slide-2 { background: var(--gray-light); }
+    .intake-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .intake-form { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+    .if-header { background: var(--black); padding: 13px 20px; display: flex; align-items: center; gap: 10px; }
+    .if-header span { font-size: 13px; font-weight: 700; color: var(--white); }
+    .if-badge { background: var(--green); color: var(--black); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; }
+    .if-fields { padding: 16px 20px; display: flex; flex-direction: column; gap: 9px; }
+    .if-field { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px;
+      border-radius: 8px; background: #f8f9fa; border: 1.5px solid transparent; transition: all 0.2s; }
+    .if-field:hover { border-color: rgba(122,193,66,0.4); background: rgba(122,193,66,0.05); }
+    .if-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .if-label { font-size: 12px; font-weight: 700; color: var(--black); margin-bottom: 1px; }
+    .if-hint { font-size: 11px; color: #888; }
+    .intake-tips { display: flex; flex-direction: column; gap: 12px; }
+    .tip-card { background: var(--white); border-radius: 11px; padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07); border-top: 3px solid transparent; }
+    .tip-card.green { border-top-color: var(--green); }
+    .tip-card.blue { border-top-color: var(--blue); }
+    .tip-card.amber { border-top-color: var(--amber); }
+    .tc-icon { font-size: 20px; margin-bottom: 8px; }
+    .tc-title { font-size: 13.5px; font-weight: 700; color: var(--black); margin-bottom: 5px; }
+    .tc-text { font-size: 12.5px; color: #555; line-height: 1.55; }
+
+    /* ════ SLIDE 3: Scheduling ══════════════════ */
+    #slide-3 { background: var(--black); }
+    .sched-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .sched-list { display: flex; flex-direction: column; gap: 8px; }
+    .sched-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 15px;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 10px; transition: all 0.2s; cursor: default; }
+    .sched-item:hover { border-color: rgba(122,193,66,0.3); background: rgba(122,193,66,0.06); }
+    .sched-check { width: 22px; height: 22px; border-radius: 5px; border: 2px solid rgba(122,193,66,0.4);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 12px; color: var(--green); transition: all 0.2s; }
+    .sched-item:hover .sched-check { background: rgba(122,193,66,0.15); border-color: var(--green); }
+    .sched-text { font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.85); }
+    .sched-side { display: flex; flex-direction: column; gap: 14px; }
+    .access-box { background: rgba(245,158,11,0.09); border: 1.5px solid rgba(245,158,11,0.3);
+      border-radius: 12px; padding: 18px 20px; }
+    .ab-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .ab-items { display: flex; flex-direction: column; gap: 6px; }
+    .ab-item { display: flex; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.75); align-items: center; }
+    .ab-item::before { content: '🔑'; font-size: 12px; flex-shrink: 0; }
+    .tech-question { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 11px; padding: 16px 18px; }
+    .tq-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 8px; }
+    .tq-text { font-size: 14px; color: var(--white); line-height: 1.6; font-style: italic; }
+    .tq-text em { color: var(--green); font-style: normal; font-weight: 600; }
+
+    /* ════ SLIDE 4: Estimates ═══════════════════ */
+    #slide-4 { background: var(--gray-light); }
+    .est-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .role-split { display: flex; flex-direction: column; gap: 12px; }
+    .role-card { background: var(--white); border-radius: 11px; padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .rc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .rc-badge { padding: 4px 11px; border-radius: 99px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; }
+    .rc-badge.admin { background: rgba(122,193,66,0.15); color: var(--green-dark); }
+    .rc-badge.route { background: rgba(66,133,244,0.13); color: #4285f4; }
+    .rc-items { display: flex; flex-direction: column; gap: 6px; }
+    .rc-item { display: flex; gap: 9px; font-size: 13px; color: #333; align-items: flex-start; }
+    .rc-item.admin-item::before { content: '→'; color: var(--green-dark); font-weight: 700; flex-shrink: 0; }
+    .rc-item.route-item::before { content: '↗'; color: #4285f4; font-weight: 700; flex-shrink: 0; }
+    .never-box { background: rgba(224,80,80,0.08); border: 1.5px solid rgba(224,80,80,0.28);
+      border-radius: 11px; padding: 16px 18px; }
+    .nb-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 9px; }
+    .nb-item { font-size: 13px; color: rgba(255,255,255,0.75); display: flex; gap: 8px; margin-bottom: 6px; }
+    .nb-item::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+    .nb-item.on-light { color: #554040; }
+
+    /* ════ SLIDE 5: Invoices ═══════════════════ */
+    #slide-5 { background: var(--black); }
+    .inv-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .invoice-mock { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; overflow: hidden; }
+    .im-header { background: rgba(122,193,66,0.1); border-bottom: 1px solid rgba(122,193,66,0.2);
+      padding: 13px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .im-title { font-size: 14px; font-weight: 700; color: var(--white); }
+    .im-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+      background: rgba(245,158,11,0.2); color: var(--amber); }
+    .im-rows { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+    .im-row { display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px; border-radius: 7px; background: rgba(255,255,255,0.03); font-size: 13px; }
+    .im-row-label { color: rgba(255,255,255,0.5); }
+    .im-row-val { color: var(--white); font-weight: 600; }
+    .admin-tasks-inv { display: flex; flex-direction: column; gap: 9px; }
+    .ati-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 15px;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 10px; transition: all 0.2s; }
+    .ati-item:hover { border-color: rgba(122,193,66,0.3); background: rgba(122,193,66,0.06); }
+    .ati-icon { font-size: 18px; flex-shrink: 0; }
+    .ati-title { font-size: 13.5px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+    .ati-desc { font-size: 12px; color: rgba(255,255,255,0.44); }
+    .neutral-language { margin-top: 16px; padding: 14px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border-left: 3px solid var(--green); }
+    .nl-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 7px; }
+    .nl-text { font-size: 14px; color: var(--white); font-style: italic; line-height: 1.6; }
+
+    /* ════ SLIDE 6: Complaints ══════════════════ */
+    #slide-6 { background: var(--gray-light); }
+    .complaint-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .cb-steps { display: flex; flex-direction: column; gap: 0; }
+    .cb-step { display: flex; gap: 14px; align-items: flex-start; padding: 13px 15px;
+      background: var(--white); border: 1px solid #eee; transition: all 0.2s; cursor: pointer; }
+    .cb-step:first-child { border-radius: 11px 11px 0 0; }
+    .cb-step:last-child { border-radius: 0 0 11px 11px; border-bottom: 1px solid #eee; }
+    .cb-step:not(:first-child):not(:last-child) { border-radius: 0; }
+    .cb-step:not(:last-child) { border-bottom: none; }
+    .cb-step:hover { background: rgba(122,193,66,0.05); }
+    .cb-step.active-step { background: rgba(122,193,66,0.08) !important; border-left: 3px solid var(--green); }
+    .cbs-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(122,193,66,0.12);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 12px; font-weight: 700; color: var(--green-dark); }
+    .cb-step.active-step .cbs-num { background: var(--green); color: var(--white); }
+    .cbs-label { font-size: 13.5px; font-weight: 600; color: var(--black); margin-top: 4px; }
+    .issue-types { background: var(--white); border-radius: 12px; padding: 18px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 14px; }
+    .it-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 12px; }
+    .it-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .it-item { padding: 8px 11px; border-radius: 8px; background: #f5f6f4;
+      font-size: 12.5px; font-weight: 600; color: #333; display: flex; gap: 7px; align-items: center; }
+    .it-item::before { content: '?'; background: rgba(122,193,66,0.2); color: var(--green-dark);
+      width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+    .cb-quote { background: var(--black); border-radius: 11px; padding: 16px 18px; }
+    .cbq-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .cbq-t { font-size: 14px; color: rgba(255,255,255,0.82); line-height: 1.65; font-style: italic; }
+
+    /* ════ SLIDE 7: Tech Coordination ══════════ */
+    #slide-7 { background: var(--black); }
+    .tech-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .tech-brief { background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 13px; overflow: hidden; }
+    .tb-header { background: rgba(122,193,66,0.12); border-bottom: 1px solid rgba(122,193,66,0.2);
+      padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+    .tb-title { font-size: 13px; font-weight: 700; color: var(--white); }
+    .tb-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      background: var(--green); color: var(--black); padding: 3px 9px; border-radius: 99px; }
+    .tb-fields { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; }
+    .tb-field { display: flex; gap: 10px; align-items: flex-start; }
+    .tbf-icon { font-size: 16px; flex-shrink: 0; }
+    .tbf-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 1px; }
+    .tbf-example { font-size: 11.5px; color: rgba(255,255,255,0.4); }
+    .tech-side { display: flex; flex-direction: column; gap: 14px; }
+    .self-check { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 18px 20px;
+      border: 1px solid rgba(255,255,255,0.08); }
+    .sc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+    .sc-checks { display: flex; flex-direction: column; gap: 8px; }
+    .sc-check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: rgba(255,255,255,0.75); }
+    .sc-check::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .missing-box { background: rgba(224,80,80,0.08); border: 1.5px solid rgba(224,80,80,0.28);
+      border-radius: 11px; padding: 14px 18px; }
+    .mb-l { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 9px; }
+    .mb-item { font-size: 12.5px; color: rgba(255,255,255,0.7); display: flex; gap: 7px; margin-bottom: 5px; }
+    .mb-item::before { content: '→'; color: var(--red); flex-shrink: 0; font-weight: 700; }
+
+    /* ════ SLIDE 8: Activity ════════════════════ */
+    #slide-8 { background: var(--black); }
+    .act-intro { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 22px; max-width: 640px; line-height: 1.6; }
+    .act-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .act-tab { padding: 9px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.55); transition: all 0.2s; }
+    .act-tab:hover { border-color: rgba(122,193,66,0.4); color: rgba(255,255,255,0.8); }
+    .act-tab.active { background: var(--green); border-color: var(--green); color: var(--black); }
+    .act-tab.done { border-color: rgba(122,193,66,0.4); color: var(--green-light); }
+    .scenario-panel { display: none; }
+    .scenario-panel.active { display: block; animation: fadeUp 0.3s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .sc-prompt { background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 18px 22px; margin-bottom: 20px; }
+    .scp-type { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .scp-text { font-size: 15px; color: var(--white); line-height: 1.55; }
+    .scp-task { font-size: 12.5px; color: rgba(255,255,255,0.45); margin-top: 8px; font-style: italic; }
+    .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 18px; }
+    .check-item { display: flex; gap: 10px; align-items: flex-start; padding: 11px 14px;
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .check-item:hover { border-color: rgba(122,193,66,0.3); }
+    .check-item.selected { border-color: rgba(122,193,66,0.5); background: rgba(122,193,66,0.08); }
+    .check-item.revealed.correct { border-color: var(--green); background: rgba(122,193,66,0.12); }
+    .check-item.revealed.incorrect-selected { border-color: var(--red); background: rgba(224,80,80,0.08); }
+    .check-item.revealed.missed { border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.06); }
+    .check-item.locked { cursor: default; }
+    .ci-box { width: 20px; height: 20px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 11px; color: transparent; transition: all 0.2s; }
+    .check-item.selected .ci-box { background: var(--green); border-color: var(--green); color: var(--black); }
+    .check-item.revealed.correct .ci-box { background: var(--green); border-color: var(--green); color: var(--black); }
+    .check-item.revealed.incorrect-selected .ci-box { background: var(--red); border-color: var(--red); color: var(--white); }
+    .check-item.revealed.missed .ci-box { background: var(--amber); border-color: var(--amber); color: var(--black); }
+    .ci-text { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; }
+    .check-btn { height: 40px; padding: 0 22px; border-radius: 20px; background: var(--green);
+      border: none; color: var(--black); font-family: var(--font-body); font-size: 14px;
+      font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .check-btn:hover { background: var(--green-dark); color: var(--white); }
+    .check-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .sc-result { display: none; margin-top: 14px; padding: 14px 18px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+    .sc-result.show { display: block; animation: fadeUp 0.3s ease; }
+    .scr-score { font-family: var(--font-heading); font-size: 22px; color: var(--green); }
+    .scr-text { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 4px; line-height: 1.55; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+    .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.5); }
+    .leg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(122,193,66,0.28); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .flow-grid, .intake-layout, .sched-layout, .est-layout, .inv-layout,
+      .complaint-layout, .tech-layout, .checklist-grid { grid-template-columns: 1fr; }
+      .slide-inner { padding: 22px 20px 88px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<nav id="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">BK</div>
+    <span>Module 7: Core Administrative Workflows</span>
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <span class="nav-time">⏱ 16 min</span>
+</nav>
+<div id="nav-controls">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter">1 / 9</span>
+  <button class="nav-btn primary" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<div id="slides-container">
+
+<!-- ══ SLIDE 0: Title ════════════════════════════════════ -->
+<section class="slide active" id="slide-0">
+  <div class="slide-inner">
+    <div class="te">BuzzKill Admin Training</div>
+    <h1 class="tm">Module 7:<br><span>Core Admin Workflows</span></h1>
+    <p class="ts">Intake, scheduling, estimates, invoices, complaints, callbacks, and technician coordination — the complete admin playbook.</p>
+    <div class="pills">
+      <div class="pill"><span class="dot-g"></span> 16 minutes</div>
+      <div class="pill"><span class="dot-g"></span> 7 Workflows</div>
+      <div class="pill"><span class="dot-g"></span> Scenario Practice</div>
+    </div>
+    <div class="obj">
+      <div class="obj-l">Learning Objective</div>
+      <p>You will be able to follow BuzzKill's core administrative workflows for intake, scheduling, estimates, service agreements, invoices, payment follow-up, complaints, callbacks, and technician coordination.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 1: Workflow Pattern ═════════════════════════ -->
+<section class="slide" id="slide-1">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 1 of 7</div>
+    <h2 class="h2">The Admin <span>Workflow Pattern</span></h2>
+    <div class="flow-grid">
+      <div class="flow-step"><div class="flow-num">1</div><div><div class="fs-title">Receive Request</div><div class="fs-desc">Call, email, or internal — identify the channel and source</div></div></div>
+      <div class="flow-step"><div class="flow-num">2</div><div><div class="fs-title">Identify Customer &amp; Property</div><div class="fs-desc">Name, type, address, community — confirm before acting</div></div></div>
+      <div class="flow-step"><div class="flow-num">3</div><div><div class="fs-title">Clarify the Issue</div><div class="fs-desc">What, where, when — get the details before routing</div></div></div>
+      <div class="flow-step"><div class="flow-num">4</div><div><div class="fs-title">Check Account &amp; History</div><div class="fs-desc">Prior service, existing agreements, open issues</div></div></div>
+      <div class="flow-step"><div class="flow-num">5</div><div><div class="fs-title">Determine Next Step</div><div class="fs-desc">Answer, schedule, update, assign, or escalate</div></div></div>
+      <div class="flow-step"><div class="flow-num">6</div><div><div class="fs-title">Update the System</div><div class="fs-desc">FieldRoutes, Front, or both — enter at time of interaction</div></div></div>
+      <div class="flow-step"><div class="flow-num">7</div><div><div class="fs-title">Communicate Clearly</div><div class="fs-desc">Confirm with the customer what happens next</div></div></div>
+      <div class="flow-step"><div class="flow-num">8</div><div><div class="fs-title">Assign, Schedule, or Escalate</div><div class="fs-desc">Make ownership clear — don't leave it in limbo</div></div></div>
+      <div class="flow-step"><div class="flow-num">9</div><div><div class="fs-title">Document Completion</div><div class="fs-desc">Record the outcome and what happens next, if anything</div></div></div>
+    </div>
+    <div class="flow-rule">
+      <span class="fr-l">Rule</span>
+      <span class="fr-t">The task is not complete until the correct system is updated and the next action is clear. Answered ≠ done.</span>
+    </div>
+    <div class="in-practice">
+      <div class="ip-l">In Practice</div>
+      <div class="ip-t">Most admin tasks follow the same basic pattern. First, understand who is contacting us and what they need. Then verify the customer, property, and service history. Determine the next step — answer, schedule, update, assign, or escalate. The task is not complete until the correct system is updated and the next action is clear.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 2: Intake ═══════════════════════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-inner">
+    <div class="eyebrow dark">Section 2 of 7</div>
+    <h2 class="h2 on-light">New Customer &amp; <span>Issue Intake</span></h2>
+    <div class="intake-layout">
+      <div>
+        <div class="intake-form">
+          <div class="if-header">
+            <div class="if-badge">Collect</div>
+            <span>Intake Checklist</span>
+          </div>
+          <div class="if-fields">
+            <div class="if-field"><span class="if-icon">👤</span><div><div class="if-label">Name &amp; Contact</div><div class="if-hint">Phone, email, preferred method</div></div></div>
+            <div class="if-field"><span class="if-icon">🏷️</span><div><div class="if-label">Customer Type</div><div class="if-hint">Homeowner, resident, manager, board member</div></div></div>
+            <div class="if-field"><span class="if-icon">📍</span><div><div class="if-label">Property / Service Address</div><div class="if-hint">Full address + unit or common area if applicable</div></div></div>
+            <div class="if-field"><span class="if-icon">🐛</span><div><div class="if-label">Pest Concern</div><div class="if-hint">What are they seeing and where exactly</div></div></div>
+            <div class="if-field"><span class="if-icon">📅</span><div><div class="if-label">Timeline</div><div class="if-hint">When did activity start or was it first noticed</div></div></div>
+            <div class="if-field"><span class="if-icon">📷</span><div><div class="if-label">Photos Available?</div><div class="if-hint">Attach or note if photos exist</div></div></div>
+            <div class="if-field"><span class="if-icon">⚠️</span><div><div class="if-label">Pets, Children, Access, Sensitivities</div><div class="if-hint">Any restrictions before scheduling</div></div></div>
+            <div class="if-field"><span class="if-icon">📋</span><div><div class="if-label">Prior Service History</div><div class="if-hint">Any prior treatments or existing account</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="intake-tips">
+        <div class="tip-card green">
+          <div class="tc-icon">🏢</div>
+          <div class="tc-title">Association Properties</div>
+          <div class="tc-text">For condo or HOA intake, also capture the community name, unit number or common area, and whether management has been notified or has authorized service.</div>
+        </div>
+        <div class="tip-card blue">
+          <div class="tc-icon">📋</div>
+          <div class="tc-title">Document as You Go</div>
+          <div class="tc-text">Enter intake details in FieldRoutes during the call or immediately after. Waiting creates gaps. The next person — technician, manager, or teammate — should see a complete picture.</div>
+        </div>
+        <div class="tip-card amber">
+          <div class="tc-icon">🔑</div>
+          <div class="tc-title">Better Intake = Better Service</div>
+          <div class="tc-text">The more complete your intake, the fewer callbacks and back-and-forth messages the team has to manage. Good intake is the foundation of every other workflow.</div>
+        </div>
+      </div>
+    </div>
+    <div class="in-practice light">
+      <div class="ip-l d">In Practice</div>
+      <div class="ip-t d">New issue intake is one of the most important admin workflows. For each request, collect the customer type, property address, pest concern, where and when activity is happening, and any access concerns. For condo and HOA properties, capture the community name, unit or common area, and authorization context.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 3: Scheduling ═══════════════════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 3 of 7</div>
+    <h2 class="h2">Scheduling <span>Service Visits</span></h2>
+    <div class="sched-layout">
+      <div>
+        <div class="sched-list">
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Confirm correct account and property</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Confirm service type or reason for visit</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Review availability and appointment window</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Capture all access notes (below)</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Update FieldRoutes with confirmed details</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Send appointment confirmation when appropriate</span></div>
+          <div class="sched-item"><div class="sched-check">✓</div><span class="sched-text">Document any special instructions or restrictions</span></div>
+        </div>
+      </div>
+      <div class="sched-side">
+        <div class="access-box">
+          <div class="ab-label">Access Notes — Never Skip These</div>
+          <div class="ab-items">
+            <div class="ab-item">Gate codes or locked entry points</div>
+            <div class="ab-item">Lockbox location and combination</div>
+            <div class="ab-item">Unit access — self, management, or resident must be present</div>
+            <div class="ab-item">Pets — type, containment, or removal needed</div>
+            <div class="ab-item">Parking restrictions or instructions</div>
+            <div class="ab-item">Tenant coordination or notification required</div>
+            <div class="ab-item">Common area vs. unit — or both</div>
+          </div>
+        </div>
+        <div class="tech-question">
+          <div class="tq-label">Before Finalizing — Ask Yourself</div>
+          <div class="tq-text">"If I were the technician, would I know <em>where to go</em>, <em>what the issue is</em>, <em>how to access the area</em>, and <em>who to contact</em>?"</div>
+        </div>
+      </div>
+    </div>
+    <div class="in-practice">
+      <div class="ip-l">In Practice</div>
+      <div class="ip-t">Scheduling is more than finding an open time slot. The technician needs enough information to arrive prepared. Always confirm the correct account and location. If the appointment involves an association, confirm whether the technician needs access to a common area, a specific unit, or multiple areas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 4: Estimates ════════════════════════════════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-inner">
+    <div class="eyebrow dark">Section 4 of 7</div>
+    <h2 class="h2 on-light">Estimates &amp; <span>Service Agreements</span></h2>
+    <div class="est-layout">
+      <div class="role-split">
+        <div class="role-card">
+          <div class="rc-header"><span class="rc-badge admin">Admin Handles</span></div>
+          <div class="rc-items">
+            <div class="rc-item admin-item">Start estimate request and gather property/pest details</div>
+            <div class="rc-item admin-item">Confirm customer contact information is complete</div>
+            <div class="rc-item admin-item">Send approved documents from the correct source</div>
+            <div class="rc-item admin-item">Track signature or approval status</div>
+            <div class="rc-item admin-item">Update account status in FieldRoutes</div>
+            <div class="rc-item admin-item">Follow up on outstanding documents</div>
+          </div>
+        </div>
+        <div class="role-card">
+          <div class="rc-header"><span class="rc-badge route">Route to Manager / Technician</span></div>
+          <div class="rc-items">
+            <div class="rc-item route-item">Pricing and scope decisions</div>
+            <div class="rc-item route-item">Warranty terms or treatment promises</div>
+            <div class="rc-item route-item">Service agreement review and final approval</div>
+            <div class="rc-item route-item">Custom or complex quote requests</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="never-box" style="background: rgba(224,80,80,0.06); border-color: rgba(224,80,80,0.22);">
+          <div class="nb-label">Admin Should Never:</div>
+          <div class="nb-item nb-item on-light" style="color:#554040;">Invent or estimate pricing without authorization</div>
+          <div class="nb-item nb-item on-light" style="color:#554040;">Define scope, inclusions, or exclusions</div>
+          <div class="nb-item nb-item on-light" style="color:#554040;">Make warranty or outcome promises</div>
+          <div class="nb-item nb-item on-light" style="color:#554040;">Send unapproved service agreements</div>
+          <div class="nb-item nb-item on-light" style="color:#554040;">Commit to treatment specifics not in the system</div>
+        </div>
+        <div class="doc-note light" style="margin-top:16px;">
+          <div class="dn-icon">📋</div>
+          <div>
+            <div class="dn-l d">Documentation Rule</div>
+            <div class="dn-t d">If a customer asks about pricing or scope and you're routing it, document the question and that you routed it. Don't leave the customer without a clear next step — "I'll have someone follow up with pricing details by [timeframe]" is far better than silence.</div>
+          </div>
+        </div>
+        <div class="in-practice light" style="margin-top:14px;">
+          <div class="ip-l d">In Practice</div>
+          <div class="ip-t d">Your role is to gather complete information, help move documents through the process, and make sure the customer receives accurate, approved materials. If the information is not already approved or documented, route it to the appropriate person.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 5: Invoices ══════════════════════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 5 of 7</div>
+    <h2 class="h2">Invoices &amp; <span>Payment Follow-Up</span></h2>
+    <div class="inv-layout">
+      <div>
+        <div class="invoice-mock">
+          <div class="im-header">
+            <div class="im-title">Service Invoice #1042</div>
+            <div class="im-status">Outstanding</div>
+          </div>
+          <div class="im-rows">
+            <div class="im-row"><span class="im-row-label">Customer</span><span class="im-row-val">Maple Court HOA</span></div>
+            <div class="im-row"><span class="im-row-label">Service Date</span><span class="im-row-val">June 4, 2026</span></div>
+            <div class="im-row"><span class="im-row-label">Service Type</span><span class="im-row-val">Rodent — Interior</span></div>
+            <div class="im-row"><span class="im-row-label">Amount Due</span><span class="im-row-val">$285.00</span></div>
+            <div class="im-row"><span class="im-row-label">Due Date</span><span class="im-row-val">June 18, 2026</span></div>
+          </div>
+        </div>
+        <div class="neutral-language" style="margin-top:14px;">
+          <div class="nl-label">Use Neutral Language</div>
+          <div class="nl-text">"I can help check the account and route any billing questions for review."</div>
+        </div>
+      </div>
+      <div class="admin-tasks-inv">
+        <div class="ati-item"><span class="ati-icon">📄</span><div><div class="ati-title">Send Invoice Copies</div><div class="ati-desc">Locate in FieldRoutes and share via the approved method</div></div></div>
+        <div class="ati-item"><span class="ati-icon">✅</span><div><div class="ati-title">Confirm Payment Status</div><div class="ati-desc">Check account for payments, credits, or outstanding balances</div></div></div>
+        <div class="ati-item"><span class="ati-icon">↗️</span><div><div class="ati-title">Route Billing Questions</div><div class="ati-desc">Direct complex questions to the right team member</div></div></div>
+        <div class="ati-item"><span class="ati-icon">📞</span><div><div class="ati-title">Follow Up on Balances</div><div class="ati-desc">Neutral, professional outreach per BuzzKill process</div></div></div>
+        <div class="ati-item"><span class="ati-icon">📋</span><div><div class="ati-title">Document All Communication</div><div class="ati-desc">Every billing interaction should be in the record</div></div></div>
+        <div class="ati-item"><span class="ati-icon">⬆️</span><div><div class="ati-title">Escalate Disputes</div><div class="ati-desc">Do not argue — document and route billing disputes</div></div></div>
+      </div>
+    </div>
+    <div class="in-practice">
+      <div class="ip-l">In Practice</div>
+      <div class="ip-t">For invoices and payment follow-up, be clear and neutral. If there is a dispute, confusion, or complaint about billing, do not argue. Document the concern and route it according to BuzzKill's process. Keep billing communication factual and professional — never emotional.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 6: Complaints ═══════════════════════════════ -->
+<section class="slide" id="slide-6">
+  <div class="slide-inner">
+    <div class="eyebrow dark">Section 6 of 7</div>
+    <h2 class="h2 on-light">Complaints &amp; <span>Callbacks</span></h2>
+    <div class="complaint-layout">
+      <div>
+        <div class="cb-steps">
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">1</div><div class="cbs-label">Acknowledge the concern</div></div>
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">2</div><div class="cbs-label">Collect the details</div></div>
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">3</div><div class="cbs-label">Check service history</div></div>
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">4</div><div class="cbs-label">Identify the issue type (see right)</div></div>
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">5</div><div class="cbs-label">Document the facts — not interpretations</div></div>
+          <div class="cb-step" onclick="highlightCb(this)"><div class="cbs-num">6</div><div class="cbs-label">Schedule, assign, or escalate</div></div>
+        </div>
+        <div class="in-practice light" style="margin-top:14px;">
+          <div class="ip-l d">In Practice</div>
+          <div class="ip-t d">A customer may say "the treatment didn't work" — but you need details. What are they seeing now? Where? When did service happen? Is it the same issue or a new one? Do not debate. Gather facts, check history, and route appropriately.</div>
+        </div>
+      </div>
+      <div>
+        <div class="issue-types">
+          <div class="it-label">Step 4 — Identify Which Type of Issue:</div>
+          <div class="it-grid">
+            <div class="it-item">Continued activity after treatment</div>
+            <div class="it-item">New or unrelated pest issue</div>
+            <div class="it-item">Access problem prevented full service</div>
+            <div class="it-item">Expectation mismatch</div>
+            <div class="it-item">Service quality concern</div>
+            <div class="it-item">Unclear — needs technician review</div>
+          </div>
+        </div>
+        <div class="cb-quote">
+          <div class="cbq-l">Suggested Response</div>
+          <div class="cbq-t">I understand this is frustrating. I'm going to document the details, check the service history, and make sure the right person is looped in to determine the next step.</div>
+        </div>
+        <div class="doc-note" style="margin-top:14px;">
+          <div class="dn-icon">📋</div>
+          <div>
+            <div class="dn-l">Documentation Rule</div>
+            <div class="dn-t">Document what the customer <em>reported</em> — not what you think happened. The technician and manager will need the facts as stated, not your interpretation. Stick to specifics: what, where, when, how often.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 7: Tech Coordination ═══════════════════════ -->
+<section class="slide" id="slide-7">
+  <div class="slide-inner">
+    <div class="eyebrow">Section 7 of 7</div>
+    <h2 class="h2">Technician <span>Coordination</span></h2>
+    <div class="tech-layout">
+      <div>
+        <div class="tech-brief">
+          <div class="tb-header">
+            <div class="tb-badge">Technician Briefing</div>
+            <div class="tb-title">What goes in every service record</div>
+          </div>
+          <div class="tb-fields">
+            <div class="tb-field"><div class="tbf-icon">📍</div><div><div class="tbf-label">Correct address + unit or common area</div><div class="tbf-example">e.g. Maple Court, Bldg B, Unit 204</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">👤</div><div><div class="tbf-label">Contact name and how to reach them</div><div class="tbf-example">Resident name, manager, or board contact</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">🔑</div><div><div class="tbf-label">Access details</div><div class="tbf-example">Gate code, lockbox, parking, key instructions</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">🐛</div><div><div class="tbf-label">Pest concern and observed locations</div><div class="tbf-example">What was seen, where, and when it started</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">🐾</div><div><div class="tbf-label">Pets or tenant restrictions</div><div class="tbf-example">Dog in unit, children present, prep required</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">📷</div><div><div class="tbf-label">Photos or customer notes attached</div><div class="tbf-example">Referenced in account record</div></div></div>
+            <div class="tb-field"><div class="tbf-icon">⚠️</div><div><div class="tbf-label">Urgency or complaint context</div><div class="tbf-example">Board president involved, tenant upset, etc.</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-side">
+        <div class="self-check">
+          <div class="sc-label">Before finalizing — confirm the technician knows:</div>
+          <div class="sc-checks">
+            <div class="sc-check">Where exactly to go (not just the street address)</div>
+            <div class="sc-check">What the pest concern is and where it's been seen</div>
+            <div class="sc-check">How to access the property or unit</div>
+            <div class="sc-check">Who to contact on arrival if needed</div>
+            <div class="sc-check">Any restrictions: pets, children, tenant prep, parking</div>
+            <div class="sc-check">Whether this is a new issue or a callback</div>
+          </div>
+        </div>
+        <div class="missing-box">
+          <div class="mb-l">What incomplete records create:</div>
+          <div class="mb-item">Technician arrives at wrong unit or building</div>
+          <div class="mb-item">Can't access property — wasted trip</div>
+          <div class="mb-item">Wrong service performed due to unclear details</div>
+          <div class="mb-item">Customer frustration and additional callbacks</div>
+          <div class="mb-item">Manager time spent on avoidable issues</div>
+        </div>
+        <div class="in-practice">
+          <div class="ip-l">In Practice</div>
+          <div class="ip-t">The technician experience depends entirely on admin documentation. Missing gate codes, wrong unit numbers, unclear contact names, or incomplete pest details create delays. Before finalizing, ask: "If I were the technician, would I have everything I need?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 8: Activity ══════════════════════════════════ -->
+<section class="slide" id="slide-8">
+  <div class="slide-inner">
+    <div class="eyebrow">Module Activity</div>
+    <h2 class="h2">Workflow <span>Practice Scenarios</span></h2>
+    <p class="act-intro">Select the correct actions for each scenario. Check all that apply — then submit to see your results. Work through all three scenarios.</p>
+    <div class="act-tabs" id="act-tabs">
+      <div class="act-tab active" onclick="showScenario(0, this)">Scenario 1</div>
+      <div class="act-tab" onclick="showScenario(1, this)">Scenario 2</div>
+      <div class="act-tab" onclick="showScenario(2, this)">Scenario 3</div>
+    </div>
+    <div id="scenarios-wrap"></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+// ── Navigation ─────────────────────────────────────────
+let current = 0;
+const TOTAL = 9;
+const slides = document.querySelectorAll('.slide');
+const visited = new Set([0]);
+
+const dotLabels = ['Intro','Pattern','Intake','Scheduling','Estimates','Invoices','Complaints','Tech','Activity'];
+const dotsEl = document.getElementById('nav-dots');
+dotLabels.forEach((l, i) => {
+  const d = document.createElement('div');
+  d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  d.title = l; d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI() {
+  dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.className = 'nav-dot';
+    if (i === current) d.classList.add('active');
+    else if (visited.has(i)) d.classList.add('visited');
+  });
+  document.getElementById('progress-bar').style.width = (current / (TOTAL-1) * 100) + '%';
+  document.getElementById('slide-counter').textContent = (current+1) + ' / ' + TOTAL;
+  document.getElementById('prev-btn').disabled = current === 0;
+  document.getElementById('next-btn').textContent = current === TOTAL-1 ? '✓ Complete' : 'Next →';
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL || idx === current) return;
+  const prev = current;
+  slides[prev].classList.remove('active');
+  slides[prev].classList.add('exit');
+  setTimeout(() => slides[prev].classList.remove('exit'), 440);
+  current = idx; visited.add(current);
+  setTimeout(() => slides[current].classList.add('active'), 30);
+  updateUI();
+  if (idx === 8 && !actBuilt) buildActivity();
+}
+
+function navigate(d) { goTo(current + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navigate(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+});
+
+function highlightCb(el) {
+  document.querySelectorAll('.cb-step').forEach(s => s.classList.remove('active-step'));
+  el.classList.add('active-step');
+}
+
+// ── Activity ───────────────────────────────────────────
+const scenarios = [
+  {
+    type: 'New Issue Intake',
+    text: 'A property manager calls to report that a resident at Maple Court, Bldg A reported cockroaches in their unit. The manager says they want someone out as soon as possible.',
+    task: 'Check all the actions you should take before routing this for scheduling.',
+    items: [
+      { text: 'Get the specific unit number and building', correct: true },
+      { text: 'Promise same-day service to de-escalate', correct: false },
+      { text: 'Ask when the cockroaches were first noticed and where', correct: true },
+      { text: 'Confirm the property manager is the authorized contact', correct: true },
+      { text: 'Check if there is existing service history for this property', correct: true },
+      { text: 'Diagnose the severity based on the manager\'s description', correct: false },
+      { text: 'Ask about access — who can let the technician in?', correct: true },
+      { text: 'Note any pets, children, or restrictions in the unit', correct: true },
+      { text: 'Document the intake details in FieldRoutes', correct: true },
+      { text: 'Tell the manager which product will be used', correct: false },
+    ],
+    explanation: 'For new intake, gather specific location, timeline, access, and authorization details — and document them immediately. Do not promise timelines or products you cannot confirm.'
+  },
+  {
+    type: 'Callback / Complaint',
+    text: 'A homeowner calls and says: "The technician came out last week for mice and I\'m still hearing them in the wall. This isn\'t working."',
+    task: 'Select all the correct actions for handling this callback.',
+    items: [
+      { text: 'Acknowledge the concern before asking questions', correct: true },
+      { text: 'Explain that mice treatments take time and the technician did it right', correct: false },
+      { text: 'Check the service history for the previous visit', correct: true },
+      { text: 'Ask what specifically they are hearing and where', correct: true },
+      { text: 'Ask when the sounds started relative to the treatment date', correct: true },
+      { text: 'Promise a free retreatment to resolve the complaint quickly', correct: false },
+      { text: 'Document what the customer reported — not your interpretation', correct: true },
+      { text: 'Escalate or schedule a callback per BuzzKill\'s process', correct: true },
+      { text: 'Blame the issue on the customer having entry points unsealed', correct: false },
+    ],
+    explanation: 'For callbacks, acknowledge first, then collect facts without debating or diagnosing. Check history, document what was reported, and route appropriately. Never promise outcomes you cannot confirm.'
+  },
+  {
+    type: 'Technician Coordination',
+    text: 'You\'re finalizing a service record for a visit to River Oaks Condos, Building C, Unit 318 tomorrow morning for ants in the kitchen.',
+    task: 'Select all the details that must be in the service record before finalizing.',
+    items: [
+      { text: 'Full address: River Oaks Condos, Bldg C, Unit 318', correct: true },
+      { text: 'Contact name for on-site access', correct: true },
+      { text: 'Whether the technician prefers morning or afternoon', correct: false },
+      { text: 'Pest concern: ants in the kitchen — location and description', correct: true },
+      { text: 'Access details: how to enter the building and unit', correct: true },
+      { text: 'Pet information — any animals in the unit', correct: true },
+      { text: 'Whether management or resident authorizes the visit', correct: true },
+      { text: 'The price you quoted the customer', correct: false },
+      { text: 'Any tenant prep requirements or restrictions', correct: true },
+      { text: 'Record confirmed in FieldRoutes before the visit', correct: true },
+    ],
+    explanation: 'A complete technician record includes location specifics, contact, access, pest details, pet/restriction notes, and authorization. Technician preferences and pricing decisions are not part of the service record you control.'
+  }
+];
+
+let actBuilt = false;
+const scenarioState = scenarios.map(() => ({ selections: new Set(), checked: false }));
+
+function buildActivity() {
+  actBuilt = true;
+  const wrap = document.getElementById('scenarios-wrap');
+  wrap.innerHTML = '';
+  scenarios.forEach((sc, si) => {
+    const panel = document.createElement('div');
+    panel.className = 'scenario-panel' + (si === 0 ? ' active' : '');
+    panel.id = 'scenario-' + si;
+
+    let itemsHtml = sc.items.map((item, ii) => `
+      <div class="check-item" id="ci-${si}-${ii}" onclick="toggleItem(${si}, ${ii}, this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-text">${item.text}</div>
+      </div>
+    `).join('');
+
+    panel.innerHTML = `
+      <div class="sc-prompt">
+        <div class="scp-type">${sc.type}</div>
+        <div class="scp-text">${sc.text}</div>
+        <div class="scp-task">${sc.task}</div>
+      </div>
+      <div class="checklist-grid">${itemsHtml}</div>
+      <button class="check-btn" id="cbtn-${si}" onclick="checkScenario(${si})">Check Answers</button>
+      <div class="sc-result" id="res-${si}">
+        <div class="scr-score" id="res-score-${si}"></div>
+        <div class="scr-text" id="res-text-${si}"></div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div> Correct selection</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div> Incorrect selection</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div> Should have selected</div>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(panel);
+  });
+}
+
+function showScenario(idx, tabEl) {
+  document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('scenario-' + idx).classList.add('active');
+  document.querySelectorAll('.act-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+}
+
+function toggleItem(si, ii, el) {
+  if (scenarioState[si].checked) return;
+  const state = scenarioState[si].selections;
+  if (state.has(ii)) { state.delete(ii); el.classList.remove('selected'); }
+  else { state.add(ii); el.classList.add('selected'); }
+}
+
+function checkScenario(si) {
+  if (scenarioState[si].checked) return;
+  scenarioState[si].checked = true;
+
+  const sc = scenarios[si];
+  const sel = scenarioState[si].selections;
+  let correct = 0, total = sc.items.filter(i => i.correct).length;
+
+  sc.items.forEach((item, ii) => {
+    const el = document.getElementById('ci-' + si + '-' + ii);
+    el.classList.add('revealed');
+    el.classList.remove('selected');
+    el.onclick = null; el.classList.add('locked');
+    if (item.correct && sel.has(ii)) { el.classList.add('correct'); correct++; }
+    else if (!item.correct && sel.has(ii)) { el.classList.add('incorrect-selected'); }
+    else if (item.correct && !sel.has(ii)) { el.classList.add('missed'); }
+  });
+
+  document.getElementById('cbtn-' + si).style.display = 'none';
+  const res = document.getElementById('res-' + si);
+  document.getElementById('res-score-' + si).textContent = correct + ' / ' + total + ' correct';
+  document.getElementById('res-text-' + si).textContent = sc.explanation;
+  res.classList.add('show');
+
+  // Mark tab as done
+  document.querySelectorAll('.act-tab')[si].classList.add('done');
+}
+
+updateUI();
+</script>
+</body>
+</html>

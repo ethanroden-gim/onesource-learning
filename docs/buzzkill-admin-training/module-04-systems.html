@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 4: Systems Overview | BuzzKill Admin Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #7ac142;
+      --green-dark: #5a9130;
+      --green-light: #a8d87c;
+      --black: #0d0d0d;
+      --gray-dark: #1a1a1a;
+      --gray-mid: #2a2a2a;
+      --gray-light: #f4f5f3;
+      --white: #ffffff;
+      --red: #e05050;
+      --fr-color: #00b4d8;
+      --gv-color: #34a853;
+      --front-color: #9b59b6;
+      --font-heading: 'Alfa Slab One', serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); font-family: var(--font-body); }
+
+    /* ── Progress bar ───────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--green); width: 0%;
+      transition: width var(--transition); z-index: 1000;
+    }
+
+    /* ── Top nav ────────────────────────────────── */
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 999; border-bottom: 1px solid rgba(122,193,66,0.15);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-brand .logo-badge {
+      width: 28px; height: 28px; background: var(--green); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 12px; color: var(--black); font-weight: 900;
+    }
+    .nav-brand span { color: var(--white); font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .nav-dots { display: flex; gap: 8px; align-items: center; }
+    .nav-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.18);
+      cursor: pointer; transition: all 0.25s; border: 1.5px solid transparent;
+    }
+    .nav-dot.active { background: var(--green); border-color: var(--green); transform: scale(1.25); }
+    .nav-dot.visited { background: rgba(122,193,66,0.38); }
+    .nav-time { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; }
+
+    /* ── Slide container ────────────────────────── */
+    #slides-container { height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      display: flex; flex-direction: column; padding-top: 52px;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: translateY(20px); overflow: hidden;
+    }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .slide.exit { opacity: 0; transform: translateY(-20px); }
+    .slide-inner { flex: 1; overflow-y: auto; padding: 32px 48px 90px; }
+
+    /* ── Nav controls ───────────────────────────── */
+    #nav-controls {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 999;
+    }
+    .nav-btn {
+      height: 42px; padding: 0 22px; border-radius: 21px; border: 1.5px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05); color: var(--white); font-family: var(--font-body);
+      font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .nav-btn:hover { border-color: var(--green); background: rgba(122,193,66,0.1); color: var(--green); }
+    .nav-btn.primary { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
+    .nav-btn.primary:hover { background: var(--green-dark); border-color: var(--green-dark); color: var(--white); }
+    .nav-btn:disabled { opacity: 0.28; cursor: not-allowed; pointer-events: none; }
+    #slide-counter { color: rgba(255,255,255,0.38); font-size: 13px; min-width: 44px; text-align: center; }
+
+    /* ── Slide header ───────────────────────────── */
+    .slide-number { font-size: 11px; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .slide-title { font-family: var(--font-heading); font-size: clamp(22px, 3.5vw, 34px);
+      color: var(--white); line-height: 1.15; margin-bottom: 24px; }
+    .slide-title span { color: var(--green); }
+    .slide-title-dark { color: var(--black); }
+    .slide-title-dark span { color: var(--green-dark); }
+
+    /* ── Speaker note inline ────────────────────── */
+    .speaker-inline {
+      margin-top: 24px; padding: 18px 22px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid rgba(122,193,66,0.5);
+    }
+    .speaker-inline.dark-bg { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.08);
+      border-left-color: var(--green-dark); }
+    .si-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .si-label.dark { color: var(--green-dark); }
+    .si-text { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+    .si-text.dark { color: #4a5540; }
+    .si-text p + p { margin-top: 8px; }
+
+    /* ── Doc callout (recurring emphasis) ──────── */
+    .doc-callout {
+      display: flex; gap: 14px; align-items: flex-start; padding: 16px 20px;
+      border-radius: 10px; background: rgba(122,193,66,0.1);
+      border: 1.5px solid rgba(122,193,66,0.3); margin-top: 20px;
+    }
+    .doc-callout-icon { font-size: 20px; flex-shrink: 0; }
+    .doc-callout-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 5px; }
+    .doc-callout-text { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.55; }
+    .doc-callout.light { background: rgba(90,145,48,0.08); border-color: rgba(90,145,48,0.3); }
+    .doc-callout.light .doc-callout-label { color: var(--green-dark); }
+    .doc-callout.light .doc-callout-text { color: #3a4a35; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 0 — Title
+    ══════════════════════════════════════════════ */
+    #slide-0 { background: var(--black); }
+    #slide-0 .slide-inner {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; padding-bottom: 90px;
+    }
+    .title-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 18px;
+    }
+    .title-main {
+      font-family: var(--font-heading); font-size: clamp(34px, 6vw, 62px);
+      color: var(--white); line-height: 1.08; margin-bottom: 14px;
+    }
+    .title-main span { color: var(--green); }
+    .title-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 36px; max-width: 500px; line-height: 1.6; }
+    .meta-pills { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 0; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.6);
+    }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .objective-box {
+      margin-top: 36px; padding: 20px 28px; border-radius: 12px; max-width: 560px;
+      border-left: 3px solid var(--green); background: rgba(122,193,66,0.06); text-align: left;
+    }
+    .objective-box .label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+    .objective-box p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 1 — Three Core Systems
+    ══════════════════════════════════════════════ */
+    #slide-1 { background: var(--black); }
+    .systems-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .system-card {
+      border-radius: 14px; padding: 24px 20px; cursor: pointer;
+      transition: all var(--transition); border: 1.5px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03); display: flex; flex-direction: column; gap: 12px;
+    }
+    .system-card:hover { transform: translateY(-3px); }
+    .system-card.fr:hover, .system-card.fr.selected { border-color: var(--fr-color); background: rgba(0,180,216,0.07); }
+    .system-card.gv:hover, .system-card.gv.selected { border-color: var(--gv-color); background: rgba(52,168,83,0.07); }
+    .system-card.front:hover, .system-card.front.selected { border-color: var(--front-color); background: rgba(155,89,182,0.07); }
+    .system-logo { height: 36px; display: flex; align-items: center; }
+    .system-logo svg { height: 100%; width: auto; }
+    .system-tagline { font-size: 12.5px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+    .system-items { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .system-items li { font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+    .system-items li::before { content: '→'; font-weight: 700; flex-shrink: 0; margin-top: 0; }
+    .system-card.fr .system-items li::before { color: var(--fr-color); }
+    .system-card.gv .system-items li::before { color: var(--gv-color); }
+    .system-card.front .system-items li::before { color: var(--front-color); }
+    .core-rule {
+      display: flex; align-items: center; gap: 14px; padding: 14px 20px;
+      background: rgba(122,193,66,0.1); border: 1.5px solid rgba(122,193,66,0.3);
+      border-radius: 10px; margin-top: 18px;
+    }
+    .rule-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); white-space: nowrap; }
+    .rule-text { font-size: 14px; color: var(--white); font-weight: 500; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 2 — FieldRoutes
+    ══════════════════════════════════════════════ */
+    #slide-2 { background: var(--gray-light); }
+    .fr-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .fr-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .fr-logo-wrap { background: #0d3040; padding: 8px 14px; border-radius: 8px; }
+    .fr-logo-wrap svg { height: 28px; width: auto; }
+    .use-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #888; margin-bottom: 12px; }
+    .static-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .static-list li {
+      display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px;
+      background: var(--white); border-radius: 9px; font-size: 13.5px;
+      color: #2a2a2a; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border-left: 3px solid transparent;
+    }
+    .static-list li::before { content: '→'; color: var(--fr-color); font-weight: 700; flex-shrink: 0; }
+    .doc-standard-light {
+      background: var(--black); border-radius: 12px; padding: 20px 22px;
+    }
+    .ds-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .ds-rule { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.8); }
+    .ds-rule strong { color: var(--green-light); }
+    .activity-box {
+      margin-top: 16px; padding: 16px 20px; border-radius: 10px;
+      background: rgba(0,180,216,0.08); border: 1.5px solid rgba(0,180,216,0.3);
+    }
+    .act-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--fr-color); margin-bottom: 7px; }
+    .act-text { font-size: 13px; color: #334; line-height: 1.55; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 3 — Google Voice
+    ══════════════════════════════════════════════ */
+    #slide-3 { background: var(--black); }
+    .gv-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .gv-logo-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .gv-logo-wrap svg { height: 28px; width: auto; }
+    .use-case-item {
+      display: flex; gap: 12px; padding: 13px 15px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 9px; align-items: flex-start; transition: all 0.2s;
+    }
+    .use-case-item:hover { background: rgba(52,168,83,0.08); border-color: rgba(52,168,83,0.3); }
+    .uc-icon { font-size: 19px; flex-shrink: 0; }
+    .uc-title { font-size: 13.5px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+    .uc-desc { font-size: 12px; color: rgba(255,255,255,0.42); }
+    .wf-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 14px; }
+    .workflow-steps { display: flex; flex-direction: column; gap: 0; }
+    .wf-step {
+      display: flex; gap: 14px; align-items: flex-start; padding: 13px 15px;
+      background: rgba(255,255,255,0.03); border-radius: 10px; position: relative;
+      cursor: pointer; transition: all 0.2s; border: 1.5px solid transparent; margin-bottom: 0;
+    }
+    .wf-step:not(:last-child) { border-radius: 10px 10px 0 0; margin-bottom: 1px; }
+    .wf-step:not(:first-child):not(:last-child) { border-radius: 0; }
+    .wf-step:last-child { border-radius: 0 0 10px 10px; }
+    .wf-step:hover { background: rgba(52,168,83,0.07); border-color: rgba(52,168,83,0.25); }
+    .wf-step.active-step { background: rgba(52,168,83,0.1); border-color: rgba(52,168,83,0.4); }
+    .step-num {
+      width: 30px; height: 30px; border-radius: 50%; background: rgba(52,168,83,0.15);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 12px; font-weight: 700; color: #5aba70;
+    }
+    .wf-step.active-step .step-num { background: var(--gv-color); color: var(--white); }
+    .step-title { font-size: 13.5px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+    .step-detail { font-size: 12px; color: rgba(255,255,255,0.42); line-height: 1.45; }
+    .never-box {
+      padding: 14px 18px; border-radius: 10px; margin-top: 16px;
+      background: rgba(224,80,80,0.1); border: 1.5px solid rgba(224,80,80,0.3);
+    }
+    .never-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 7px; }
+    .never-text { font-size: 13px; color: rgba(255,255,255,0.72); line-height: 1.55; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 4 — Front
+    ══════════════════════════════════════════════ */
+    #slide-4 { background: var(--gray-light); }
+    .front-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .front-logo-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .front-logo-wrap svg { height: 28px; width: auto; }
+    .use-light-item {
+      display: flex; gap: 11px; padding: 11px 14px; border-radius: 9px;
+      background: var(--white); border: 1.5px solid transparent; margin-bottom: 8px;
+      align-items: flex-start; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .use-light-item:hover { border-color: rgba(155,89,182,0.3); }
+    .ul-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+    .ul-title { font-size: 13.5px; font-weight: 600; color: var(--black); margin-bottom: 1px; }
+    .ul-desc { font-size: 12px; color: #777; }
+    .practices-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #888; margin-bottom: 12px; }
+    .practice-card {
+      background: var(--white); border-radius: 9px; padding: 13px 15px;
+      margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start;
+      border-left: 4px solid transparent; transition: all 0.2s; cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .practice-card:hover { border-left-color: var(--front-color); }
+    .practice-card.expanded { border-left-color: var(--front-color); }
+    .pc-icon { font-size: 17px; flex-shrink: 0; }
+    .pc-title { font-size: 13.5px; font-weight: 600; color: var(--black); }
+    .pc-detail { font-size: 12.5px; color: #555; line-height: 1.55; margin-top: 4px;
+      max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+    .practice-card.expanded .pc-detail { max-height: 80px; }
+    .front-goal {
+      margin-top: 16px; padding: 16px 20px; border-radius: 10px;
+      background: var(--black); border-left: 4px solid var(--front-color);
+    }
+    .fg-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--front-color); margin-bottom: 7px; }
+    .fg-text { font-size: 13.5px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════════
+       SLIDE 5 — Documentation Examples
+    ══════════════════════════════════════════════ */
+    #slide-5 { background: var(--black); }
+    .doc-intro { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 22px; max-width: 640px; line-height: 1.6; }
+    .doc-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .doc-panel { border-radius: 13px; overflow: hidden; }
+    .dp-header { padding: 13px 18px; display: flex; align-items: center; gap: 10px; }
+    .dp-weak .dp-header { background: rgba(224,80,80,0.14); }
+    .dp-strong .dp-header { background: rgba(122,193,66,0.14); }
+    .dp-badge { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; }
+    .dp-weak .dp-badge { background: rgba(224,80,80,0.28); color: var(--red); }
+    .dp-strong .dp-badge { background: rgba(122,193,66,0.28); color: var(--green); }
+    .dp-label { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .dp-body { padding: 18px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07); border-top: none; border-radius: 0 0 13px 13px; }
+    .dp-text { font-size: 13.5px; line-height: 1.7; font-family: 'Inter', monospace; }
+    .dp-weak .dp-text { color: rgba(220,80,80,0.88); }
+    .dp-strong .dp-text { color: rgba(255,255,255,0.82); }
+    .highlight { background: rgba(122,193,66,0.18); border-radius: 3px; padding: 0 3px;
+      color: var(--green-light); font-weight: 500; }
+    .dp-issues { margin-top: 12px; }
+    .dp-issue, .dp-strength { display: flex; gap: 8px; font-size: 12px; margin-bottom: 5px; line-height: 1.4; }
+    .dp-issue { color: rgba(220,80,80,0.8); }
+    .dp-issue::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+    .dp-strength { color: rgba(122,193,66,0.85); }
+    .dp-strength::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .doc-anatomy { background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 18px 22px; }
+    .anatomy-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+    .anatomy-items { display: flex; flex-wrap: wrap; gap: 8px; }
+    .anatomy-item { padding: 7px 13px; border-radius: 99px; font-size: 12px; font-weight: 600;
+      background: rgba(122,193,66,0.1); color: var(--green-light);
+      border: 1px solid rgba(122,193,66,0.24); }
+
+    /* ── Scrollbar ──────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(122,193,66,0.28); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .systems-grid, .fr-layout, .gv-layout, .front-layout, .doc-comparison { grid-template-columns: 1fr; }
+      .slide-inner { padding: 24px 20px 90px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="top-nav">
+  <div class="nav-brand">
+    <div class="logo-badge">BK</div>
+    <span>Module 4: Systems Overview</span>
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <span class="nav-time">⏱ 13 min</span>
+</nav>
+
+<div id="nav-controls">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter">1 / 6</span>
+  <button class="nav-btn primary" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<div id="slides-container">
+
+  <!-- ══ SLIDE 0: Title ══════════════════════════════════ -->
+  <section class="slide active" id="slide-0">
+    <div class="slide-inner">
+      <div class="title-eyebrow">BuzzKill Admin Training</div>
+      <h1 class="title-main">Module 4:<br><span>Systems Overview</span></h1>
+      <p class="title-sub">FieldRoutes, Google Voice, and Front — the right tool for every task, and documentation that makes the next step clear.</p>
+      <div class="meta-pills">
+        <div class="pill"><span class="dot"></span> 13 minutes</div>
+        <div class="pill"><span class="dot"></span> Interactive</div>
+      </div>
+      <div class="objective-box">
+        <div class="label">Learning Objective</div>
+        <p>You will be able to identify which system to use for common administrative tasks and explain how customer communication should be documented.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 1: Three Core Systems ════════════════════ -->
+  <section class="slide" id="slide-1">
+    <div class="slide-inner">
+      <div class="slide-number">Section 1 of 5</div>
+      <h2 class="slide-title">The Three <span>Core Systems</span></h2>
+      <div class="systems-grid">
+
+        <!-- FieldRoutes card -->
+        <div class="system-card fr" onclick="this.classList.toggle('selected')">
+          <div class="system-logo">
+            <!-- FieldRoutes SVG logo -->
+            <svg viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="0,22 14,0 14,45" fill="#00b4d8" opacity="0.9"/>
+              <polygon points="8,22 22,0 22,45" fill="#00b4d8" opacity="0.5"/>
+              <text x="32" y="33" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#00b4d8">Field</text>
+              <text x="101" y="33" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Routes</text>
+            </svg>
+          </div>
+          <p class="system-tagline">Operational record — everything about the customer, property, and service</p>
+          <ul class="system-items">
+            <li>Customer and property records</li>
+            <li>Service addresses and locations</li>
+            <li>Scheduling and appointment updates</li>
+            <li>Technician-relevant notes</li>
+            <li>Service history</li>
+            <li>Estimates, agreements, invoices</li>
+          </ul>
+        </div>
+
+        <!-- Google Voice card -->
+        <div class="system-card gv" onclick="this.classList.toggle('selected')">
+          <div class="system-logo">
+            <!-- Google Voice SVG logo -->
+            <svg viewBox="0 0 210 45" xmlns="http://www.w3.org/2000/svg">
+              <!-- Phone icon -->
+              <g transform="translate(0,4)">
+                <path d="M10,2 Q8,2 7,4 L5,9 Q4,11 5,13 Q9,21 18,27 Q26,33 32,34 Q35,35 36,33 L39,28 Q40,26 38,25 L33,22 Q31,21 30,23 L28,25 Q27,26 25,25 Q21,23 17,18 Q13,13 12,9 Q11,7 12,6 L14,4 Q16,3 15,1 L11,1 Q10,1 10,2 Z" fill="#34a853"/>
+              </g>
+              <text x="50" y="33" font-family="Arial, sans-serif" font-weight="400" font-size="24" fill="#5f6368">Google </text>
+              <text x="128" y="33" font-family="Arial, sans-serif" font-weight="400" font-size="24" fill="#34a853">Voice</text>
+            </svg>
+          </div>
+          <p class="system-tagline">All inbound and outbound phone communication</p>
+          <ul class="system-items">
+            <li>Answering incoming calls</li>
+            <li>Returning missed calls</li>
+            <li>Checking voicemails</li>
+            <li>Outbound scheduling calls</li>
+            <li>Follow-up call handling</li>
+          </ul>
+        </div>
+
+        <!-- Front card -->
+        <div class="system-card front" onclick="this.classList.toggle('selected')">
+          <div class="system-logo">
+            <!-- Front SVG logo -->
+            <svg viewBox="0 0 180 45" xmlns="http://www.w3.org/2000/svg">
+              <!-- Front F icon: square bracket with circle -->
+              <rect x="2" y="2" width="32" height="32" rx="4" fill="#b668f5" opacity="0.9"/>
+              <circle cx="18" cy="22" r="9" fill="#4b0082"/>
+              <rect x="2" y="2" width="18" height="15" rx="4" fill="#b668f5"/>
+              <text x="44" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#6c2eb9">Front</text>
+            </svg>
+          </div>
+          <p class="system-tagline">Shared inboxes, email threads, and team coordination</p>
+          <ul class="system-items">
+            <li>Customer email threads</li>
+            <li>Shared inbox management</li>
+            <li>Thread assignments</li>
+            <li>Internal comments to teammates</li>
+            <li>Team follow-up tracking</li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="core-rule">
+        <span class="rule-label">Core Rule</span>
+        <span class="rule-text">Use the right system for the right task — and always document the next step so nothing is left to memory.</span>
+      </div>
+      <div class="speaker-inline">
+        <div class="si-label">In Practice</div>
+        <div class="si-text">
+          <p>You will use three primary systems. FieldRoutes is the operational source for customer records, scheduling, service history, and account details. Google Voice handles calls and voicemails. Front is where shared inbox communication and internal coordination happen.</p>
+          <p>A key part of your job is knowing where information belongs so nothing gets lost between systems or left undocumented.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 2: FieldRoutes ════════════════════════════ -->
+  <section class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="slide-number" style="color:var(--green-dark)">Section 2 of 5</div>
+      <h2 class="slide-title slide-title-dark">FieldRoutes: <span>Operational Record</span></h2>
+      <div class="fr-layout">
+        <div>
+          <div class="fr-header">
+            <div class="fr-logo-wrap">
+              <svg viewBox="0 0 200 45" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="0,22 14,0 14,45" fill="#00d4f5" opacity="0.9"/>
+                <polygon points="8,22 22,0 22,45" fill="#00d4f5" opacity="0.5"/>
+                <text x="32" y="33" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#00d4f5">Field</text>
+                <text x="101" y="33" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Routes</text>
+              </svg>
+            </div>
+          </div>
+          <div class="use-label">Use FieldRoutes for:</div>
+          <ul class="static-list">
+            <li>Customer and property records</li>
+            <li>Service addresses</li>
+            <li>Contact details</li>
+            <li>Scheduling and appointment updates</li>
+            <li>Technician-relevant notes (access, pets, restrictions)</li>
+            <li>Service history</li>
+            <li>Estimates or service agreement support</li>
+            <li>Invoice and payment visibility</li>
+          </ul>
+          <div class="activity-box" style="margin-top:16px;">
+            <div class="act-label">Separate Practice Activity</div>
+            <div class="act-text">You will practice entering and locating records directly in FieldRoutes as a hands-on exercise — see your trainer for instructions.</div>
+          </div>
+        </div>
+        <div>
+          <div class="doc-standard-light">
+            <div class="ds-label">Documentation Standard</div>
+            <p class="ds-rule">If it affects <strong>service</strong>, <strong>scheduling</strong>, <strong>billing</strong>, <strong>access</strong>, or <strong>technician instructions</strong> — it belongs in FieldRoutes, entered at the time of the conversation.</p>
+          </div>
+          <div class="speaker-inline dark-bg" style="margin-top:16px;">
+            <div class="si-label dark">In Practice</div>
+            <div class="si-text dark">
+              <p>Think of FieldRoutes as the operational record. If a technician needs the information to complete service, or if the office needs it for scheduling, billing, or account history, it should be captured here — not in notes, not in your head, and not in a text message.</p>
+              <p>Examples: access notes, appointment changes, pest issue details, service location, customer contact updates, and account authorization status. A technician arriving on-site will rely on what you entered. Missing details create problems in the field.</p>
+            </div>
+          </div>
+          <div class="doc-callout light" style="margin-top:16px;">
+            <div class="doc-callout-icon">📋</div>
+            <div>
+              <div class="doc-callout-label">Documentation Rule</div>
+              <div class="doc-callout-text" style="color:#3a4a35;">Enter notes at the time of the conversation — not later. Information held in memory gets lost, changed, or forgotten before the next person needs it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 3: Google Voice ═══════════════════════════ -->
+  <section class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="slide-number">Section 3 of 5</div>
+      <h2 class="slide-title">Google Voice: <span>Phone Handling</span></h2>
+      <div class="gv-layout">
+        <div>
+          <div class="gv-logo-wrap">
+            <svg viewBox="0 0 210 45" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(0,4)">
+                <path d="M10,2 Q8,2 7,4 L5,9 Q4,11 5,13 Q9,21 18,27 Q26,33 32,34 Q35,35 36,33 L39,28 Q40,26 38,25 L33,22 Q31,21 30,23 L28,25 Q27,26 25,25 Q21,23 17,18 Q13,13 12,9 Q11,7 12,6 L14,4 Q16,3 15,1 L11,1 Q10,1 10,2 Z" fill="#34a853"/>
+              </g>
+              <text x="50" y="33" font-family="Arial, sans-serif" font-weight="400" font-size="24" fill="#9aa0a6">Google </text>
+              <text x="129" y="33" font-family="Arial, sans-serif" font-weight="400" font-size="24" fill="#34a853">Voice</text>
+            </svg>
+          </div>
+          <div class="use-label" style="color:rgba(255,255,255,0.38)">Use Google Voice for:</div>
+          <div class="use-case-item"><span class="uc-icon">📲</span><div><div class="uc-title">Incoming Calls</div><div class="uc-desc">Answer and handle all inbound customer calls professionally</div></div></div>
+          <div class="use-case-item"><span class="uc-icon">↩️</span><div><div class="uc-title">Return Missed Calls</div><div class="uc-desc">Follow up on any calls that weren't answered promptly</div></div></div>
+          <div class="use-case-item"><span class="uc-icon">🎙️</span><div><div class="uc-title">Check Voicemails</div><div class="uc-desc">Review, transcribe key details, and document</div></div></div>
+          <div class="use-case-item"><span class="uc-icon">📤</span><div><div class="uc-title">Outbound Calls</div><div class="uc-desc">Scheduling confirmations, follow-ups, and callbacks</div></div></div>
+          <div class="never-box">
+            <div class="never-label">Never rely on memory for:</div>
+            <div class="never-text">Access details · Customer concerns · Complaints · Promised follow-up · Scheduling commitments</div>
+          </div>
+        </div>
+        <div>
+          <p class="wf-title">After every call — in this order:</p>
+          <div class="workflow-steps">
+            <div class="wf-step" onclick="activateStep(this)">
+              <div class="step-num">1</div>
+              <div><div class="step-title">Summarize the issue</div><div class="step-detail">Write down who called, what property, what concern, and relevant details from the conversation</div></div>
+            </div>
+            <div class="wf-step" onclick="activateStep(this)">
+              <div class="step-num">2</div>
+              <div><div class="step-title">Update the correct system</div><div class="step-detail">Operational details → FieldRoutes. Emails/threads → Front. Do not leave information only in your head.</div></div>
+            </div>
+            <div class="wf-step" onclick="activateStep(this)">
+              <div class="step-num">3</div>
+              <div><div class="step-title">Assign or escalate if needed</div><div class="step-detail">If someone else owns the next step, assign it clearly in the correct system. Don't assume it will be picked up.</div></div>
+            </div>
+            <div class="wf-step" onclick="activateStep(this)">
+              <div class="step-num">4</div>
+              <div><div class="step-title">Confirm the next step is clear</div><div class="step-detail">The call is complete only when details are documented and the next action is defined — not when you hang up.</div></div>
+            </div>
+          </div>
+          <div class="doc-callout" style="margin-top:16px;">
+            <div class="doc-callout-icon">📝</div>
+            <div>
+              <div class="doc-callout-label">Documentation Rule</div>
+              <div class="doc-callout-text">Phone conversations move fast. A call that ends without a written summary is a call that creates follow-up confusion. Document while the details are fresh.</div>
+            </div>
+          </div>
+          <div class="speaker-inline" style="margin-top:14px;">
+            <div class="si-label">In Practice</div>
+            <div class="si-text">
+              <p>A good call is not complete just because you answered politely. It is complete when the relevant details are captured, the right next step is clear, and the right person or system has been updated.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 4: Front ══════════════════════════════════ -->
+  <section class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="slide-number" style="color:var(--green-dark)">Section 4 of 5</div>
+      <h2 class="slide-title slide-title-dark">Front: <span>Shared Inbox &amp; Team Communication</span></h2>
+      <div class="front-layout">
+        <div>
+          <div class="front-logo-wrap">
+            <svg viewBox="0 0 180 45" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="32" height="32" rx="4" fill="#b668f5" opacity="0.9"/>
+              <circle cx="18" cy="22" r="9" fill="#4b0082"/>
+              <rect x="2" y="2" width="18" height="15" rx="4" fill="#b668f5"/>
+              <text x="44" y="30" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#6c2eb9">Front</text>
+            </svg>
+          </div>
+          <div class="use-label">Use Front for:</div>
+          <div class="use-light-item"><span class="ul-icon">📧</span><div><div class="ul-title">Customer Email Threads</div><div class="ul-desc">All inbound and outbound customer email</div></div></div>
+          <div class="use-light-item"><span class="ul-icon">📥</span><div><div class="ul-title">Shared Inbox Management</div><div class="ul-desc">Monitor, triage, and action incoming messages</div></div></div>
+          <div class="use-light-item"><span class="ul-icon">👤</span><div><div class="ul-title">Thread Assignments</div><div class="ul-desc">Assign ownership so one person is clearly responsible</div></div></div>
+          <div class="use-light-item"><span class="ul-icon">💬</span><div><div class="ul-title">Internal Comments</div><div class="ul-desc">Communicate with teammates without emailing the customer</div></div></div>
+          <div class="use-light-item"><span class="ul-icon">🔄</span><div><div class="ul-title">Team Follow-up</div><div class="ul-desc">Track open items so nothing is dropped</div></div></div>
+        </div>
+        <div>
+          <p class="practices-title">Best Practices — tap to expand:</p>
+          <div class="practice-card" onclick="this.classList.toggle('expanded')"><span class="pc-icon">📖</span><div><div class="pc-title">Read the full thread before replying</div><div class="pc-detail">Check what was already said, promised, or decided. Replying without reading creates duplicate work and contradictions that damage trust.</div></div></div>
+          <div class="practice-card" onclick="this.classList.toggle('expanded')"><span class="pc-icon">💬</span><div><div class="pc-title">Use internal comments for team notes</div><div class="pc-detail">If you need to ask a teammate a question or add context, use an internal comment — not a reply that goes to the customer.</div></div></div>
+          <div class="practice-card" onclick="this.classList.toggle('expanded')"><span class="pc-icon">✋</span><div><div class="pc-title">Assign ownership when needed</div><div class="pc-detail">If someone else owns the next step, assign the thread to them. An unassigned thread is a thread at risk of being missed.</div></div></div>
+          <div class="practice-card" onclick="this.classList.toggle('expanded')"><span class="pc-icon">✅</span><div><div class="pc-title">Never leave unclear next steps</div><div class="pc-detail">Before closing or leaving a thread, confirm the next action is documented. Ambiguity is how promises get broken.</div></div></div>
+          <div class="doc-callout light" style="margin-top:14px;">
+            <div class="doc-callout-icon">📋</div>
+            <div>
+              <div class="doc-callout-label">Documentation Rule</div>
+              <div class="doc-callout-text" style="color:#3a4a35;">Anyone reviewing a thread should be able to tell what happened, what was promised, and what needs to happen next — without asking anyone.</div>
+            </div>
+          </div>
+          <div class="speaker-inline dark-bg" style="margin-top:14px;">
+            <div class="si-label dark">In Practice</div>
+            <div class="si-text dark">Before replying, read the full thread so you do not duplicate work or miss context. Assign threads when someone else owns the next step. Use internal comments to communicate internally. The goal is a thread that tells the full story.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SLIDE 5: Documentation Examples ════════════════ -->
+  <section class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="slide-number">Section 5 of 5</div>
+      <h2 class="slide-title">Documentation <span>Examples</span></h2>
+      <p class="doc-intro">Good documentation is specific. It tells the team who contacted us, where the issue is, what they experienced, when it started, any access or scheduling constraints, and what needs to happen next. A weak note creates more work. A strong note lets the next person act confidently.</p>
+      <div class="doc-comparison">
+        <div class="doc-panel dp-weak">
+          <div class="dp-header"><span class="dp-badge">Weak</span><span class="dp-label">Incomplete — creates more questions</span></div>
+          <div class="dp-body">
+            <div class="dp-text">"Customer has mice. Wants service."</div>
+            <div class="dp-issues">
+              <div class="dp-issue">No name, contact, or property</div>
+              <div class="dp-issue">No unit number or address</div>
+              <div class="dp-issue">No detail on what was observed or when</div>
+              <div class="dp-issue">No access, pet, or scheduling notes</div>
+              <div class="dp-issue">No next step or authorization status</div>
+            </div>
+          </div>
+        </div>
+        <div class="doc-panel dp-strong">
+          <div class="dp-header"><span class="dp-badge">Strong</span><span class="dp-label">Complete — the next person can act</span></div>
+          <div class="dp-body">
+            <div class="dp-text">
+              "<span class="highlight">6/4</span>: <span class="highlight">Jane Smith</span>, resident at <span class="highlight">Maple Court, Bldg B Unit 204</span>, reports <span class="highlight">scratching sounds in kitchen wall for 3 nights</span> and <span class="highlight">droppings under sink</span>. Has not notified property manager. <span class="highlight">No pets</span>. Available <span class="highlight">weekdays after 3 PM</span>. Needs <span class="highlight">account authorization checked</span> before scheduling."
+            </div>
+            <div class="dp-issues" style="margin-top:10px;">
+              <div class="dp-strength">Date, name, and location recorded</div>
+              <div class="dp-strength">Specific observations and timeline</div>
+              <div class="dp-strength">Access and scheduling constraints noted</div>
+              <div class="dp-strength">Authorization status flagged as next step</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-anatomy">
+        <div class="anatomy-title">Every strong note includes these elements:</div>
+        <div class="anatomy-items">
+          <span class="anatomy-item">Date &amp; time</span>
+          <span class="anatomy-item">Who called</span>
+          <span class="anatomy-item">Property &amp; unit</span>
+          <span class="anatomy-item">What they reported</span>
+          <span class="anatomy-item">When it started</span>
+          <span class="anatomy-item">Access &amp; pets</span>
+          <span class="anatomy-item">Availability</span>
+          <span class="anatomy-item">Authorization status</span>
+          <span class="anatomy-item">Clear next step</span>
+        </div>
+      </div>
+      <div class="speaker-inline" style="margin-top:20px;">
+        <div class="si-label">In Practice</div>
+        <div class="si-text">The difference between these two notes is the difference between a technician who arrives prepared and one who has to call the office from the driveway. Every field in the strong note exists because someone, at some point, needed that information and didn't have it. Build the habit of capturing it the first time.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /slides-container -->
+
+<script>
+  let current = 0;
+  const totalSlides = 6;
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const counter = document.getElementById('slide-counter');
+  const progressBar = document.getElementById('progress-bar');
+  const visited = new Set([0]);
+
+  // Build nav dots
+  const dotsContainer = document.getElementById('nav-dots');
+  const dotLabels = ['Intro', 'Systems', 'FieldRoutes', 'Voice', 'Front', 'Docs'];
+  dotLabels.forEach((label, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.title = label;
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  });
+
+  function updateUI() {
+    const dots = dotsContainer.querySelectorAll('.nav-dot');
+    dots.forEach((dot, i) => {
+      dot.className = 'nav-dot';
+      if (i === current) dot.classList.add('active');
+      else if (visited.has(i)) dot.classList.add('visited');
+    });
+    progressBar.style.width = (current / (totalSlides - 1) * 100) + '%';
+    counter.textContent = (current + 1) + ' / ' + totalSlides;
+    prevBtn.disabled = current === 0;
+    if (current === totalSlides - 1) {
+      nextBtn.textContent = '✓ Complete';
+      nextBtn.classList.add('primary');
+    } else {
+      nextBtn.textContent = 'Next →';
+    }
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= totalSlides || index === current) return;
+    const prev = current;
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add('exit');
+    setTimeout(() => slides[prev].classList.remove('exit'), 450);
+    current = index;
+    visited.add(current);
+    setTimeout(() => slides[current].classList.add('active'), 30);
+    updateUI();
+  }
+
+  function navigate(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navigate(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+  });
+
+  function activateStep(el) {
+    document.querySelectorAll('.wf-step').forEach(s => s.classList.remove('active-step'));
+    el.classList.add('active-step');
+  }
+
+  updateUI();
+</script>
+</body>
+</html>

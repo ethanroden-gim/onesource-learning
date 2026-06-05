@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 5: Communication Standards | BuzzKill Admin Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #7ac142;
+      --green-dark: #5a9130;
+      --green-light: #a8d87c;
+      --black: #0d0d0d;
+      --gray-light: #f4f5f3;
+      --white: #ffffff;
+      --red: #e05050;
+      --amber: #f59e0b;
+      --font-heading: 'Alfa Slab One', serif;
+      --font-body: 'Inter', 'Segoe UI', sans-serif;
+      --trans: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body { height: 100%; overflow: hidden; background: var(--black); font-family: var(--font-body); }
+
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--green); width: 0%; transition: width var(--trans); z-index: 1000; }
+
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(13,13,13,0.97); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 999; border-bottom: 1px solid rgba(122,193,66,0.15);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-logo { width: 28px; height: 28px; background: var(--green); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-heading); font-size: 12px; color: var(--black); }
+    .nav-brand span { color: var(--white); font-size: 13px; font-weight: 500; opacity: 0.8; }
+    .nav-dots { display: flex; gap: 7px; align-items: center; }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18);
+      cursor: pointer; transition: all 0.25s; }
+    .nav-dot.active { background: var(--green); transform: scale(1.3); }
+    .nav-dot.visited { background: rgba(122,193,66,0.4); }
+    .nav-time { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 500; }
+
+    #slides-container { height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0; opacity: 0; pointer-events: none;
+      display: flex; flex-direction: column; padding-top: 52px;
+      transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(18px);
+    }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .slide.exit { opacity: 0; transform: translateY(-18px); }
+    .slide-inner { flex: 1; overflow-y: auto; padding: 30px 48px 88px; }
+
+    #nav-controls {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px; z-index: 999;
+    }
+    .nav-btn { height: 42px; padding: 0 22px; border-radius: 21px;
+      border: 1.5px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05);
+      color: var(--white); font-family: var(--font-body); font-size: 13.5px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; }
+    .nav-btn:hover { border-color: var(--green); background: rgba(122,193,66,0.1); color: var(--green); }
+    .nav-btn.primary { background: var(--green); border-color: var(--green); color: var(--black); font-weight: 700; }
+    .nav-btn.primary:hover { background: var(--green-dark); border-color: var(--green-dark); color: var(--white); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+    #slide-counter { color: rgba(255,255,255,0.38); font-size: 13px; min-width: 44px; text-align: center; }
+
+    /* Common elements */
+    .slide-number { font-size: 11px; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+    .slide-number.dark { color: var(--green-dark); }
+    .slide-title { font-family: var(--font-heading); font-size: clamp(22px, 3.2vw, 32px);
+      color: var(--white); line-height: 1.15; margin-bottom: 22px; }
+    .slide-title span { color: var(--green); }
+    .slide-title.on-light { color: var(--black); }
+    .slide-title.on-light span { color: var(--green-dark); }
+
+    /* Inline speaker notes */
+    .in-practice {
+      margin-top: 22px; padding: 16px 20px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border-left: 3px solid rgba(122,193,66,0.5);
+    }
+    .in-practice.light { background: rgba(0,0,0,0.05); border-left-color: var(--green-dark); }
+    .ip-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 7px; }
+    .ip-label.dark { color: var(--green-dark); }
+    .ip-text { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.65); }
+    .ip-text.dark { color: #445540; }
+    .ip-text p + p { margin-top: 8px; }
+
+    /* Doc callout */
+    .doc-callout {
+      display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px;
+      border-radius: 10px; background: rgba(122,193,66,0.09);
+      border: 1.5px solid rgba(122,193,66,0.28); margin-top: 18px;
+    }
+    .doc-callout.light { background: rgba(90,145,48,0.07); border-color: rgba(90,145,48,0.28); }
+    .dc-icon { font-size: 18px; flex-shrink: 0; }
+    .dc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 5px; }
+    .dc-label.dark { color: var(--green-dark); }
+    .dc-text { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.55; }
+    .dc-text.dark { color: #3a4a35; }
+
+    /* ════ SLIDE 0: Title ════════════════════════════════════ */
+    #slide-0 { background: var(--black); }
+    #slide-0 .slide-inner {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; padding-bottom: 88px;
+    }
+    .title-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+    .title-main { font-family: var(--font-heading); font-size: clamp(32px, 5.5vw, 58px);
+      color: var(--white); line-height: 1.08; margin-bottom: 12px; }
+    .title-main span { color: var(--green); }
+    .title-sub { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 32px;
+      max-width: 500px; line-height: 1.6; }
+    .meta-pills { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+      border-radius: 99px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.6); }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .objective-box { margin-top: 32px; padding: 20px 26px; border-radius: 12px; max-width: 550px;
+      border-left: 3px solid var(--green); background: rgba(122,193,66,0.06); text-align: left; }
+    .obj-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 7px; }
+    .objective-box p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+
+    /* ════ SLIDE 1: Required Greeting ═══════════════════════ */
+    #slide-1 { background: var(--black); }
+    .greeting-box {
+      background: rgba(122,193,66,0.09); border: 2px solid rgba(122,193,66,0.4);
+      border-radius: 14px; padding: 28px 32px; text-align: center; margin-bottom: 24px;
+    }
+    .greeting-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .greeting-text { font-family: var(--font-heading); font-size: clamp(15px, 2.2vw, 21px);
+      color: var(--white); line-height: 1.5; }
+    .greeting-text .placeholder { color: var(--green); font-style: italic; }
+    .tone-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .tone-card {
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 16px 12px; text-align: center;
+      transition: all 0.2s; cursor: default;
+    }
+    .tone-card:hover { border-color: rgba(122,193,66,0.4); background: rgba(122,193,66,0.07); transform: translateY(-2px); }
+    .tone-icon { font-size: 22px; margin-bottom: 8px; }
+    .tone-word { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .tone-desc { font-size: 11px; color: rgba(255,255,255,0.42); line-height: 1.4; }
+
+    /* ════ SLIDE 2: Alternative Openers ═════════════════════ */
+    #slide-2 { background: var(--gray-light); }
+    .opener-cards { display: flex; flex-direction: column; gap: 14px; }
+    .opener-card {
+      background: var(--white); border-radius: 12px; padding: 20px 24px;
+      border-left: 4px solid transparent; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      transition: all 0.2s;
+    }
+    .opener-card:hover { transform: translateX(3px); }
+    .opener-card.voicemail { border-left-color: #4285f4; }
+    .opener-card.scheduling { border-left-color: var(--green); }
+    .opener-card.manager { border-left-color: #9b59b6; }
+    .oc-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 10px; }
+    .opener-card.voicemail .oc-label { color: #4285f4; }
+    .opener-card.scheduling .oc-label { color: var(--green-dark); }
+    .opener-card.manager .oc-label { color: #9b59b6; }
+    .oc-script { font-size: 15px; color: var(--black); line-height: 1.6; }
+    .oc-script .placeholder { color: #4a90a0; font-style: italic; }
+    .oc-note { margin-top: 8px; font-size: 12px; color: #888; line-height: 1.5; }
+
+    /* ════ SLIDE 3: Communication Tone ══════════════════════ */
+    #slide-3 { background: var(--black); }
+    .tone-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .do-dont { display: flex; flex-direction: column; gap: 10px; }
+    .do-item, .dont-item {
+      display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px;
+      border-radius: 10px; font-size: 13.5px; font-weight: 500;
+    }
+    .do-item { background: rgba(122,193,66,0.08); border: 1.5px solid rgba(122,193,66,0.25); color: var(--white); }
+    .do-item::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .dont-item { background: rgba(224,80,80,0.07); border: 1.5px solid rgba(224,80,80,0.2); color: rgba(255,255,255,0.75); }
+    .dont-item::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 12px; }
+    .section-label.green { color: var(--green); }
+    .section-label.red { color: var(--red); }
+    .key-reminder {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px; padding: 18px 22px; margin-top: 20px;
+    }
+    .kr-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 8px; }
+    .kr-text { font-size: 14px; color: var(--white); line-height: 1.6; }
+    .kr-text em { color: var(--green); font-style: normal; font-weight: 600; }
+
+    /* ════ SLIDE 4: Suggested Responses ═════════════════════ */
+    #slide-4 { background: var(--gray-light); }
+    .response-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .response-card {
+      background: var(--white); border-radius: 12px; padding: 18px 20px;
+      border-top: 4px solid transparent; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      transition: all 0.2s; cursor: default;
+    }
+    .response-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+    .response-card.worried { border-top-color: var(--amber); }
+    .response-card.technical { border-top-color: #4285f4; }
+    .response-card.safety { border-top-color: var(--red); }
+    .response-card.urgent { border-top-color: #9b59b6; }
+    .rc-type { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 8px; }
+    .response-card.worried .rc-type { color: var(--amber); }
+    .response-card.technical .rc-type { color: #4285f4; }
+    .response-card.safety .rc-type { color: var(--red); }
+    .response-card.urgent .rc-type { color: #9b59b6; }
+    .rc-situation { font-size: 13px; color: #888; margin-bottom: 10px; font-style: italic; }
+    .rc-response { font-size: 14px; color: var(--black); line-height: 1.6; font-weight: 500; }
+    .rc-formula { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 20px; }
+    .formula-step {
+      padding: 7px 14px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      background: var(--black); color: var(--green); border: 1.5px solid rgba(122,193,66,0.3);
+    }
+    .formula-arrow { color: #aaa; font-size: 14px; align-self: center; }
+
+    /* ════ SLIDE 5: Upset Customers ════════════════════════ */
+    #slide-5 { background: var(--black); }
+    .upset-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .steps-list { display: flex; flex-direction: column; gap: 0; }
+    .step-item {
+      display: flex; gap: 14px; align-items: flex-start; padding: 13px 15px;
+      background: rgba(255,255,255,0.03); border-radius: 0; border: 1px solid rgba(255,255,255,0.06);
+      border-bottom: none; cursor: pointer; transition: all 0.2s;
+    }
+    .step-item:first-child { border-radius: 10px 10px 0 0; }
+    .step-item:last-child { border-radius: 0 0 10px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .step-item:hover { background: rgba(255,255,255,0.06); }
+    .step-item.highlighted { background: rgba(122,193,66,0.1); border-color: rgba(122,193,66,0.3) !important; }
+    .step-num { width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(122,193,66,0.15); display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; font-size: 13px; font-weight: 700;
+      color: var(--green); }
+    .step-item.highlighted .step-num { background: var(--green); color: var(--black); }
+    .step-label { font-size: 14px; font-weight: 600; color: var(--white); margin-top: 5px; }
+    .suggested-response {
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 20px 22px; margin-bottom: 16px;
+    }
+    .sr-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .sr-text { font-size: 15px; color: var(--white); line-height: 1.6; font-style: italic; }
+    .dont-do-box { background: rgba(224,80,80,0.08); border: 1.5px solid rgba(224,80,80,0.25);
+      border-radius: 10px; padding: 14px 18px; }
+    .dd-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 8px; }
+    .dd-item { font-size: 13px; color: rgba(255,255,255,0.72); display: flex; gap: 8px;
+      align-items: flex-start; margin-bottom: 5px; }
+    .dd-item::before { content: '✗'; color: var(--red); flex-shrink: 0; font-weight: 700; }
+
+    /* ════ SLIDE 6: Written Standards ══════════════════════ */
+    #slide-6 { background: var(--gray-light); }
+    .written-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .standards-list { display: flex; flex-direction: column; gap: 9px; }
+    .standard-item {
+      display: flex; gap: 12px; align-items: center; padding: 12px 16px;
+      background: var(--white); border-radius: 9px; font-size: 13.5px;
+      font-weight: 600; color: var(--black); box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border-left: 3px solid var(--green);
+    }
+    .standard-item .si-icon { font-size: 17px; flex-shrink: 0; }
+    .example-email {
+      background: var(--white); border-radius: 12px; padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;
+    }
+    .email-header { background: #f8f8f8; border-bottom: 1px solid #e5e5e5;
+      padding: 12px 18px; display: flex; align-items: center; gap: 8px; }
+    .email-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .email-header span { font-size: 12px; color: #999; margin-left: 4px; }
+    .email-body { padding: 20px 22px; }
+    .email-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--green-dark); margin-bottom: 10px; }
+    .email-text { font-size: 13.5px; color: var(--black); line-height: 1.7; }
+    .email-text .highlight { background: rgba(122,193,66,0.15); border-radius: 3px;
+      padding: 0 3px; color: var(--green-dark); font-weight: 600; }
+
+    /* ════ SLIDE 7: Module Activity ════════════════════════ */
+    #slide-7 { background: var(--black); }
+    .activity-intro { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 24px;
+      max-width: 600px; line-height: 1.6; }
+    #quiz-container { max-width: 760px; }
+    .quiz-progress-wrap { margin-bottom: 20px; }
+    .quiz-progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.1);
+      border-radius: 2px; margin-bottom: 8px; }
+    .quiz-progress-bar { height: 4px; background: var(--green); border-radius: 2px;
+      transition: width 0.4s; width: 0%; }
+    .quiz-progress-label { font-size: 12px; color: rgba(255,255,255,0.38); }
+    .scenario-box {
+      background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 13px; padding: 22px 26px; margin-bottom: 18px;
+    }
+    .scenario-meta { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .scenario-customer { font-size: 11px; color: rgba(255,255,255,0.4);
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .scenario-text { font-size: 18px; font-weight: 600; color: var(--white); line-height: 1.5; font-style: italic; }
+    .scenario-text::before { content: '"'; color: var(--green); }
+    .scenario-text::after { content: '"'; color: var(--green); }
+    .answer-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .answer-option {
+      padding: 15px 18px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); cursor: pointer; transition: all 0.2s;
+      font-size: 13.5px; line-height: 1.55; color: rgba(255,255,255,0.8);
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .answer-option:not(.locked):hover { border-color: var(--green); background: rgba(122,193,66,0.08); }
+    .answer-option.correct { border-color: var(--green); background: rgba(122,193,66,0.12); color: var(--white); }
+    .answer-option.wrong { border-color: var(--red); background: rgba(224,80,80,0.08); color: rgba(255,255,255,0.6); }
+    .answer-option.correct.selected { background: rgba(122,193,66,0.18); }
+    .answer-option.wrong.selected { background: rgba(224,80,80,0.14); }
+    .answer-option.dimmed { opacity: 0.4; }
+    .answer-letter {
+      width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5);
+    }
+    .answer-option.correct .answer-letter { background: var(--green); border-color: var(--green); color: var(--black); }
+    .answer-option.wrong.selected .answer-letter { background: var(--red); border-color: var(--red); color: var(--white); }
+    .feedback-box {
+      padding: 16px 20px; border-radius: 10px; margin-bottom: 16px;
+      display: none; border: 1.5px solid; animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .feedback-box.show { display: block; }
+    .feedback-box.correct-fb { background: rgba(122,193,66,0.1); border-color: rgba(122,193,66,0.35); }
+    .feedback-box.wrong-fb { background: rgba(224,80,80,0.08); border-color: rgba(224,80,80,0.3); }
+    .fb-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .feedback-box.correct-fb .fb-title { color: var(--green); }
+    .feedback-box.wrong-fb .fb-title { color: var(--red); }
+    .fb-explanation { font-size: 13px; color: rgba(255,255,255,0.72); line-height: 1.6; }
+    .quiz-btn { height: 40px; padding: 0 22px; border-radius: 20px;
+      background: var(--green); border: none; color: var(--black); font-family: var(--font-body);
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: none; }
+    .quiz-btn:hover { background: var(--green-dark); color: var(--white); }
+    .quiz-btn.show { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* Score screen */
+    #score-screen { display: none; text-align: center; padding: 40px 20px; }
+    #score-screen.show { display: block; animation: slideIn 0.4s ease; }
+    .score-circle {
+      width: 110px; height: 110px; border-radius: 50%; border: 4px solid var(--green);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      margin: 0 auto 20px; background: rgba(122,193,66,0.1);
+    }
+    .score-num { font-family: var(--font-heading); font-size: 36px; color: var(--green); line-height: 1; }
+    .score-denom { font-size: 14px; color: rgba(255,255,255,0.5); }
+    .score-message { font-family: var(--font-heading); font-size: 24px; color: var(--white); margin-bottom: 10px; }
+    .score-sub { font-size: 14px; color: rgba(255,255,255,0.55); max-width: 400px; margin: 0 auto 24px; line-height: 1.6; }
+    .restart-btn { height: 42px; padding: 0 24px; border-radius: 21px;
+      background: transparent; border: 1.5px solid var(--green); color: var(--green);
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; }
+    .restart-btn:hover { background: var(--green); color: var(--black); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(122,193,66,0.28); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .tone-grid { grid-template-columns: repeat(3, 1fr); }
+      .response-cards, .upset-layout, .written-layout, .tone-layout { grid-template-columns: 1fr; }
+      .slide-inner { padding: 22px 20px 88px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">BK</div>
+    <span>Module 5: Communication Standards</span>
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <span class="nav-time">⏱ 17 min</span>
+</nav>
+
+<div id="nav-controls">
+  <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter">1 / 8</span>
+  <button class="nav-btn primary" id="next-btn" onclick="navigate(1)">Next →</button>
+</div>
+
+<div id="slides-container">
+
+<!-- ══ SLIDE 0: Title ══════════════════════════════════════ -->
+<section class="slide active" id="slide-0">
+  <div class="slide-inner">
+    <div class="title-eyebrow">BuzzKill Admin Training</div>
+    <h1 class="title-main">Module 5:<br><span>Customer Communication</span></h1>
+    <p class="title-sub">How to answer calls, respond to common situations, handle upset customers, and write clearly — every time.</p>
+    <div class="meta-pills">
+      <div class="pill"><span class="dot"></span> 17 minutes</div>
+      <div class="pill"><span class="dot"></span> Interactive Scenarios</div>
+    </div>
+    <div class="objective-box">
+      <div class="obj-label">Learning Objective</div>
+      <p>You will be able to use BuzzKill's communication standards to answer calls, respond to common situations, and escalate technical or sensitive issues appropriately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 1: Required Greeting ═════════════════════════ -->
+<section class="slide" id="slide-1">
+  <div class="slide-inner">
+    <div class="slide-number">Section 1 of 6</div>
+    <h2 class="slide-title">Required <span>Phone Greeting</span></h2>
+    <div class="greeting-box">
+      <div class="greeting-label">Required Greeting — use this every time</div>
+      <div class="greeting-text">
+        "Thank you for choosing BuzzKill Pest Control, this is <span class="placeholder">[Name]</span>. How can I help you today?"
+      </div>
+    </div>
+    <div class="tone-grid">
+      <div class="tone-card">
+        <div class="tone-icon">☀️</div>
+        <div class="tone-word">Warm</div>
+        <div class="tone-desc">Welcoming, not cold or transactional</div>
+      </div>
+      <div class="tone-card">
+        <div class="tone-icon">🔊</div>
+        <div class="tone-word">Clear</div>
+        <div class="tone-desc">Spoken slowly enough to understand</div>
+      </div>
+      <div class="tone-card">
+        <div class="tone-icon">🧘</div>
+        <div class="tone-word">Not Rushed</div>
+        <div class="tone-desc">No matter how busy the queue is</div>
+      </div>
+      <div class="tone-card">
+        <div class="tone-icon">🤝</div>
+        <div class="tone-word">Helpful</div>
+        <div class="tone-desc">Ready to assist, not gatekeeping</div>
+      </div>
+      <div class="tone-card">
+        <div class="tone-icon">📋</div>
+        <div class="tone-word">Process-Ready</div>
+        <div class="tone-desc">Confident about next steps</div>
+      </div>
+    </div>
+    <div class="in-practice">
+      <div class="ip-label">In Practice</div>
+      <div class="ip-text">
+        <p>The greeting matters because it creates consistency and professionalism. Customers may be anxious, frustrated, or embarrassed about their pest situation. A calm, organized greeting lowers the temperature immediately and signals that BuzzKill is ready to help — not reactive or disorganized.</p>
+        <p>Use this greeting on every incoming call, without exception. It is not optional, and it is not something to skip when you are busy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 2: Alternative Openers ═══════════════════════ -->
+<section class="slide" id="slide-2">
+  <div class="slide-inner">
+    <div class="slide-number dark">Section 2 of 6</div>
+    <h2 class="slide-title on-light">Alternative <span>Openers</span></h2>
+    <div class="opener-cards">
+      <div class="opener-card voicemail">
+        <div class="oc-label">Returning a Voicemail</div>
+        <div class="oc-script">"Thank you for choosing BuzzKill Pest Control, this is <span class="placeholder">[Name]</span>. I'm returning your call about <span class="placeholder">[topic]</span>."</div>
+        <div class="oc-note">Name the reason for the call immediately so the customer knows why you're reaching out.</div>
+      </div>
+      <div class="opener-card scheduling">
+        <div class="oc-label">Scheduling Call</div>
+        <div class="oc-script">"Thank you for choosing BuzzKill Pest Control, this is <span class="placeholder">[Name]</span>. I'm calling to help coordinate your upcoming service."</div>
+        <div class="oc-note">Explain that you are coordinating service — this frames the call as helpful and expected.</div>
+      </div>
+      <div class="opener-card manager">
+        <div class="oc-label">Calling a Property Manager</div>
+        <div class="oc-script">"Thank you for choosing BuzzKill Pest Control, this is <span class="placeholder">[Name]</span>. I'm reaching out regarding service at <span class="placeholder">[property/community name]</span>."</div>
+        <div class="oc-note">Reference the property or community name so they immediately have the context they need.</div>
+      </div>
+    </div>
+    <div class="doc-callout light">
+      <div class="dc-icon">📋</div>
+      <div>
+        <div class="dc-label dark">Consistency Rule</div>
+        <div class="dc-text dark">The BuzzKill greeting stays intact in all three openers. You adapt the middle — the reason for the call — but never drop the opening or your name. Every caller should know immediately who they are speaking with and that they reached BuzzKill.</div>
+      </div>
+    </div>
+    <div class="in-practice light">
+      <div class="ip-label dark">In Practice</div>
+      <div class="ip-text dark">When returning a voicemail, name the reason for the call. When scheduling, explain that you are coordinating service. When calling a property manager, reference the property name so they have immediate context — property managers handle multiple accounts and need to orient quickly.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 3: Communication Tone ════════════════════════ -->
+<section class="slide" id="slide-3">
+  <div class="slide-inner">
+    <div class="slide-number">Section 3 of 6</div>
+    <h2 class="slide-title">Communication <span>Tone</span></h2>
+    <div class="tone-layout">
+      <div>
+        <div class="section-label green">BuzzKill communication is:</div>
+        <div class="do-dont">
+          <div class="do-item">Calm — even when the customer isn't</div>
+          <div class="do-item">Clear — specific, not vague</div>
+          <div class="do-item">Respectful — always, regardless of tone received</div>
+          <div class="do-item">Practical — focused on the next step</div>
+          <div class="do-item">Accurate — no guessing, no promises not backed up</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label red">BuzzKill communication is never:</div>
+        <div class="do-dont">
+          <div class="dont-item">Defensive — no justifying or blame-shifting</div>
+          <div class="dont-item">Dismissive — customers' concerns are always valid</div>
+          <div class="dont-item">Overly technical — avoid jargon the customer won't understand</div>
+          <div class="dont-item">Rushed — take the time to get details right</div>
+          <div class="dont-item">Imprecise — vague answers create more calls</div>
+        </div>
+      </div>
+    </div>
+    <div class="key-reminder">
+      <div class="kr-label">Remember</div>
+      <div class="kr-text">Customers don't just need an answer. They need <em>confidence that the issue is being handled</em>. Your tone is part of what delivers that confidence — even when you don't have the final answer yet.</div>
+    </div>
+    <div class="in-practice">
+      <div class="ip-label">In Practice</div>
+      <div class="ip-text">
+        <p>Pest issues can feel personal and urgent. A customer may be worried about health, property damage, embarrassment, pets, children, or tenant complaints. You do not need to have every answer immediately. You do need to show that you are taking the concern seriously and moving it to the right next step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 4: Suggested Responses ══════════════════════ -->
+<section class="slide" id="slide-4">
+  <div class="slide-inner">
+    <div class="slide-number dark">Section 4 of 6</div>
+    <h2 class="slide-title on-light">Suggested Responses for <span>Common Situations</span></h2>
+    <div class="response-cards">
+      <div class="response-card worried">
+        <div class="rc-type">Worried Customer</div>
+        <div class="rc-situation">Customer is anxious, stressed, or upset about a pest concern</div>
+        <div class="rc-response">"I understand why that would be concerning. Let me collect a few details so we can route this properly."</div>
+      </div>
+      <div class="response-card technical">
+        <div class="rc-type">Technical Question</div>
+        <div class="rc-situation">Customer asks about treatment methods, product types, or pest identification</div>
+        <div class="rc-response">"I don't want to guess or give inaccurate information. I'll document that and have the technician or manager review it."</div>
+      </div>
+      <div class="response-card safety">
+        <div class="rc-type">Safety Question</div>
+        <div class="rc-situation">Customer asks about product safety for people, pets, or children</div>
+        <div class="rc-response">"For product-specific safety information, we refer to the SDS and product label. I can help route that question to the right person."</div>
+      </div>
+      <div class="response-card urgent">
+        <div class="rc-type">Urgent Request</div>
+        <div class="rc-situation">Customer needs service quickly or is pressuring for a same-day response</div>
+        <div class="rc-response">"I'll check the schedule and make sure we capture the right details so the technician is prepared."</div>
+      </div>
+    </div>
+    <div style="margin-top:18px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:10px;">The pattern behind every strong response:</div>
+      <div class="rc-formula">
+        <span class="formula-step">Acknowledge</span>
+        <span class="formula-arrow">→</span>
+        <span class="formula-step">Collect Details</span>
+        <span class="formula-arrow">→</span>
+        <span class="formula-step">Document</span>
+        <span class="formula-arrow">→</span>
+        <span class="formula-step">Route</span>
+      </div>
+    </div>
+    <div class="in-practice light">
+      <div class="ip-label dark">In Practice</div>
+      <div class="ip-text dark">These responses acknowledge the customer without overpromising. For safety questions, refer to the SDS and product label rather than answering from memory. For technical questions, involve the technician or manager. Stay within your role — that protects the customer and BuzzKill.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 5: Handling Upset Customers ══════════════════ -->
+<section class="slide" id="slide-5">
+  <div class="slide-inner">
+    <div class="slide-number">Section 5 of 6</div>
+    <h2 class="slide-title">Handling <span>Upset Customers</span></h2>
+    <div class="upset-layout">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:12px;">When a customer is upset:</div>
+        <div class="steps-list">
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">1</div><div class="step-label">Let them explain</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">2</div><div class="step-label">Acknowledge the concern</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">3</div><div class="step-label">Avoid arguing</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">4</div><div class="step-label">Ask clarifying questions</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">5</div><div class="step-label">Check service history</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">6</div><div class="step-label">Document the facts</div></div>
+          <div class="step-item" onclick="highlightStep(this)"><div class="step-num">7</div><div class="step-label">Escalate when appropriate</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="suggested-response">
+          <div class="sr-label">Suggested Response</div>
+          <div class="sr-text">I understand this is frustrating. I'm going to document the details, check the service history, and make sure the right person is looped in.</div>
+        </div>
+        <div class="dont-do-box">
+          <div class="dd-label">Never do this:</div>
+          <div class="dd-item">Blame the customer, technician, property manager, or board</div>
+          <div class="dd-item">Take frustration personally or become defensive</div>
+          <div class="dd-item">Make promises you cannot keep to de-escalate</div>
+          <div class="dd-item">Dismiss the concern or minimize the problem</div>
+        </div>
+        <div class="in-practice" style="margin-top:16px;">
+          <div class="ip-label">In Practice</div>
+          <div class="ip-text">Customers may be upset because they are still seeing activity, expected a different outcome, or feel the issue is urgent. Your job is to slow the conversation down, collect facts, and avoid defensiveness. Use neutral language and document what was reported — not your interpretation of it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 6: Written Communication ════════════════════ -->
+<section class="slide" id="slide-6">
+  <div class="slide-inner">
+    <div class="slide-number dark">Section 6 of 6</div>
+    <h2 class="slide-title on-light">Written Communication <span>Standards</span></h2>
+    <div class="written-layout">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:12px;">Good written responses are:</div>
+        <div class="standards-list">
+          <div class="standard-item"><span class="si-icon">✏️</span> Clear — no ambiguous language</div>
+          <div class="standard-item"><span class="si-icon">⚖️</span> Brief but complete — covers what matters</div>
+          <div class="standard-item"><span class="si-icon">🏢</span> Professional — appropriate for any reader</div>
+          <div class="standard-item"><span class="si-icon">➡️</span> Specific about next steps — never vague</div>
+          <div class="standard-item"><span class="si-icon">🚫</span> Free of unsupported promises</div>
+        </div>
+        <div class="doc-callout light" style="margin-top:16px;">
+          <div class="dc-icon">💬</div>
+          <div>
+            <div class="dc-label dark">Internal vs. Customer-Facing</div>
+            <div class="dc-text dark">Use internal comments in Front for teammate questions. Never put internal notes in a customer-facing reply. If you need to ask your team something, comment internally first.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="example-email">
+          <div class="email-header">
+            <div class="email-dot" style="background:#ff5f57"></div>
+            <div class="email-dot" style="background:#ffbd2e;margin-left:6px;"></div>
+            <div class="email-dot" style="background:#28c840;margin-left:6px;"></div>
+            <span>Sample Association Email Response</span>
+          </div>
+          <div class="email-body">
+            <div class="email-label">Strong written response:</div>
+            <div class="email-text">
+              Thank you for reaching out. I've documented the reported activity in <span class="highlight">Building 2, Units 104 and 207</span>, and the <span class="highlight">common laundry area</span>. I'm going to route this for review and scheduling guidance. We'll follow up with the <span class="highlight">next available service options</span>.
+            </div>
+          </div>
+        </div>
+        <div class="in-practice light" style="margin-top:16px;">
+          <div class="ip-label dark">In Practice</div>
+          <div class="ip-text dark">Confirm what you understood. State what you are doing next. For association work, include property, building, unit, and common area details when relevant. Avoid making unsupported promises. Keep it professional enough that a board member, property manager, or technician could all read it and understand exactly what is happening.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SLIDE 7: Module Activity ══════════════════════════ -->
+<section class="slide" id="slide-7">
+  <div class="slide-inner">
+    <div class="slide-number">Module Activity</div>
+    <h2 class="slide-title">Call Response <span>Practice</span></h2>
+    <p class="activity-intro">Read each customer statement and choose the best response. You'll see feedback after each selection explaining what works and why.</p>
+
+    <div id="quiz-container">
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-bar-wrap"><div class="quiz-progress-bar" id="quiz-bar"></div></div>
+        <div class="quiz-progress-label" id="quiz-progress-label">Scenario 1 of 4</div>
+      </div>
+
+      <div id="scenario-area"></div>
+
+      <div id="feedback-area" class="feedback-box"></div>
+      <button class="quiz-btn" id="next-q-btn" onclick="nextQuestion()">Next Scenario →</button>
+    </div>
+
+    <div id="score-screen">
+      <div class="score-circle">
+        <div class="score-num" id="score-num">0</div>
+        <div class="score-denom">/ 4</div>
+      </div>
+      <div class="score-message" id="score-msg"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <button class="restart-btn" onclick="restartQuiz()">↩ Try Again</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /slides-container -->
+
+<script>
+// ── Navigation ───────────────────────────────────────────
+let current = 0;
+const TOTAL = 8;
+const slides = document.querySelectorAll('.slide');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const counter = document.getElementById('slide-counter');
+const pb = document.getElementById('progress-bar');
+const visited = new Set([0]);
+
+const dotsEl = document.getElementById('nav-dots');
+['Intro','Greeting','Openers','Tone','Responses','Upset','Written','Activity'].forEach((label, i) => {
+  const d = document.createElement('div');
+  d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  d.title = label; d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+});
+
+function updateUI() {
+  dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.className = 'nav-dot';
+    if (i === current) d.classList.add('active');
+    else if (visited.has(i)) d.classList.add('visited');
+  });
+  pb.style.width = (current / (TOTAL - 1) * 100) + '%';
+  counter.textContent = (current + 1) + ' / ' + TOTAL;
+  prevBtn.disabled = current === 0;
+  nextBtn.textContent = current === TOTAL - 1 ? '✓ Complete' : 'Next →';
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL || idx === current) return;
+  const prev = current;
+  slides[prev].classList.remove('active');
+  slides[prev].classList.add('exit');
+  setTimeout(() => slides[prev].classList.remove('exit'), 440);
+  current = idx; visited.add(current);
+  setTimeout(() => slides[current].classList.add('active'), 30);
+  updateUI();
+  if (idx === 7 && !quizStarted) startQuiz();
+}
+
+function navigate(d) { goTo(current + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navigate(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+});
+
+function highlightStep(el) {
+  document.querySelectorAll('.step-item').forEach(s => s.classList.remove('highlighted'));
+  el.classList.add('highlighted');
+}
+
+// ── Quiz ─────────────────────────────────────────────────
+const scenarios = [
+  {
+    id: 1,
+    customer: "Worried homeowner",
+    situation: "Is this treatment safe for my dog?",
+    options: [
+      { text: "Yes, all of our products are pet-safe once they've dried — usually about 30 minutes.", correct: false, feedback: "This overpromises specific safety information you aren't qualified to confirm. Product safety depends on the specific treatment, and only the SDS and product label — reviewed by the technician — can give accurate guidance." },
+      { text: "For product-specific safety information, we refer to the SDS and product label. I'll route this so the technician or manager can confirm details for your service.", correct: true, feedback: "This is the correct response. You acknowledge the concern without guessing, you refer to the authoritative source (SDS/product label), and you route it to the right person. You stay within your role." },
+      { text: "I'm not sure — you should probably look that up on our website or call the product manufacturer.", correct: false, feedback: "This is dismissive and unhelpful. The customer reached out to BuzzKill. Sending them elsewhere without documentation or routing is a missed opportunity to handle the concern correctly." },
+      { text: "You'll need to keep your dog outside for 24 hours after any treatment.", correct: false, feedback: "This gives specific safety advice from memory, which is exactly what admin staff should avoid. Different products have different requirements, and only the SDS and technician can give accurate instructions for a specific service." }
+    ]
+  },
+  {
+    id: 2,
+    customer: "Property manager",
+    situation: "Can you tell from this photo if it's termites?",
+    options: [
+      { text: "Those look like termites to me — the wings are a giveaway. You should schedule an inspection right away.", correct: false, feedback: "Diagnosing pests from a photo is outside the admin role and risks giving inaccurate information. Even trained technicians use photos only as a starting point — not a diagnosis." },
+      { text: "I can't help with photos — you'd need to schedule an in-person inspection for us to say anything.", correct: false, feedback: "While an inspection is ultimately needed, this response doesn't capture the photo or route it properly. A better approach uses the photo as part of the intake process rather than dismissing it." },
+      { text: "I can attach the photo for review, but I do not want to diagnose from the photo myself. I'll route this to the appropriate person.", correct: true, feedback: "Correct. You capture the information (photo), explain your limitation without apologizing, and route it appropriately. This keeps the intake moving without overstepping your role." },
+      { text: "Those are probably just carpenter ants — they get mistaken for termites all the time.", correct: false, feedback: "This is a diagnosis from memory based on a photo — exactly the kind of statement admin staff should avoid. If this turns out to be wrong, it damages trust and could delay necessary treatment." }
+    ]
+  },
+  {
+    id: 3,
+    customer: "Residential homeowner",
+    situation: "The technician already came and I still see ants.",
+    options: [
+      { text: "I understand that's frustrating. Let me check the service history, document what you're seeing now, and determine the right next step.", correct: true, feedback: "This is the correct response. You acknowledge the frustration without defensiveness, you commit to a process (check history, document, determine next step), and you avoid making promises about what that next step will be." },
+      { text: "The technician completed the treatment correctly — sometimes it takes 1–2 weeks for ants to clear out after treatment.", correct: false, feedback: "This is defensive and dismissive. Even if there's a legitimate explanation, the customer's concern deserves documentation and review — not an immediate explanation that minimizes their experience without checking the service history first." },
+      { text: "I'll schedule another free visit right away — you shouldn't still be seeing them.", correct: false, feedback: "This makes an unauthorized promise (free visit) and skips the documentation and review process entirely. You don't yet know what the service history shows, what was treated, or what the appropriate next step is." },
+      { text: "You might have a more severe infestation than initially thought.", correct: false, feedback: "This is speculative, could alarm the customer further, and doesn't help move the situation toward resolution. Document first, then route for review — don't speculate on causes." }
+    ]
+  },
+  {
+    id: 4,
+    customer: "Board member — condo association",
+    situation: "Our board president wants this fixed today.",
+    options: [
+      { text: "We'll have a technician out by end of day — I'll make that happen.", correct: false, feedback: "This makes an unauthorized scheduling commitment. You don't have visibility into the full schedule or what escalation options exist. Promising same-day service without checking creates expectations BuzzKill may not be able to meet." },
+      { text: "I understand the urgency. I'll capture the affected areas and check scheduling and escalation options.", correct: true, feedback: "Correct. You acknowledge the urgency, commit to capturing the necessary details, and are transparent that you'll explore options — without promising something you can't confirm. This response is professional, accurate, and actionable." },
+      { text: "Same-day service usually isn't possible — you'd need to have called earlier in the day.", correct: false, feedback: "This is unnecessarily dismissive of both the urgency and the customer. Even if same-day service isn't always possible, the correct response is to check options and escalate — not to explain why it won't work before you've even tried." },
+      { text: "Tell the board president to send us an email and we'll get back to them within 24 hours.", correct: false, feedback: "This deflects a direct, urgent request and introduces unnecessary delay. The board member is already on the phone — this is the time to capture details and check options, not redirect them to another channel." }
+    ]
+  }
+];
+
+let qIndex = 0;
+let score = 0;
+let answered = false;
+let quizStarted = false;
+
+function startQuiz() {
+  quizStarted = true;
+  qIndex = 0; score = 0;
+  document.getElementById('quiz-container').style.display = 'block';
+  document.getElementById('score-screen').classList.remove('show');
+  renderQuestion();
+}
+
+function restartQuiz() {
+  document.getElementById('score-screen').classList.remove('show');
+  document.getElementById('quiz-container').style.display = 'block';
+  qIndex = 0; score = 0;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = scenarios[qIndex];
+  const qBar = document.getElementById('quiz-bar');
+  const qLabel = document.getElementById('quiz-progress-label');
+  qBar.style.width = ((qIndex / scenarios.length) * 100) + '%';
+  qLabel.textContent = `Scenario ${qIndex + 1} of ${scenarios.length}`;
+
+  // Shuffle options
+  const opts = [...q.options].sort(() => Math.random() - 0.5);
+  const letters = ['A','B','C','D'];
+
+  let html = `
+    <div class="scenario-box">
+      <div class="scenario-meta">Scenario ${q.id} — ${q.customer}</div>
+      <div class="scenario-customer">Customer says:</div>
+      <div class="scenario-text">${q.situation}</div>
+    </div>
+    <div class="answer-options" id="options-wrap">
+  `;
+  opts.forEach((opt, i) => {
+    html += `<div class="answer-option" onclick="selectAnswer(this, ${opt.correct}, '${escQ(opt.feedback)}')">
+      <span class="answer-letter">${letters[i]}</span>
+      <span>${opt.text}</span>
+    </div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('scenario-area').innerHTML = html;
+  const fb = document.getElementById('feedback-area');
+  fb.className = 'feedback-box';
+  fb.innerHTML = '';
+  const btn = document.getElementById('next-q-btn');
+  btn.className = 'quiz-btn';
+  btn.textContent = qIndex < scenarios.length - 1 ? 'Next Scenario →' : 'See Results →';
+}
+
+function escQ(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+function selectAnswer(el, isCorrect, feedbackText) {
+  if (answered) return;
+  answered = true;
+
+  const allOpts = document.querySelectorAll('.answer-option');
+  allOpts.forEach(opt => {
+    opt.classList.add('locked');
+    const isThisCorrect = opt.onclick.toString().includes('true');
+    if (isThisCorrect) opt.classList.add('correct');
+    else opt.classList.add('dimmed');
+  });
+
+  el.classList.remove('dimmed');
+  if (isCorrect) {
+    el.classList.add('correct', 'selected');
+    score++;
+  } else {
+    el.classList.add('wrong', 'selected');
+  }
+
+  const fb = document.getElementById('feedback-area');
+  fb.className = 'feedback-box show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = `
+    <div class="fb-title">${isCorrect ? '✓ Correct' : '✗ Not quite'}</div>
+    <div class="fb-explanation">${feedbackText}</div>
+  `;
+
+  document.getElementById('next-q-btn').classList.add('show');
+}
+
+function nextQuestion() {
+  qIndex++;
+  if (qIndex >= scenarios.length) {
+    showScore();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showScore() {
+  document.getElementById('quiz-bar').style.width = '100%';
+  document.getElementById('quiz-progress-label').textContent = 'Complete';
+  document.getElementById('quiz-container').style.display = 'none';
+
+  const ss = document.getElementById('score-screen');
+  document.getElementById('score-num').textContent = score;
+
+  let msg, sub;
+  if (score === 4) {
+    msg = 'Excellent Work';
+    sub = 'You identified the correct response in every scenario. You understand how to acknowledge, document, and route customer concerns without overstepping your role.';
+  } else if (score >= 3) {
+    msg = 'Strong Performance';
+    sub = 'You got most responses right. Review the scenarios you missed and pay attention to the pattern: acknowledge, collect details, document, route.';
+  } else if (score >= 2) {
+    msg = 'Good Start';
+    sub = 'You\'re getting there. Review the feedback on the scenarios you missed — the key is staying within your role: no guessing, no promises, document and route.';
+  } else {
+    msg = 'Keep Practicing';
+    sub = 'Review the speaker notes and suggested responses in the earlier slides, then try again. Focus on the core pattern: acknowledge, collect, document, route.';
+  }
+
+  document.getElementById('score-msg').textContent = msg;
+  document.getElementById('score-sub').textContent = sub;
+  ss.classList.add('show');
+}
+
+updateUI();
+</script>
+</body>
+</html>
