@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module 2: Pest Control Business Basics for Marketers | Digital Marketing for BuzzKill Pest Control</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='8' fill='%230e0e0c' stroke='%235fd12f' stroke-width='3'/%3E%3Ctext x='16' y='20' text-anchor='middle' font-family='Arial' font-size='11' font-weight='900' fill='%235fd12f'%3EBK%3C/text%3E%3Cpath d='M7 23 25 9' stroke='%235fd12f' stroke-width='2.5'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0e0e0c;
+      --lime: #5fd12f;
+      --forest: #1f5a14;
+      --cream: #fbf8f2;
+      --ink: #1b1914;
+      --stone: #504b40;
+      --warm-gray: #7a7363;
+      --mint: #d4ecc4;
+      --sand: #ebe3d0;
+      --tan: #d6cdb8;
+      --red: #e03a2f;
+      --amber: #e8a33d;
+      --white: #ffffff;
+      --success-bg: #edf7e8;
+      --error-bg: #fff1ef;
+      --focus: #155eef;
+      --shadow-sm: 0 2px 8px rgba(27, 25, 20, 0.08);
+      --shadow-md: 0 10px 28px rgba(27, 25, 20, 0.12);
+      --topbar-h: 64px;
+      --stepper-h: 38px;
+      --footer-h: 54px;
+      --font-display: "Fraunces", Georgia, serif;
+      --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: clamp(13px, 1.25vw, 15px);
+      line-height: 1.5;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    a:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .course {
+      width: 100vw;
+      height: 100dvh;
+      max-width: calc(100dvh * 16 / 9);
+      max-height: calc(100vw * 9 / 16);
+      aspect-ratio: 16 / 9;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: var(--topbar-h) var(--stepper-h) minmax(0, 1fr) var(--footer-h);
+      overflow: hidden;
+      background: var(--cream);
+      border: 1px solid rgba(14, 14, 12, 0.1);
+    }
+
+    @supports not (height: 100dvh) {
+      .course { height: 100vh; max-width: calc(100vh * 16 / 9); }
+    }
+
+    .topbar {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 14px;
+      color: var(--cream);
+      background: var(--black);
+      border-bottom: 3px solid var(--lime);
+    }
+
+    .brand-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: auto;
+      height: 50px;
+      flex: 0 0 auto;
+      display: block;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .course-title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+      font-size: clamp(0.9rem, 1.55vw, 1.05rem);
+      line-height: 1.1;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .progress-compact {
+      width: clamp(104px, 14vw, 148px);
+    }
+
+    .progress-track {
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(251, 248, 242, 0.16);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--lime);
+      transition: width 200ms ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+      color: rgba(251, 248, 242, 0.82);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .reset {
+      min-height: 30px;
+      border: 1px solid rgba(251, 248, 242, 0.24);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--cream);
+      background: transparent;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 4px;
+      min-width: 0;
+      padding: 6px 8px;
+      background: rgba(251, 248, 242, 0.96);
+      border-bottom: 1px solid var(--tan);
+      overflow: hidden;
+    }
+
+    .step-btn {
+      min-width: 0;
+      min-height: 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid var(--tan);
+      border-radius: 999px;
+      padding: 3px 5px;
+      color: var(--stone);
+      background: var(--cream);
+      font-size: clamp(0.54rem, 0.72vw, 0.66rem);
+      font-weight: 800;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .step-num {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--stone);
+      background: var(--sand);
+      font-size: 0.58rem;
+      font-weight: 900;
+    }
+
+    .step-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .step-btn.active {
+      color: var(--forest);
+      border-color: rgba(31, 90, 20, 0.34);
+      background: var(--mint);
+    }
+
+    .step-btn.active .step-num,
+    .step-btn.done .step-num {
+      color: var(--cream);
+      background: var(--forest);
+    }
+
+    .viewer {
+      min-height: 0;
+      overflow-y: auto;
+      padding: 12px;
+      scroll-behavior: smooth;
+      background:
+        linear-gradient(115deg, rgba(95, 209, 47, 0.08), transparent 32%),
+        var(--cream);
+    }
+
+    .slide {
+      display: none;
+      max-width: 980px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--tan);
+      border-radius: 12px;
+      background: rgba(251, 248, 242, 0.96);
+      box-shadow: var(--shadow-md);
+      animation: fade 160ms ease;
+    }
+
+    .slide.dark {
+      color: var(--cream);
+      border-color: rgba(95, 209, 47, 0.22);
+      background: var(--black);
+    }
+
+    .slide.active { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-head {
+      padding: 16px 18px 13px;
+      border-bottom: 1px solid var(--tan);
+      background: linear-gradient(180deg, #fffaf0 0%, var(--cream) 100%);
+    }
+
+    .slide.dark .slide-head {
+      border-bottom-color: rgba(95, 209, 47, 0.24);
+      background: radial-gradient(circle at top right, rgba(95, 209, 47, 0.14), transparent 34%), var(--black);
+    }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--forest);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .slide.dark .eyebrow { color: var(--lime); }
+
+    .slide-title {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 3.1vw, 2rem);
+      font-weight: 650;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .slide-title em {
+      color: var(--forest);
+      font-style: italic;
+    }
+
+    .slide.dark .slide-title { color: var(--cream); }
+    .slide.dark .slide-title em { color: var(--lime); }
+
+    .slide-body {
+      padding: 16px 18px 18px;
+    }
+
+    p,
+    h3 {
+      margin-top: 0;
+    }
+
+    p { margin-bottom: 10px; }
+
+    ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    li + li { margin-top: 4px; }
+
+    .lede {
+      color: var(--stone);
+      font-size: clamp(0.94rem, 1.35vw, 1.03rem);
+      line-height: 1.56;
+    }
+
+    .slide.dark .lede { color: rgba(251, 248, 242, 0.78); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card,
+    .callout,
+    .panel,
+    .activity-card {
+      border: 1px solid var(--tan);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.56);
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .slide.dark .card,
+    .slide.dark .callout,
+    .slide.dark .panel,
+    .slide.dark .activity-card {
+      color: var(--cream);
+      border-color: rgba(95, 209, 47, 0.22);
+      background: rgba(251, 248, 242, 0.05);
+    }
+
+    .callout {
+      border-left: 5px solid var(--forest);
+      background: #f2f6ea;
+    }
+
+    .slide.dark .callout {
+      border-left-color: var(--lime);
+      background: rgba(95, 209, 47, 0.1);
+    }
+
+    .callout.warning {
+      border-left-color: var(--amber);
+      background: #fff8eb;
+    }
+
+    .icon-tile {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: var(--forest);
+      background: var(--mint);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .card h3,
+    .panel h3,
+    .activity-card h3,
+    .callout h3 {
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 1.08rem;
+      font-weight: 650;
+      line-height: 1.15;
+    }
+
+    .slide.dark h3 { color: var(--cream); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+      color: var(--forest);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .slide.dark .tag { color: var(--lime); }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .service-card {
+      border: 1px solid var(--tan);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.58);
+      overflow: hidden;
+    }
+
+    .service-toggle {
+      width: 100%;
+      min-height: 58px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .service-toggle strong {
+      display: block;
+      font-size: 0.94rem;
+      line-height: 1.15;
+    }
+
+    .service-toggle span {
+      display: block;
+      color: var(--warm-gray);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .chevron {
+      color: var(--forest);
+      font-weight: 900;
+      transition: transform 160ms ease;
+    }
+
+    .service-card.open .chevron { transform: rotate(90deg); }
+
+    .service-detail {
+      display: none;
+      padding: 0 12px 12px 62px;
+      color: var(--stone);
+      font-size: 0.84rem;
+    }
+
+    .service-card.open .service-detail { display: block; }
+
+    .service-detail b {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn,
+    .button {
+      min-height: 36px;
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 8px 13px;
+      color: var(--ink);
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tab-btn.active,
+    .button.primary {
+      color: var(--cream);
+      border-color: var(--forest);
+      background: var(--forest);
+    }
+
+    .button.dark-primary {
+      color: var(--black);
+      border-color: var(--lime);
+      background: var(--lime);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .button.secondary {
+      border-color: var(--tan);
+      background: rgba(255, 255, 255, 0.48);
+    }
+
+    .audience-panel { display: none; }
+    .audience-panel.active { display: block; }
+
+    .mini-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--tan);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--tan);
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.42;
+    }
+
+    th {
+      color: var(--forest);
+      background: var(--sand);
+      font-size: 0.74rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .season-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .season-card {
+      border: 1px solid var(--tan);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .season-card h3 {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .season-card small {
+      color: var(--forest);
+      font-family: var(--font-body);
+      font-weight: 900;
+    }
+
+    .match-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: minmax(160px, 0.9fr) minmax(190px, 1fr);
+      gap: 9px;
+      align-items: center;
+    }
+
+    .query {
+      border: 1px solid var(--tan);
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: rgba(255, 255, 255, 0.56);
+      font-weight: 800;
+    }
+
+    select {
+      width: 100%;
+      min-height: 38px;
+      border: 1.5px solid var(--tan);
+      border-radius: 8px;
+      padding: 8px;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.good { border: 1px solid #bad9ad; background: var(--success-bg); color: var(--forest); }
+    .feedback.bad { border: 1px solid #f0b4ae; background: var(--error-bg); color: #8f2019; }
+
+    .do-dont {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .do-panel { border-left: 5px solid var(--forest); }
+    .dont-panel { border-left: 5px solid var(--red); }
+
+    .scenario-options,
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .choice {
+      width: 100%;
+      border: 1.5px solid var(--tan);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.62);
+      text-align: left;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .choice[disabled] { cursor: default; opacity: 0.78; }
+    .choice.correct { border-color: var(--forest); background: var(--success-bg); }
+    .choice.wrong { border-color: var(--red); background: var(--error-bg); }
+
+    .quiz-question { display: none; }
+    .quiz-question.active { display: block; }
+
+    .resource-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .completion-message {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid rgba(95, 209, 47, 0.36);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--cream);
+      background: rgba(95, 209, 47, 0.1);
+      font-weight: 700;
+    }
+
+    .completion-message.show { display: block; }
+
+    .footer {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-top: 1px solid var(--tan);
+      background: rgba(251, 248, 242, 0.98);
+    }
+
+    .counter {
+      color: var(--warm-gray);
+      font-size: 0.82rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .footer-title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--stone);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 800px) {
+      :root {
+        --topbar-h: 58px;
+        --stepper-h: 38px;
+        --footer-h: 52px;
+      }
+
+      body {
+        place-items: stretch;
+      }
+
+      .course {
+        width: 100vw;
+        height: 100dvh;
+        max-width: none;
+        max-height: none;
+        aspect-ratio: auto;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .progress-compact { display: none; }
+      .brand-row { gap: 9px; }
+      .brand-logo {
+        height: 42px;
+      }
+      .step-label { display: none; }
+      .stepper { gap: 5px; }
+      .grid,
+      .grid.three,
+      .mini-columns,
+      .service-grid,
+      .season-grid,
+      .do-dont,
+      .match-row {
+        grid-template-columns: 1fr;
+      }
+
+      .footer { grid-template-columns: auto auto; }
+      .footer-title { display: none; }
+      .service-detail { padding-left: 12px; }
+    }
+
+    @media (max-height: 520px) {
+      :root {
+        --topbar-h: 52px;
+        --stepper-h: 36px;
+        --footer-h: 48px;
+      }
+
+      .slide-head { padding: 12px 14px 10px; }
+      .slide-body { padding: 12px 14px 14px; }
+      .card,
+      .callout,
+      .panel,
+      .activity-card { padding: 11px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    @media print {
+      html,
+      body {
+        height: auto;
+        overflow: visible;
+      }
+
+      .course {
+        height: auto;
+        max-width: none;
+        max-height: none;
+        display: block;
+        aspect-ratio: auto;
+      }
+
+      .topbar,
+      .stepper,
+      .footer { display: none; }
+
+      .viewer {
+        overflow: visible;
+        padding: 0;
+      }
+
+      .slide {
+        display: block !important;
+        margin: 0 0 18px;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="course" id="courseApp">
+    <header class="topbar">
+      <div class="brand-row">
+        <img class="brand-logo" src="assets/buzzkill-logo-transparent.png" alt="BuzzKill Pest Control">
+        <div class="course-title">Digital Marketing for BuzzKill Pest Control - Module 2</div>
+      </div>
+      <div class="top-actions">
+        <div class="progress-compact" aria-label="Module progress">
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-text"><span>Progress</span><span id="progressText">0%</span></div>
+        </div>
+        <button class="reset" id="resetProgress" type="button">Reset</button>
+      </div>
+    </header>
+
+    <nav class="stepper" id="stepper" aria-label="Module sections"></nav>
+
+    <main class="viewer" id="viewer" aria-live="polite">
+      <section class="slide dark active" data-title="Module Introduction">
+        <div class="slide-head">
+          <span class="eyebrow">Module 2</span>
+          <h1 class="slide-title">Pest control business basics <em>for marketers</em></h1>
+        </div>
+        <div class="slide-body">
+          <p class="lede">To market BuzzKill effectively, you do not need to be a technician. You do need to understand what customers are buying, who makes the decision, when demand spikes, and what messages help the right leads take action.</p>
+          <div class="grid">
+            <div class="card">
+              <span class="tag">10-12 minutes</span>
+              <h3>What this module covers</h3>
+              <ul>
+                <li>Common pest control services BuzzKill may market</li>
+                <li>Association, residential, and commercial customer differences</li>
+                <li>Seasonal campaign planning and growth opportunities</li>
+                <li>Message angles that are clear, specific, and supportable</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <h3>Core idea</h3>
+              <p>BuzzKill marketing should not use one generic message for every customer. Strong pest control marketing matches the service, customer type, urgency, and decision-making process.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Learning Objective">
+        <div class="slide-head">
+          <span class="eyebrow">Learning objective</span>
+          <h2 class="slide-title">Match the right service, audience, season, and <em>message</em></h2>
+        </div>
+        <div class="slide-body">
+          <p class="lede">By the end of this module, you will be able to match common pest control services and customer types to appropriate marketing messages, seasonal campaign opportunities, and growth-focused digital marketing strategies.</p>
+          <div class="grid three">
+            <div class="card"><div class="icon-tile">01</div><h3>Recognize services</h3><p>Understand major service categories such as ants, rodents, cockroaches, mosquitoes, termites, bed bugs, wildlife exclusion, one-time service, and recurring plans.</p></div>
+            <div class="card"><div class="icon-tile">02</div><h3>Read the buyer</h3><p>Separate association, residential, and commercial customer needs before choosing the page, ad, CTA, or campaign angle.</p></div>
+            <div class="card"><div class="icon-tile">03</div><h3>Avoid overclaiming</h3><p>Use plain, confident language without unsupported safety claims, guarantees, diagnosis, or technical promises.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Service Categories">
+        <div class="slide-head">
+          <span class="eyebrow">Service categories</span>
+          <h2 class="slide-title">What customers may be trying to <em>solve</em></h2>
+        </div>
+        <div class="slide-body">
+          <p class="lede">Open the cards to connect customer language to marketing intent, message angle, and marketer watch-outs.</p>
+          <div class="service-grid" id="serviceGrid"></div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Growth Audiences">
+        <div class="slide-head">
+          <span class="eyebrow">Three growth audiences</span>
+          <h2 class="slide-title">The same pest issue can mean a different <em>buyer journey</em></h2>
+        </div>
+        <div class="slide-body">
+          <div class="tabs" role="tablist" aria-label="Audience segments">
+            <button class="tab-btn active" id="tab-association" type="button" role="tab" aria-selected="true" aria-controls="panel-association" data-audience="association">Association / Property</button>
+            <button class="tab-btn" id="tab-residential" type="button" role="tab" aria-selected="false" aria-controls="panel-residential" data-audience="residential">Residential</button>
+            <button class="tab-btn" id="tab-commercial" type="button" role="tab" aria-selected="false" aria-controls="panel-commercial" data-audience="commercial">Commercial</button>
+          </div>
+
+          <article class="audience-panel active" id="panel-association" role="tabpanel" aria-labelledby="tab-association">
+            <h3>Association, condo, HOA, and property management customers</h3>
+            <div class="mini-columns">
+              <div class="panel"><span class="tag">They care about</span><ul><li>Reliable response</li><li>Clear documentation</li><li>Fewer resident complaints</li><li>Vendor consistency</li><li>Multi-unit coordination</li></ul></div>
+              <div class="panel"><span class="tag">Message angles</span><ul><li>Reliable pest control for managed communities</li><li>Support for condos, HOAs, and property managers</li><li>Recurring solutions for associations</li><li>Clear communication and service history</li></ul></div>
+              <div class="panel"><span class="tag">Digital implications</span><ul><li>HOA, condo, and property management pages</li><li>Vendor comparison content</li><li>Property manager checklist</li><li>Retargeting for consultations</li></ul></div>
+            </div>
+            <div class="callout warning"><h3>Watch-out</h3><p>Do not make the messaging too homeowner-focused. A property manager may be asking, "Can you support our property reliably, communicate well, and help reduce complaints?"</p></div>
+          </article>
+
+          <article class="audience-panel" id="panel-residential" role="tabpanel" aria-labelledby="tab-residential">
+            <h3>Residential homeowners</h3>
+            <div class="mini-columns">
+              <div class="panel"><span class="tag">They care about</span><ul><li>Fast help</li><li>Trustworthy company</li><li>Easy scheduling</li><li>Reviews</li><li>What to expect before and after the visit</li></ul></div>
+              <div class="panel"><span class="tag">Message angles</span><ul><li>Local pest control for your home</li><li>Fast, professional help for common pest problems</li><li>Recurring protection for year-round peace of mind</li><li>Clear next steps from a local team</li></ul></div>
+              <div class="panel"><span class="tag">Digital implications</span><ul><li>Residential and pest-specific landing pages</li><li>Google Business Profile updates</li><li>Google Ads and Local Services Ads</li><li>Review request campaigns</li><li>Mobile-friendly lead forms</li></ul></div>
+            </div>
+            <div class="callout warning"><h3>Watch-out</h3><p>Residential customers often decide quickly. Do not bury the phone number, service area, or appointment request path.</p></div>
+          </article>
+
+          <article class="audience-panel" id="panel-commercial" role="tabpanel" aria-labelledby="tab-commercial">
+            <h3>Commercial customers</h3>
+            <div class="mini-columns">
+              <div class="panel"><span class="tag">They care about</span><ul><li>Professionalism</li><li>Reliability</li><li>Prevention</li><li>Minimal disruption</li><li>Documentation</li><li>Business-appropriate scheduling</li></ul></div>
+              <div class="panel"><span class="tag">Message angles</span><ul><li>Commercial pest control for local businesses</li><li>Professional prevention for your workplace</li><li>Recurring service options</li><li>Protect your business from pest-related disruption</li></ul></div>
+              <div class="panel"><span class="tag">Digital implications</span><ul><li>Commercial pest control page</li><li>Commercial-intent search campaigns</li><li>B2B content where relevant</li><li>Lead forms asking business type, location, and urgency</li></ul></div>
+            </div>
+            <div class="callout warning"><h3>Watch-out</h3><p>Do not imply BuzzKill serves regulated or specialized commercial environments unless confirmed.</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Marketing Implications">
+        <div class="slide-head">
+          <span class="eyebrow">Marketing implications</span>
+          <h2 class="slide-title">Turn audience context into <em>campaign choices</em></h2>
+        </div>
+        <div class="slide-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Audience</th>
+                  <th>Common trigger</th>
+                  <th>Decision-maker</th>
+                  <th>What they need to trust</th>
+                  <th>Best channels</th>
+                  <th>Strong CTA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>HOA / Condo / Association</strong></td>
+                  <td>Multiple resident reports, recurring issue, vendor search, board concern</td>
+                  <td>Property manager, board member, association representative</td>
+                  <td>Reliability, documentation, communication, multi-unit support</td>
+                  <td>Local SEO, property management landing pages, referrals, email outreach, reviews, case studies</td>
+                  <td>Request association pest control support</td>
+                </tr>
+                <tr>
+                  <td><strong>Residential</strong></td>
+                  <td>Visible pest issue, seasonal pressure, urgent search, prevention interest</td>
+                  <td>Homeowner or household decision-maker</td>
+                  <td>Speed, reviews, clarity, friendliness, safety-conscious communication</td>
+                  <td>Google Business Profile, SEO, Google Ads, Local Services Ads, reviews, service pages</td>
+                  <td>Schedule residential pest control service</td>
+                </tr>
+                <tr>
+                  <td><strong>Commercial</strong></td>
+                  <td>Pest sighting, customer or employee complaint, prevention need, recurring vendor search</td>
+                  <td>Business owner, office manager, property owner, facility manager</td>
+                  <td>Professionalism, consistency, discretion, minimal disruption, recurring capability</td>
+                  <td>Commercial pages, paid search, local SEO, email outreach, B2B content, referrals</td>
+                  <td>Request commercial pest control support</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Seasonality">
+        <div class="slide-head">
+          <span class="eyebrow">Seasonality</span>
+          <h2 class="slide-title">Plan campaigns before demand <em>peaks</em></h2>
+        </div>
+        <div class="slide-body">
+          <div class="callout warning">
+            <h3>Important note</h3>
+            <p>Seasonality can vary by geography, weather, and service area. Treat this as a practical planning guide, not a fixed rule.</p>
+          </div>
+          <div class="season-grid">
+            <div class="season-card"><h3>Spring <small>Ready</small></h3><p><strong>Opportunities:</strong> ants, termite/WDI awareness, general pest control, early mosquito and tick prevention, recurring plans.</p><p><strong>Focus:</strong> prevention, inspections, and seasonal readiness.</p></div>
+            <div class="season-card"><h3>Summer <small>Active</small></h3><p><strong>Opportunities:</strong> mosquitoes, ticks, ants, general activity, outdoor comfort campaigns.</p><p><strong>Focus:</strong> outdoor comfort, fast response, and seasonal pest pressure.</p></div>
+            <div class="season-card"><h3>Fall <small>Prevent</small></h3><p><strong>Opportunities:</strong> mice, rats, wildlife entry concerns, exterior pressure, association and commercial planning.</p><p><strong>Focus:</strong> prevention before pests seek shelter indoors.</p></div>
+            <div class="season-card"><h3>Winter <small>Plan</small></h3><p><strong>Opportunities:</strong> rodents, cockroaches, bed bugs, commercial prevention, recurring account planning.</p><p><strong>Focus:</strong> indoor issues, recurring service, and property manager outreach.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Intent Matching">
+        <div class="slide-head">
+          <span class="eyebrow">Activity</span>
+          <h2 class="slide-title">Match the pest concern to the marketing <em>intent</em></h2>
+        </div>
+        <div class="slide-body">
+          <p class="lede">Read each customer search or statement. Match it to the most likely marketing intent.</p>
+          <div class="match-list" id="matchList"></div>
+          <div class="button-row" style="margin-top: 12px;">
+            <button class="button primary" id="checkMatches" type="button">Check Matches</button>
+            <button class="button secondary" id="resetMatches" type="button">Clear</button>
+          </div>
+          <div class="feedback" id="matchFeedback" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Growth Opportunity">
+        <div class="slide-head">
+          <span class="eyebrow">Growth opportunity</span>
+          <h2 class="slide-title">Where BuzzKill can grow through <em>better marketing</em></h2>
+        </div>
+        <div class="slide-body">
+          <p class="lede">BuzzKill can grow by improving marketing across all three major customer segments. Each segment contributes differently and requires a different strategy.</p>
+          <div class="grid three">
+            <div class="card"><span class="tag">Association / property</span><h3>Win more recurring community relationships</h3><ul><li>Build property-manager-focused landing pages</li><li>Highlight reliability and documentation</li><li>Improve local search for HOA and condo pest control</li><li>Answer vendor-selection questions</li></ul><p><strong>Metric examples:</strong> property manager inquiries, consultation requests, recurring opportunities.</p></div>
+            <div class="card"><span class="tag">Residential</span><h3>Capture urgent and seasonal demand</h3><ul><li>Improve Google Business Profile visibility</li><li>Build pest-specific service pages</li><li>Run seasonal campaigns</li><li>Improve call and form conversion</li><li>Encourage reviews</li></ul><p><strong>Metric examples:</strong> calls, form submissions, cost per lead, recurring plan conversions.</p></div>
+            <div class="card"><span class="tag">Commercial</span><h3>Attract recurring business accounts</h3><ul><li>Build a commercial pest control page</li><li>Create business-focused messaging</li><li>Run commercial-intent search campaigns</li><li>Support email outreach or retargeting</li></ul><p><strong>Metric examples:</strong> qualified commercial leads, recurring opportunities, lead-to-close rate.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Messaging Standards">
+        <div class="slide-head">
+          <span class="eyebrow">Messaging implications</span>
+          <h2 class="slide-title">Good pest control marketing is clear, specific, and <em>supportable</em></h2>
+        </div>
+        <div class="slide-body">
+          <p class="lede">Marketing should make BuzzKill easy to understand and easy to contact. It should not make unsupported promises, diagnose issues without inspection, or overstate safety or treatment outcomes.</p>
+          <div class="do-dont">
+            <div class="panel do-panel"><h3>Use messaging like:</h3><ul><li>Schedule pest control service for your home or property.</li><li>Ask about recurring pest control options.</li><li>BuzzKill supports residential, commercial, and association pest control needs.</li><li>Our team can help assess the right next step.</li><li>Professional pest control support for property managers and managed communities.</li></ul></div>
+            <div class="panel dont-panel"><h3>Avoid messaging like:</h3><ul><li>Guaranteed to eliminate every pest forever.</li><li>Completely safe for all pets and children in every situation.</li><li>We can identify any pest instantly from a photo.</li><li>One visit always solves the problem.</li><li>We handle every type of wildlife problem.</li></ul></div>
+          </div>
+          <div class="callout warning"><h3>Why it matters</h3><p>Unsupported claims can create customer confusion, operational problems, compliance risk, or trust issues. Safety, treatment methods, guarantees, and technical identification should be reviewed by operations or leadership.</p></div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Scenario Practice">
+        <div class="slide-head">
+          <span class="eyebrow">Mini scenario activity</span>
+          <h2 class="slide-title">Choose the best marketing <em>angle</em></h2>
+        </div>
+        <div class="slide-body">
+          <div id="scenarioArea"></div>
+          <div class="feedback" id="scenarioFeedback" aria-live="polite"></div>
+          <div class="button-row" style="margin-top: 12px;">
+            <button class="button primary" id="nextScenario" type="button">Next Scenario</button>
+            <button class="button secondary" id="restartScenarios" type="button">Restart</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Knowledge Check">
+        <div class="slide-head">
+          <span class="eyebrow">Knowledge check</span>
+          <h2 class="slide-title">Check your understanding before the <em>wrap-up</em></h2>
+        </div>
+        <div class="slide-body">
+          <div id="quizArea"></div>
+          <div class="button-row" style="margin-top: 12px;">
+            <button class="button primary" id="submitQuiz" type="button">Submit Knowledge Check</button>
+            <button class="button secondary" id="resetQuiz" type="button">Reset Quiz</button>
+          </div>
+          <div class="feedback" id="quizFeedback" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="slide dark" data-title="Module Takeaways">
+        <div class="slide-head">
+          <span class="eyebrow">Module takeaways</span>
+          <h2 class="slide-title">Create qualified demand, not just <em>traffic</em></h2>
+        </div>
+        <div class="slide-body">
+          <div class="grid">
+            <div class="card">
+              <h3>Key takeaways</h3>
+              <ul>
+                <li>Pest control marketers need to understand services, customers, seasonality, and intent.</li>
+                <li>BuzzKill's major growth audiences are association/property management, residential, and commercial customers.</li>
+                <li>Association marketing should emphasize reliability, documentation, communication, and recurring support.</li>
+                <li>Residential marketing should emphasize fast help, local trust, reviews, easy scheduling, and seasonal needs.</li>
+                <li>Commercial marketing should emphasize professionalism, prevention, recurring service, and minimal disruption.</li>
+                <li>Strong campaigns are planned before demand peaks.</li>
+                <li>Marketing should avoid unsupported claims about safety, guarantees, diagnosis, or outcomes.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag">Downloadable resources</span>
+              <h3>Keep the practical tools</h3>
+              <p>These quick-reference files are generated from the lesson and can help a new hire plan pages, ads, and campaign timing without rereading the whole module.</p>
+              <div class="resource-actions">
+                <button class="button dark-primary" type="button" data-download="checklist">Download Checklist</button>
+                <button class="button secondary" type="button" data-download="worksheet">Download Worksheet</button>
+              </div>
+              <div class="callout" style="margin-top: 12px;">
+                <h3>Next module</h3>
+                <p>Next, you will learn how pest control customers move from concern to search, comparison, contact, booking, and follow-up, and where marketing influences that journey.</p>
+              </div>
+              <button class="button dark-primary" id="completeModule" type="button">Complete Module 2</button>
+              <div class="completion-message" id="completionMessage" aria-live="polite">Module 2 complete. Next, you will learn how pest control customers move from concern to search, comparison, contact, booking, and follow-up, and where marketing influences that journey.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="counter" id="counter">Slide 1 of 12</div>
+      <div class="footer-title" id="footerTitle">Module Introduction</div>
+      <div class="footer-actions">
+        <button class="button secondary" id="prevBtn" type="button">Previous</button>
+        <button class="button primary" id="nextBtn" type="button">Next</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const storageKey = "buzzkill-digital-marketing-module-02-v1";
+      const sections = [
+        "Start", "Objective", "Services", "Audience", "Channels", "Seasons",
+        "Intent", "Growth", "Messages", "Scenario", "Check", "Wrap-Up"
+      ];
+
+      const services = [
+        ["General Pest Control", "Routine, prevention, or right-next-step help", "Reliable pest protection, convenient scheduling, local service, prevention-focused support.", "Avoid vague claims like eliminates every pest forever."],
+        ["Ant Control", "Ants in the kitchen or trails near windows", "Quick response, clear inspection and treatment process, help finding the source of activity.", "Do not guarantee a one-visit solution unless approved."],
+        ["Rodent Control: Mice and Rats", "Scratching in walls, droppings, resident reports", "Responsive rodent control, inspection, treatment, prevention, and exclusion support.", "For associations and commercial customers, emphasize documentation and recurring prevention."],
+        ["Cockroach Control", "Roaches in kitchens, multiple units, discreet need", "Discreet, professional, responsive service with clear next steps.", "Avoid shame-based language or implying the customer caused the issue."],
+        ["Mosquito and Tick Treatments", "Outdoor comfort and seasonal prevention", "Outdoor comfort, seasonal prevention, family/pet-conscious messaging without unsupported safety claims.", "Do not say treatments are completely safe for all pets and children."],
+        ["Termites and Wood-Destroying Insects", "Damage, mud tubes, buying or selling a property", "Professional inspection, early detection, property protection, expert review.", "Avoid diagnosing termite activity from photos or vague descriptions."],
+        ["Bed Bug Service", "Bites, bugs near a bed, resident report", "Discreet help, clear preparation steps, professional inspection, responsive service.", "Avoid fear-based language or instant-elimination guarantees."],
+        ["Wildlife Exclusion", "Something in attic or possible entry point", "Professional inspection, entry-point awareness, prevention-focused support.", "Do not imply BuzzKill handles every wildlife species unless confirmed."],
+        ["Seasonal Pest Programs", "Regular service or prevention before issues spike", "Stay ahead of seasonal pest pressure, recurring service, convenient prevention.", "Launch before peak demand, not after customers have chosen providers."],
+        ["One-Time Service", "Specific urgent issue or not ready for a plan", "Simple next step, clear scheduling, issue-specific support.", "Do not position one-time service as always sufficient."],
+        ["Recurring Pest Control Plans", "Ongoing protection across homes, properties, or businesses", "Ongoing prevention, fewer surprises, convenience, consistency, long-term support.", "Make the value clear without pressure-based messaging."]
+      ];
+
+      const matchOptions = [
+        ["A", "Urgent residential rodent lead"],
+        ["B", "Association or property management vendor search"],
+        ["C", "Seasonal residential outdoor service"],
+        ["D", "Commercial recurring or preventive service opportunity"],
+        ["E", "Inspection-driven termite/WDI concern"],
+        ["F", "Sensitive, urgent, discreet service inquiry"],
+        ["G", "Recurring revenue opportunity"],
+        ["H", "Multi-unit association pest concern"]
+      ];
+
+      const matchItems = [
+        ["Mouse exterminator near me", "A"],
+        ["HOA pest control company", "B"],
+        ["Mosquito treatment for yard", "C"],
+        ["Commercial pest control service", "D"],
+        ["Are these termites?", "E"],
+        ["Bed bugs in apartment", "F"],
+        ["Recurring pest control plan", "G"],
+        ["Roaches in condo units", "H"]
+      ];
+
+      const scenarios = [
+        {
+          prompt: "A property manager is dealing with repeated resident complaints about mice in a condo community. Which marketing angle is strongest?",
+          options: [
+            ["Cheap mouse treatment today only", false],
+            ["Reliable rodent control support for managed communities, with clear communication and recurring service options", true],
+            ["Mice are always easy to eliminate in one visit", false],
+            ["Residents should solve this themselves", false]
+          ],
+          feedback: "Property managers need reliability, documentation, communication, and support for recurring or multi-unit issues."
+        },
+        {
+          prompt: "A homeowner searches for mosquito and tick treatment in early summer. Which marketing angle is strongest?",
+          options: [
+            ["Outdoor seasonal pest treatment options for your yard", true],
+            ["Commercial pest documentation for facility managers", false],
+            ["HOA vendor proposal process", false],
+            ["Winter rodent prevention", false]
+          ],
+          feedback: "This is a residential seasonal need. Messaging should focus on outdoor comfort, seasonal timing, and easy scheduling."
+        },
+        {
+          prompt: "A local business wants ongoing pest prevention. Which marketing angle is strongest?",
+          options: [
+            ["One-time ant treatment for kitchens only", false],
+            ["Professional recurring pest control options for local businesses", true],
+            ["Guaranteed zero pests forever", false],
+            ["DIY pest control tips only", false]
+          ],
+          feedback: "Commercial customers often value professionalism, recurring prevention, consistency, and minimal disruption."
+        },
+        {
+          prompt: "A homeowner says they saw possible termite damage. Which marketing angle is safest?",
+          options: [
+            ["We can confirm termites from any photo.", false],
+            ["Schedule an inspection for possible termite or wood-destroying insect activity.", true],
+            ["Ignore it unless the damage gets worse.", false],
+            ["One treatment always repairs termite damage.", false]
+          ],
+          feedback: "Termite/WDI marketing should be inspection-driven and avoid diagnosis before review."
+        }
+      ];
+
+      const quiz = [
+        ["Why does BuzzKill need different marketing messages for association, residential, and commercial customers?", [
+          ["Because each audience has different needs, decision-makers, urgency levels, and trust factors", true],
+          ["Because different audiences do not use the internet", false],
+          ["Because only residential customers care about pest control", false],
+          ["Because commercial customers never need recurring service", false]
+        ]],
+        ["Which audience is most likely to care about resident complaints, documentation, and vendor reliability?", [
+          ["A homeowner looking for mosquito service", false],
+          ["A property manager or HOA contact", true],
+          ["A person casually reading a blog", false],
+          ["A one-time social media follower", false]
+        ]],
+        ["Which service category is most clearly seasonal and outdoor-focused?", [
+          ["Mosquitoes and ticks", true],
+          ["Invoice follow-up", false],
+          ["Website hosting", false],
+          ["Review management", false]
+        ]],
+        ["Which marketing statement should be avoided unless specifically approved and supportable?", [
+          ["Schedule residential pest control service.", false],
+          ["Ask about recurring pest protection options.", false],
+          ["Completely safe for all pets and children in every situation.", true],
+          ["Professional pest control support for local businesses.", false]
+        ]],
+        ["A search for commercial pest control company near me most likely suggests what type of opportunity?", [
+          ["A commercial customer looking for professional service, possibly recurring", true],
+          ["A board member asking about HOA bylaws", false],
+          ["A homeowner researching mosquito prevention only", false],
+          ["A technician looking for training", false]
+        ]]
+      ];
+
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const viewer = document.getElementById("viewer");
+      const stepper = document.getElementById("stepper");
+      const counter = document.getElementById("counter");
+      const footerTitle = document.getElementById("footerTitle");
+      const progressFill = document.getElementById("progressFill");
+      const progressText = document.getElementById("progressText");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const resetProgress = document.getElementById("resetProgress");
+      const live = document.createElement("div");
+      live.className = "sr-only";
+      live.setAttribute("aria-live", "polite");
+      document.body.appendChild(live);
+
+      let current = 0;
+      let visited = new Set([0]);
+      let scenarioIndex = 0;
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function loadProgress() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey));
+          if (saved && Array.isArray(saved.visited)) {
+            visited = new Set(saved.visited.filter(n => Number.isInteger(n) && n >= 0 && n < slides.length));
+            current = Number.isInteger(saved.current) && saved.current >= 0 && saved.current < slides.length ? saved.current : 0;
+            visited.add(current);
+          }
+        } catch (error) {
+          current = 0;
+          visited = new Set([0]);
+        }
+      }
+
+      function saveProgress() {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({ current, visited: Array.from(visited) }));
+        } catch (error) {
+          /* LMS previews may block localStorage. */
+        }
+      }
+
+      function buildStepper() {
+        stepper.innerHTML = sections.map((label, index) => `
+          <button class="step-btn" data-step="${index}" type="button">
+            <span class="step-num">${index + 1}</span>
+            <span class="step-label">${escapeHtml(label)}</span>
+          </button>
+        `).join("");
+        stepper.querySelectorAll(".step-btn").forEach(button => {
+          button.addEventListener("click", () => goTo(Number(button.dataset.step)));
+        });
+      }
+
+      function renderServices() {
+        document.getElementById("serviceGrid").innerHTML = services.map((item, index) => `
+          <article class="service-card">
+            <button class="service-toggle" type="button" aria-expanded="false">
+              <span class="icon-tile">${String(index + 1).padStart(2, "0")}</span>
+              <span><strong>${escapeHtml(item[0])}</strong><span>${escapeHtml(item[1])}</span></span>
+              <span class="chevron" aria-hidden="true">&gt;</span>
+            </button>
+            <div class="service-detail">
+              <p><b>Marketing intent:</b> ${escapeHtml(item[1])}.</p>
+              <p><b>Message angle:</b> ${escapeHtml(item[2])}</p>
+              <p><b>Watch-out:</b> ${escapeHtml(item[3])}</p>
+            </div>
+          </article>
+        `).join("");
+        document.querySelectorAll(".service-toggle").forEach(button => {
+          button.addEventListener("click", () => {
+            const card = button.closest(".service-card");
+            const isOpen = card.classList.toggle("open");
+            button.setAttribute("aria-expanded", String(isOpen));
+          });
+        });
+      }
+
+      function renderMatches() {
+        const options = `<option value="">Choose intent...</option>` + matchOptions.map(([key, text]) => `<option value="${key}">${key}. ${escapeHtml(text)}</option>`).join("");
+        document.getElementById("matchList").innerHTML = matchItems.map(([query, correct], index) => `
+          <div class="match-row">
+            <div class="query">${index + 1}. "${escapeHtml(query)}"</div>
+            <label>
+              <span class="sr-only">Intent for ${escapeHtml(query)}</span>
+              <select data-answer="${correct}">${options}</select>
+            </label>
+          </div>
+        `).join("");
+      }
+
+      function setFeedback(element, type, message) {
+        element.className = "feedback show " + type;
+        element.textContent = message;
+        live.textContent = message;
+      }
+
+      function renderScenario() {
+        const scenario = scenarios[scenarioIndex];
+        document.getElementById("scenarioArea").innerHTML = `
+          <div class="activity-card">
+            <span class="tag">Scenario ${scenarioIndex + 1} of ${scenarios.length}</span>
+            <h3>${escapeHtml(scenario.prompt)}</h3>
+            <div class="scenario-options">
+              ${scenario.options.map(([text, correct], index) => `
+                <button class="choice" type="button" data-correct="${correct}">
+                  ${String.fromCharCode(65 + index)}. ${escapeHtml(text)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        `;
+        const feedback = document.getElementById("scenarioFeedback");
+        feedback.className = "feedback";
+        feedback.textContent = "";
+        document.querySelectorAll("#scenarioArea .choice").forEach(button => {
+          button.addEventListener("click", () => {
+            const correct = button.dataset.correct === "true";
+            document.querySelectorAll("#scenarioArea .choice").forEach(choice => {
+              choice.disabled = true;
+              if (choice.dataset.correct === "true") choice.classList.add("correct");
+            });
+            if (!correct) button.classList.add("wrong");
+            setFeedback(feedback, correct ? "good" : "bad", (correct ? "Correct. " : "Not quite. ") + scenario.feedback);
+          });
+        });
+      }
+
+      function renderQuiz() {
+        document.getElementById("quizArea").innerHTML = quiz.map((question, qIndex) => `
+          <fieldset class="activity-card" style="margin: ${qIndex === 0 ? "0" : "10px"} 0 0; border: 1px solid var(--tan);">
+            <legend class="tag">Question ${qIndex + 1}</legend>
+            <h3>${escapeHtml(question[0])}</h3>
+            <div class="quiz-options">
+              ${question[1].map((option, oIndex) => `
+                <label class="choice" style="display:block;">
+                  <input type="radio" name="quiz-${qIndex}" value="${oIndex}" data-correct="${option[1]}">
+                  ${String.fromCharCode(65 + oIndex)}. ${escapeHtml(option[0])}
+                </label>
+              `).join("")}
+            </div>
+          </fieldset>
+        `).join("");
+      }
+
+      function update() {
+        slides.forEach((slide, index) => slide.classList.toggle("active", index === current));
+        stepper.querySelectorAll(".step-btn").forEach((button, index) => {
+          button.classList.toggle("active", index === current);
+          button.classList.toggle("done", visited.has(index));
+          button.setAttribute("aria-current", index === current ? "step" : "false");
+        });
+
+        const title = slides[current].dataset.title || "Module content";
+        counter.textContent = `Slide ${current + 1} of ${slides.length}`;
+        footerTitle.textContent = title;
+        prevBtn.disabled = current === 0;
+        nextBtn.textContent = current === slides.length - 1 ? "Finish" : "Next";
+
+        const percent = Math.round((visited.size / slides.length) * 100);
+        progressFill.style.width = `${percent}%`;
+        progressText.textContent = `${percent}%`;
+        saveProgress();
+
+        requestAnimationFrame(() => {
+          viewer.scrollTop = 0;
+          const activeStep = stepper.querySelectorAll(".step-btn")[current];
+          if (activeStep && activeStep.scrollIntoView) {
+            activeStep.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+          }
+        });
+      }
+
+      function goTo(index) {
+        if (index < 0 || index >= slides.length) return;
+        current = index;
+        visited.add(current);
+        update();
+      }
+
+      function downloadText(filename, content) {
+        const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function resourceContent(type) {
+        if (type === "checklist") {
+          return [
+            "BuzzKill Digital Marketing Quick Checklist",
+            "",
+            "Audience",
+            "- Is this association/property management, residential, or commercial?",
+            "- Who is likely making the decision?",
+            "- What do they need to trust before contacting BuzzKill?",
+            "",
+            "Intent",
+            "- Is the need urgent, seasonal, inspection-driven, recurring, or vendor-selection focused?",
+            "- Does the CTA match that intent?",
+            "",
+            "Message Safety",
+            "- Avoid unsupported safety claims.",
+            "- Avoid diagnosis from photos or vague descriptions.",
+            "- Avoid guarantees unless approved.",
+            "- Use inspection, assessment, recurring support, and clear next-step language.",
+            "",
+            "Growth",
+            "- Association: reliability, documentation, recurring community support.",
+            "- Residential: fast help, reviews, local trust, easy scheduling.",
+            "- Commercial: professionalism, prevention, minimal disruption, recurring service."
+          ].join("\n");
+        }
+        return [
+          "BuzzKill Seasonal Campaign Planning Worksheet",
+          "",
+          "Season:",
+          "Primary pest/service focus:",
+          "Audience segment:",
+          "Likely customer trigger:",
+          "Best channel:",
+          "Landing page or asset needed:",
+          "Strong CTA:",
+          "Supportable message angle:",
+          "Claim or wording to avoid:",
+          "Metric to monitor:",
+          "",
+          "Planning reminder: launch before peak demand when possible."
+        ].join("\n");
+      }
+
+      buildStepper();
+      renderServices();
+      renderMatches();
+      renderScenario();
+      renderQuiz();
+      loadProgress();
+      update();
+
+      document.querySelectorAll(".tab-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach(tab => {
+            tab.classList.toggle("active", tab === button);
+            tab.setAttribute("aria-selected", String(tab === button));
+          });
+          document.querySelectorAll(".audience-panel").forEach(panel => {
+            panel.classList.toggle("active", panel.id === `panel-${button.dataset.audience}`);
+          });
+        });
+      });
+
+      document.getElementById("checkMatches").addEventListener("click", () => {
+        const selects = Array.from(document.querySelectorAll("#matchList select"));
+        const unanswered = selects.filter(select => !select.value).length;
+        if (unanswered) {
+          setFeedback(document.getElementById("matchFeedback"), "bad", `Choose an intent for all ${selects.length} items before checking.`);
+          return;
+        }
+        const correct = selects.filter(select => select.value === select.dataset.answer).length;
+        if (correct === selects.length) {
+          setFeedback(document.getElementById("matchFeedback"), "good", "Nice work. Strong pest control marketing starts with recognizing intent. The same pest issue may need different messaging depending on who is searching and what decision they are trying to make.");
+        } else {
+          setFeedback(document.getElementById("matchFeedback"), "bad", `${correct} of ${selects.length} are correct. Think about who is likely searching, how urgent the issue is, and whether the need is residential, association-based, or commercial.`);
+        }
+      });
+
+      document.getElementById("resetMatches").addEventListener("click", () => {
+        document.querySelectorAll("#matchList select").forEach(select => { select.value = ""; });
+        document.getElementById("matchFeedback").className = "feedback";
+      });
+
+      document.getElementById("nextScenario").addEventListener("click", () => {
+        scenarioIndex = (scenarioIndex + 1) % scenarios.length;
+        renderScenario();
+      });
+
+      document.getElementById("restartScenarios").addEventListener("click", () => {
+        scenarioIndex = 0;
+        renderScenario();
+      });
+
+      document.getElementById("submitQuiz").addEventListener("click", () => {
+        let answered = 0;
+        let correct = 0;
+        quiz.forEach((_, index) => {
+          const selected = document.querySelector(`input[name="quiz-${index}"]:checked`);
+          if (selected) {
+            answered++;
+            if (selected.dataset.correct === "true") correct++;
+          }
+        });
+        if (answered < quiz.length) {
+          setFeedback(document.getElementById("quizFeedback"), "bad", `Answer all ${quiz.length} questions before submitting.`);
+          return;
+        }
+        const passed = correct >= 4;
+        setFeedback(
+          document.getElementById("quizFeedback"),
+          passed ? "good" : "bad",
+          passed
+            ? `Great job. You scored ${correct} of ${quiz.length}. You understand the basic pest control business context marketers need.`
+            : `You scored ${correct} of ${quiz.length}. Review the audience and messaging sections before continuing. The most important concept is matching customer type, service need, urgency, and decision-making process.`
+        );
+      });
+
+      document.getElementById("resetQuiz").addEventListener("click", () => {
+        document.querySelectorAll("#quizArea input").forEach(input => { input.checked = false; });
+        document.getElementById("quizFeedback").className = "feedback";
+      });
+
+      document.querySelectorAll("[data-download]").forEach(button => {
+        button.addEventListener("click", () => {
+          const type = button.dataset.download;
+          const filename = type === "checklist"
+            ? "buzzkill-digital-marketing-quick-checklist.txt"
+            : "buzzkill-seasonal-campaign-planning-worksheet.txt";
+          downloadText(filename, resourceContent(type));
+        });
+      });
+
+      document.getElementById("completeModule").addEventListener("click", () => {
+        visited = new Set(slides.map((_, index) => index));
+        document.getElementById("completionMessage").classList.add("show");
+        update();
+      });
+
+      prevBtn.addEventListener("click", () => goTo(current - 1));
+      nextBtn.addEventListener("click", () => {
+        if (current === slides.length - 1) {
+          visited = new Set(slides.map((_, index) => index));
+          update();
+        } else {
+          goTo(current + 1);
+        }
+      });
+
+      resetProgress.addEventListener("click", () => {
+        current = 0;
+        visited = new Set([0]);
+        try { localStorage.removeItem(storageKey); } catch (error) {}
+        update();
+      });
+
+      document.addEventListener("keydown", event => {
+        const tag = event.target.tagName;
+        if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA" || tag === "BUTTON") return;
+        if (event.key === "ArrowLeft") goTo(current - 1);
+        if (event.key === "ArrowRight") goTo(current + 1);
+      });
+    })();
+  </script>
+</body>
+</html>
